@@ -124,3 +124,14 @@
     @apply bg-background text-foreground;
   }
 }
+
+@layer components {
+  .icon-after::after {
+    @apply absolute inset-0 pointer-events-none border-[4px] border-black;
+    content: "";
+  }
+  .text-multi-shadow {
+    text-shadow: -2px -2px 4px #000, -2px 2px 4px #000, 2px -2px 4px #000,
+      2px 2px 4px #000, 0 0 8px #000, 0 0 8px #000, 0 0 8px #000, 0 0 8px #000;
+  }
+}
