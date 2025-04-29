@@ -3,6 +3,7 @@ import { Nunito } from "next/font/google";
 import "./globals.css";
 import { Header } from "@/components/shared/header";
 import { ThemeProvider } from "@/components/shared/theme-provider";
+import Script from "next/script";
 
 const nunito = Nunito({
   subsets: ["cyrillic"],
@@ -22,6 +23,15 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
+      <head>
+        <Script id="wowhead-tooltips-config">
+          {`const whTooltips = {colorLinks: true, iconizeLinks: true, renameLinks: true};`}
+        </Script>
+        <Script
+          src="https://wow.zamimg.com/js/tooltips.js"
+          strategy="afterInteractive"
+        />
+      </head>
       <body className={nunito.className}>
         <main className="min-h-screen">
           <ThemeProvider attribute="class" defaultTheme="dark" enableSystem>
