@@ -14,9 +14,32 @@ import { Facebook, Link as LinkIcon, Twitter } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
 import { GuideTabs } from "@/components/shared/";
-import { RatingEditor } from "@/components/shared/guide/overview/difficulty-bar-editor";
 
 export default function Home() {
+  const tabsData = [
+    {
+      value: "AR",
+      label: "Aldrachi Reaver",
+      iconUrl: "https://assets-ng.maxroll.gg/wow/icons/sprites/27132.webp",
+      content:
+        "Art of the Glaive makes your Throw Glaive ability become Reaver's Glaive...",
+    },
+    {
+      value: "FS",
+      label: "Fel-Scarred",
+      iconUrl: "https://assets-ng.maxroll.gg/wow/icons/sprites/27066.webp",
+      content:
+        "The Fel-Scarred talent tree is generally more passive than the Aldrachi Reaver...",
+    },
+    // Добавьте новые табы по необходимости
+    {
+      value: "NEW",
+      label: "New Tab",
+      iconUrl: "https://example.com/new-icon.webp",
+      content: "This is content for new tab...",
+    },
+  ];
+
   const [isCopied, setIsCopied] = useState(false);
 
   const handleCopy = () => {
@@ -155,7 +178,7 @@ export default function Home() {
                 patch="Patch 11.1.5 - Nightfall"
               />
 
-              <GuideTabs />
+              <GuideTabs tabs={tabsData} defaultTab="AR" />
 
               <GuideTitle
                 anchorId="talents-header"

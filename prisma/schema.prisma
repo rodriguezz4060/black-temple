@@ -1,0 +1,153 @@
+generator client {
+    provider = "prisma-client-js"
+}
+
+datasource db {
+    provider = "postgresql"
+    url      = env("POSTGRES_URL")
+}
+
+model User {
+    id Int @id @default(autoincrement())
+
+    fullName String
+    email    String   @unique
+    password String
+    role     UserRole @default(USER)
+
+    provider   String?
+    providerId String?
+
+    createdAt DateTime @default(now())
+    updateAt  DateTime @updatedAt
+}
+
+model Guide {
+    id Int @id @default(autoincrement())
+
+    spec  String
+    mode  String
+    title String?
+    patch String?
+
+    overviewDifficulty OverviewDifficulty?
+    overviewGear       OverviewGear?
+    heroTalents        HeroTalents?
+
+    createdAt DateTime @default(now())
+    updateAt  DateTime @updatedAt
+}
+
+model OverviewDifficulty {
+    id Int @id @default(autoincrement())
+
+    spec String
+    mode String
+
+    singleTarget  Int
+    multiTarget   Int
+    utility       Int
+    survivability Int
+    mobility      Int
+
+    guide   Guide @relation(fields: [guideId], references: [id])
+    guideId Int   @unique
+
+    createdAt DateTime @default(now())
+    updateAt  DateTime @updatedAt
+}
+
+model OverviewGear {
+    id Int @id @default(autoincrement())
+
+    headImg     String?
+    headLink    String?
+    headSocket  String?
+    headEnchant String?
+
+    neckImg     String?
+    neckLink    String?
+    neckSocket1 String?
+    neckSocket2 String?
+
+    shouldersImg  String?
+    shouldersLink String?
+
+    backImg     String?
+    backLink    String?
+    backEnchant String?
+
+    chestImg     String?
+    chestLink    String?
+    chestEnchant String?
+
+    wristImg     String?
+    wristLink    String?
+    wristSocket1 String?
+    wristEnchant String?
+
+    handsImg     String?
+    handsLink    String?
+    handsEnchant String?
+
+    waistImg     String?
+    waistLink    String?
+    waistSocket1 String?
+
+    legsImg     String?
+    legsLink    String?
+    legsEnchant String?
+
+    feetImg     String?
+    feetLink    String?
+    feetEnchant String?
+
+    fingerOneImg     String?
+    fingerOneLink1   String?
+    fingerOneSocket1 String?
+    fingerOneSocket2 String?
+    fingerOneSocket3 String?
+    fingerOneEnchant String?
+
+    fingerTwoImg     String?
+    fingerTwoLink    String?
+    fingerTwoSocket1 String?
+    fingerTwoSocket2 String?
+    fingerTwoSocket3 String?
+    fingerTwoEnchant String?
+
+    trinketOneImg  String?
+    trinketOneLink String?
+
+    trinketTwoImg  String?
+    trinketTwoLink String?
+
+    mainHandImg     String?
+    mainHandLink    String?
+    mainHandEnchant String?
+
+    offHandImg     String?
+    offHandLink    String?
+    offHandEnchant String?
+
+    guide   Guide @relation(fields: [guideId], references: [id])
+    guideId Int   @unique
+
+    createdAt DateTime @default(now())
+    updateAt  DateTime @updatedAt
+}
+
+model HeroTalents {
+    id Int @id @default(autoincrement())
+
+    guide   Guide @relation(fields: [guideId], references: [id])
+    guideId Int   @unique
+
+    createdAt DateTime @default(now())
+    updateAt  DateTime @updatedAt
+}
+
+enum UserRole {
+    USER
+    ADMIN
+}
