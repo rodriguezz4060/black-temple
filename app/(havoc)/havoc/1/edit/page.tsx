@@ -23,15 +23,10 @@ export default function Home() {
                 initialTabs={[
                   {
                     value: "tab1",
-                    label: "Tab 1",
-                    iconUrl: "icon1.webp",
+                    label: "‍Aldrachi Reaver M+ Build",
+                    iconUrl:
+                      "https://assets-ng.maxroll.gg/wow/icons/sprites/27132.webp",
                     content: "Content for tab 1",
-                  },
-                  {
-                    value: "tab2",
-                    label: "Tab 2",
-                    iconUrl: "icon2.webp",
-                    content: "Content for tab 2",
                   },
                 ]}
                 defaultTab="tab1"

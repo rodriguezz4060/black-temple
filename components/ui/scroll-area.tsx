@@ -42,7 +42,7 @@ function ScrollBar({
         orientation === "vertical" &&
           "h-full w-2.5 border-l border-l-transparent",
         orientation === "horizontal" &&
-          "h-3.5 flex-col border-t border-t-transparent bg-[#171717] w-full",
+          "h-2 flex-col border-t-transparent rounded-md ml-4 mr-4 bg-background ",
         className
       )}
       {...props}
