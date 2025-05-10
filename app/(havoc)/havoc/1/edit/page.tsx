@@ -1,7 +1,7 @@
 "use client";
 
 import { Container, GuideTitle, LeftSideBar } from "@/components/shared";
-import { HeroTalents } from "@/components/shared/guide/editor/hero-talents";
+import { TabsEditor } from "@/components/shared/guide/editor/tabs-editor";
 
 export default function Home() {
   return (
@@ -19,7 +19,7 @@ export default function Home() {
                 patch="Patch 11.1.5 - Nightfall"
               />
 
-              <HeroTalents
+              <TabsEditor
                 initialTabs={[
                   {
                     value: "tab1",

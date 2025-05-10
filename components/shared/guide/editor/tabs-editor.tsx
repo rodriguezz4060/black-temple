@@ -35,7 +35,7 @@ interface HeroTalentsProps {
   editable?: boolean;
 }
 
-export const HeroTalents = ({ initialTabs, defaultTab }: HeroTalentsProps) => {
+export const TabsEditor = ({ initialTabs, defaultTab }: HeroTalentsProps) => {
   const [tabs, setTabs] = useState<TabData[]>(initialTabs);
   const [activeTab, setActiveTab] = useState(
     defaultTab || initialTabs[0]?.value || ""

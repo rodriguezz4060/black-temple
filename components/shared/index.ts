@@ -1,6 +1,5 @@
 export { Container } from "./container";
 export { Header } from "./header";
-export { Title } from "./title";
 export { DarkModeToggle } from "./dark-mode-toggle";
 
 export * from "./guide";
