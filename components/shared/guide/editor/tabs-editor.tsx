@@ -1,3 +1,5 @@
+"use client";
+
 import { useEffect, useRef, useState } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import {
@@ -7,7 +9,7 @@ import {
   TabsTrigger,
 } from "@/components/ui/tabs-list";
 import { Button } from "@/components/ui/button";
-import { Plus, Pencil, Trash2 } from "lucide-react";
+import { Plus, Pencil, Trash2, Save } from "lucide-react";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import { cn } from "@/lib/utils";
 import {
@@ -21,21 +23,31 @@ import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import MDEditor from "@uiw/react-md-editor";
 import { useTheme } from "next-themes";
+// import { TUpdateTabsSchemas } from "./schemas/update-tabs-schemas";
+import toast from "react-hot-toast";
+import { updateTabs } from "@/app/actions";
 
 interface TabData {
   value: string;
   label: string;
   iconUrl: string;
   content: string;
+  heroTalentsId: number; // Добавлено поле heroTalentsId
 }
 
 interface HeroTalentsProps {
   initialTabs: TabData[];
   defaultTab?: string;
-  editable?: boolean;
+
+  guideId: number;
+  onSave?: (tabs: TabData[]) => Promise<void>;
 }
 
-export const TabsEditor = ({ initialTabs, defaultTab }: HeroTalentsProps) => {
+export const TabsEditor = ({
+  initialTabs,
+  defaultTab,
+  guideId,
+}: HeroTalentsProps) => {
   const [tabs, setTabs] = useState<TabData[]>(initialTabs);
   const [activeTab, setActiveTab] = useState(
     defaultTab || initialTabs[0]?.value || ""
@@ -45,11 +57,11 @@ export const TabsEditor = ({ initialTabs, defaultTab }: HeroTalentsProps) => {
     label: "",
     iconUrl: "",
   });
+  const [isSaving, setIsSaving] = useState(false);
 
   const tabsRef = useRef<Map<string, HTMLButtonElement> | null>(null);
   const scrollAreaRef = useRef<HTMLDivElement>(null);
 
-  // Функция для получения map с ref табов
   const getMap = () => {
     if (!tabsRef.current) {
       tabsRef.current = new Map();
@@ -57,7 +69,6 @@ export const TabsEditor = ({ initialTabs, defaultTab }: HeroTalentsProps) => {
     return tabsRef.current;
   };
 
-  // Эффект для прокрутки к активному табу
   useEffect(() => {
     const map = getMap();
     const activeTabNode = map.get(activeTab);
@@ -75,10 +86,11 @@ export const TabsEditor = ({ initialTabs, defaultTab }: HeroTalentsProps) => {
   const addNewTab = () => {
     const newTabNumber = tabs.length + 1;
     const newTab: TabData = {
-      value: `newTab${newTabNumber}`,
+      value: `Tab${newTabNumber}`,
       label: `New Tab ${newTabNumber}`,
       iconUrl: "",
-      content: "**Edit this content** using Markdown", // Начальный Markdown контент
+      content: "**Edit this content** using Markdown",
+      heroTalentsId: guideId,
     };
     setTabs([...tabs, newTab]);
     setActiveTab(newTab.value);
@@ -135,106 +147,152 @@ export const TabsEditor = ({ initialTabs, defaultTab }: HeroTalentsProps) => {
     setEditingTab(null);
   };
 
+  // Инициализация React Hook Form
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsSaving(true);
+    try {
+      const dataToSend = {
+        tabs: tabs.map((tab) => ({
+          value: tab.value,
+          label: tab.label,
+          iconUrl: tab.iconUrl || null,
+          content: tab.content,
+          heroTalentsId: tab.heroTalentsId,
+        })),
+        guideId: guideId,
+      };
+
+      await updateTabs(dataToSend);
+      toast.success("Табы успешно обновлены");
+    } catch (error) {
+      toast.error(
+        error instanceof Error ? error.message : "Ошибка при обновлении табов"
+      );
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
   const { theme } = useTheme();
   const isDarkMode = theme === "dark";
 
   return (
     <div className="space-y-4">
-      <Tabs value={activeTab} onValueChange={setActiveTab}>
-        <div className="relative w-full">
-          <ScrollArea
-            type="auto"
-            className="max-w-full whitespace-nowrap"
-            ref={scrollAreaRef}
-          >
-            <div className="flex">
-              <TabsList>
-                {tabs.map((tab) => (
-                  <TabsTrigger
-                    key={tab.value}
-                    value={tab.value}
-                    className="group relative pr-8"
-                    ref={(node) => {
-                      const map = getMap();
-                      if (node) {
-                        map.set(tab.value, node);
-                      } else {
-                        map.delete(tab.value);
-                      }
-                    }}
-                  >
-                    <span className="text-[16px] flex items-center">
-                      {tab.iconUrl && (
-                        <div
-                          className="bg-[position:50%] bg-[size:1.2em_auto] border border-t-gray-300 border-r-gray-600 border-b-gray-700 border-l-gray-600 rounded-[0.2em] box-content inline-block h-4 w-4 m-[0_.2em_-.2em]"
-                          style={{ backgroundImage: `url('${tab.iconUrl}')` }}
-                        />
-                      )}
-                      <span>{tab.label}</span>
-                    </span>
-
-                    <div
-                      role="button" // Добавляем роль для доступности
-                      tabIndex={0} // Делаем элемент фокусируемым
-                      onKeyDown={(e) => {
-                        if (e.key === "Enter" || e.key === " ") {
-                          e.preventDefault();
-                          openEditDialog(tab);
+      <form onSubmit={handleSubmit}>
+        <Tabs value={activeTab} onValueChange={setActiveTab}>
+          <div className="relative w-full">
+            <ScrollArea
+              type="auto"
+              className="max-w-full whitespace-nowrap"
+              ref={scrollAreaRef}
+            >
+              <div className="flex">
+                <TabsList>
+                  {tabs.map((tab) => (
+                    <TabsTrigger
+                      key={tab.value}
+                      value={tab.value}
+                      className="group relative pr-8"
+                      ref={(node) => {
+                        const map = getMap();
+                        if (node) {
+                          map.set(tab.value, node);
+                        } else {
+                          map.delete(tab.value);
                         }
                       }}
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        openEditDialog(tab);
-                      }}
-                      className="absolute right-1 -top-[12%] cursor-pointer h-6 w-6 opacity-0 group-hover:opacity-100 flex items-center justify-center rounded-md hover:bg-accent hover:text-accent-foreground"
                     >
-                      <Pencil className="h-3 w-3" />
-                    </div>
-                  </TabsTrigger>
-                ))}
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={addNewTab}
-                  className="my-1.5 h-12 ml-1 -10 top-1/2"
-                >
-                  <Plus className="h-4 w-4" />
-                </Button>
-              </TabsList>
-            </div>
-            <div className="dark:bg-[#171717] items-center w-full h-[15px]">
-              <ScrollBar orientation="horizontal" className={cn("p-[0px]")} />
-            </div>
-          </ScrollArea>
+                      <span className="text-[16px] flex items-center">
+                        {tab.iconUrl && (
+                          <div
+                            className="bg-[position:50%] bg-[size:1.2em_auto] border border-t-gray-300 border-r-gray-600 border-b-gray-700 border-l-gray-600 rounded-[0.2em] box-content inline-block h-4 w-4 m-[0_.2em_-.2em]"
+                            style={{ backgroundImage: `url('${tab.iconUrl}')` }}
+                          />
+                        )}
+                        <span>{tab.label}</span>
+                      </span>
+
+                      <div
+                        role="button"
+                        tabIndex={0}
+                        onKeyDown={(e) => {
+                          if (e.key === "Enter" || e.key === " ") {
+                            e.preventDefault();
+                            openEditDialog(tab);
+                          }
+                        }}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          openEditDialog(tab);
+                        }}
+                        className="absolute right-1 -top-[12%] cursor-pointer h-6 w-6 opacity-0 group-hover:opacity-100 flex items-center justify-center rounded-md hover:bg-accent hover:text-accent-foreground"
+                      >
+                        <Pencil className="h-3 w-3" />
+                      </div>
+                    </TabsTrigger>
+                  ))}
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    onClick={addNewTab}
+                    className="my-1.5 h-12 ml-1 -10 top-1/2"
+                  >
+                    <Plus className="h-4 w-4" />
+                  </Button>
+                </TabsList>
+              </div>
+              <div className="dark:bg-[#171717] items-center w-full h-[15px]">
+                <ScrollBar orientation="horizontal" className={cn("p-[0px]")} />
+              </div>
+            </ScrollArea>
+          </div>
+
+          {tabs.map((tab) => (
+            <TabsContent key={tab.value} value={tab.value} className="mt-0">
+              <Card className="rounded-none border-none dark:bg-[#171717]">
+                <CardContent className="space-y-2 p-0">
+                  <div className="px-2 ">
+                    <MDEditor
+                      value={tab.content}
+                      onChange={(value) =>
+                        updateTabContent(tab.value, value || "")
+                      }
+                      height={400}
+                      previewOptions={{}}
+                      data-color-mode={isDarkMode ? "dark" : "light"}
+                      className=""
+                    />
+                  </div>
+                </CardContent>
+              </Card>
+            </TabsContent>
+          ))}
+        </Tabs>
+
+        {/* Кнопка сохранения */}
+        <div className="flex justify-end">
+          <Button type="submit" disabled={isSaving}>
+            {isSaving ? (
+              "Сохранение..."
+            ) : (
+              <>
+                <Save className="h-4 w-4 mr-2" />
+                Сохранить изменения
+              </>
+            )}
+          </Button>
         </div>
-
-        {tabs.map((tab) => (
-          <TabsContent key={tab.value} value={tab.value} className="mt-0">
-            <Card className="rounded-none border-none dark:bg-[#171717]">
-              <CardContent className="space-y-2 p-0">
-                <div className="px-2 ">
-                  <MDEditor
-                    value={tab.content}
-                    onChange={(value) =>
-                      updateTabContent(tab.value, value || "")
-                    }
-                    height={400}
-                    previewOptions={{}}
-                    data-color-mode={isDarkMode ? "dark" : "light"}
-                    className=""
-                  />
-                </div>
-              </CardContent>
-            </Card>
-          </TabsContent>
-        ))}
-      </Tabs>
-
+      </form>
       <Dialog
         open={!!editingTab}
         onOpenChange={(open) => !open && setEditingTab(null)}
       >
-        <DialogContent className="sm:max-w-[425px]">
+        <DialogContent
+          className="sm:max-w-[425px]"
+          aria-describedby={undefined}
+        >
           <DialogHeader>
             <DialogTitle>Редактирование таба</DialogTitle>
           </DialogHeader>

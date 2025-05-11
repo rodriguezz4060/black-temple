@@ -18,6 +18,12 @@ const nextConfig: NextConfig = {
       },
     ],
   },
+  experimental: {
+    turbo: {
+      resolveAlias: {
+        ".prisma/client": [".prisma/client", "node_modules/.prisma/client"],
+      },
+    },
+  },
 };
-
 export default nextConfig;

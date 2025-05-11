@@ -239,7 +239,7 @@ export const Gear = () => {
                       <div className="right-[52px] cursor-default text-[12px] font-bold absolute text-right -top-0.5 w-[106px]">
                         <div className="h-[2.4em] leading-[1.2em] text-multi-shadow">
                           <span className="text-[#a335ee]">
-                            Capo's Molten Knuckles
+                            Capo&apos;s Molten Knuckles
                           </span>
                         </div>
                         <div className="gap-0.5 items-center flex flex-row-reverse ">

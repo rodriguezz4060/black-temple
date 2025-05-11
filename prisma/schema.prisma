@@ -1,5 +1,6 @@
 generator client {
     provider = "prisma-client-js"
+    output   = "../node_modules/.prisma/client"
 }
 
 datasource db {
@@ -159,7 +160,7 @@ model HeroTalents {
 model Tab {
     id Int @id @default(autoincrement())
 
-    value   String  @unique // Уникальный идентификатор таба (например "tab1")
+    value   String // Уникальный идентификатор таба (например "tab1")
     label   String // Название таба (отображаемый текст)
     iconUrl String? // URL иконки (может быть null)
     content String // Markdown-контент
@@ -171,6 +172,7 @@ model Tab {
     createdAt DateTime @default(now())
     updatedAt DateTime @updatedAt
 
+    @@unique([value, heroTalentsId], name: "value_heroTalentsId")
     @@index([value])
 }
 

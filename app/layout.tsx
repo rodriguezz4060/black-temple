@@ -4,6 +4,7 @@ import "./globals.css";
 import { Header } from "@/components/shared/header";
 import { ThemeProvider } from "@/components/shared/theme-provider";
 import Script from "next/script";
+import { Toaster } from "react-hot-toast";
 
 const nunito = Nunito({
   subsets: ["cyrillic"],
@@ -37,6 +38,7 @@ export default function RootLayout({
           <ThemeProvider attribute="class" defaultTheme="dark" enableSystem>
             <Header />
             {children}
+            <Toaster />
           </ThemeProvider>
         </main>
       </body>

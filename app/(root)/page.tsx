@@ -1,4 +1,5 @@
-import { Container, Title } from "@/components/shared";
+import { Container } from "@/components/shared";
+import { Title } from "@/components/ui/title";
 import Link from "next/link";
 
 export default function Home() {

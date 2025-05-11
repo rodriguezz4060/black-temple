@@ -1,4 +1,4 @@
-"use client";
+"use server";
 
 import {
   Banner,
@@ -7,13 +7,12 @@ import {
   Gear,
   GuideTitle,
   LeftSideBar,
-  Title,
 } from "@/components/shared";
 import { cn } from "@/lib/utils";
 import { Facebook, Link as LinkIcon, Twitter } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { useState } from "react";
 import { GuideTabs } from "@/components/shared/";
+import { Title } from "@/components/ui/title";
 
 export default function Home() {
   const tabsData = [
@@ -39,14 +38,6 @@ export default function Home() {
       content: "This is content for new tab...",
     },
   ];
-
-  const [isCopied, setIsCopied] = useState(false);
-
-  const handleCopy = () => {
-    // Логика копирования
-    setIsCopied(true);
-    setTimeout(() => setIsCopied(false), 2000);
-  };
 
   return (
     <>
