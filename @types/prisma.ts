@@ -4,4 +4,10 @@ export type GuideProps = Guide & {
   heroTalents: (HeroTalents & { tabs: Tab[] }) | null;
 };
 
-export type TabData = Tab & {};
+export type TabData = {
+  value: string;
+  label: string;
+  iconUrl: string;
+  content: string;
+  heroTalentsId: number;
+};

@@ -27,7 +27,7 @@ export default async function GuidePage({
 
   return (
     <>
-      <Container className="secondary dark:bg-zinc-900 px-4 pb-10">
+      <Container className="secondary px-4 pb-10">
         <CreateGuide guide={guide} />
       </Container>
     </>

@@ -6,9 +6,9 @@ import { notFound } from "next/navigation";
 export default async function EditGuidePage({
   params,
 }: {
-  params: { id: string };
+  params: Promise<{ id: string }>;
 }) {
-  const { id } = params;
+  const { id } = await params;
 
   const guide = await prisma.guide.findFirst({
     where: { id: Number(id) },
@@ -27,7 +27,7 @@ export default async function EditGuidePage({
 
   return (
     <>
-      <Container className="secondary dark:bg-zinc-900 px-4 pb-10">
+      <Container className="secondary px-4 pb-10">
         <CreateGuide guide={guide} />
       </Container>
     </>
