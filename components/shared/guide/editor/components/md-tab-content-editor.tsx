@@ -1,7 +1,7 @@
-import { cn } from "@/lib/utils";
-import MDEditor from "@uiw/react-md-editor";
-import { useTheme } from "next-themes";
-import React from "react";
+import { cn } from '@/lib/utils';
+import MDEditor from '@uiw/react-md-editor';
+import { useTheme } from 'next-themes';
+import React from 'react';
 
 interface MDTabContentEditorProps {
   content: string;
@@ -15,16 +15,16 @@ export const MDTabContentEditor: React.FC<MDTabContentEditorProps> = ({
   className,
 }) => {
   const { theme } = useTheme();
-  const isDarkMode = theme === "dark";
+  const isDarkMode = theme === 'dark';
 
   return (
-    <div className={cn("px-2", className)}>
+    <div className={cn('px-2', className)}>
       <MDEditor
         value={content}
-        onChange={(value) => onContentChange(value || "")}
+        onChange={(value) => onContentChange(value || '')}
         height={400}
         previewOptions={{}}
-        data-color-mode={isDarkMode ? "dark" : "light"}
+        data-color-mode={isDarkMode ? 'dark' : 'light'}
       />
     </div>
   );

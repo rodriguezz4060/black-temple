@@ -1,8 +1,8 @@
-import type { Metadata } from "next";
+import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
-  title: "Главная",
-  description: "",
+  title: 'Главная',
+  description: '',
 };
 
 export default function HomeLayout({

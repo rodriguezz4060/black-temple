@@ -1,8 +1,8 @@
-import type { Metadata } from "next";
+import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
-  title: "RodriguezDB | Главная",
-  description: "База данных Родригеза",
+  title: 'RodriguezDB | Главная',
+  description: 'База данных Родригеза',
 };
 
 export default function HomeLayout({

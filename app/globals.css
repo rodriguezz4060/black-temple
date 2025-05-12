@@ -1,4 +1,4 @@
-@import "tailwindcss";
+@import 'tailwindcss';
 
 @plugin "tailwindcss-animate";
 
@@ -128,32 +128,39 @@
 @layer components {
   .icon-after::after {
     @apply absolute inset-0 pointer-events-none border-[4px] border-black;
-    content: "";
+    content: '';
   }
   .text-multi-shadow {
-    text-shadow: -2px -2px 4px #000, -2px 2px 4px #000, 2px -2px 4px #000,
-      2px 2px 4px #000, 0 0 8px #000, 0 0 8px #000, 0 0 8px #000, 0 0 8px #000;
+    text-shadow:
+      -2px -2px 4px #000,
+      -2px 2px 4px #000,
+      2px -2px 4px #000,
+      2px 2px 4px #000,
+      0 0 8px #000,
+      0 0 8px #000,
+      0 0 8px #000,
+      0 0 8px #000;
   }
 }
 /* Темная тема */
-[data-color-mode="dark"] .w-md-editor {
+[data-color-mode='dark'] .w-md-editor {
   background-color: #171717 !important; /* или любой другой цвет */
 }
 
-[data-color-mode="dark"] .w-md-editor-toolbar {
+[data-color-mode='dark'] .w-md-editor-toolbar {
   background-color: #171717 !important;
 }
 
-[data-color-mode="dark"] .w-md-editor-content {
+[data-color-mode='dark'] .w-md-editor-content {
   background-color: #171717 !important;
 }
 
-[data-color-mode="dark"] .wmde-markdown {
+[data-color-mode='dark'] .wmde-markdown {
   background-color: #171717 !important;
 }
 
 /* Изменение цвета блоков кода */
-[data-color-mode="dark"] .wmde-markdown pre {
+[data-color-mode='dark'] .wmde-markdown pre {
   background-color: #171717 !important;
 }
 

@@ -1,10 +1,10 @@
-import { Card, CardContent } from "@/components/ui/card";
+import { Card, CardContent } from '@/components/ui/card';
 import {
   Tabs,
   TabsContent,
   TabsList,
   TabsTrigger,
-} from "@/components/ui/tabs-list";
+} from '@/components/ui/tabs-list';
 
 interface TabData {
   value: string;
@@ -19,19 +19,19 @@ interface GuideTabsProps {
 }
 
 export const GuideTabs = ({ tabs, defaultTab }: GuideTabsProps) => {
-  const defaultValue = defaultTab || tabs[0]?.value || "";
+  const defaultValue = defaultTab || tabs[0]?.value || '';
 
   return (
-    <Tabs defaultValue={defaultValue} className="">
-      <TabsList className="grid justify-start grid-flow-col">
+    <Tabs defaultValue={defaultValue} className=''>
+      <TabsList className='grid justify-start grid-flow-col'>
         {tabs.map((tab) => (
           <TabsTrigger key={tab.value} value={tab.value}>
-            <span className="text-[16px]">
+            <span className='text-[16px]'>
               <div
-                className="bg-[position:50%] bg-[size:1.2em_auto] border border-t-gray-300 border-r-gray-600 border-b-gray-700 border-l-gray-600 rounded-[0.2em] box-content inline-block h-4 w-4 m-[0_.2em_-.2em]"
+                className='bg-[position:50%] bg-[size:1.2em_auto] border border-t-gray-300 border-r-gray-600 border-b-gray-700 border-l-gray-600 rounded-[0.2em] box-content inline-block h-4 w-4 m-[0_.2em_-.2em]'
                 style={{ backgroundImage: `url('${tab.iconUrl}')` }}
               />
-              <span className="text-amber-400 font-medium">{tab.label}</span>
+              <span className='text-amber-400 font-medium'>{tab.label}</span>
             </span>
           </TabsTrigger>
         ))}
@@ -39,8 +39,8 @@ export const GuideTabs = ({ tabs, defaultTab }: GuideTabsProps) => {
       {tabs.map((tab) => (
         <TabsContent key={tab.value} value={tab.value}>
           <Card>
-            <CardContent className="space-y-2">
-              <div className="space-y-1">{tab.content}</div>
+            <CardContent className='space-y-2'>
+              <div className='space-y-1'>{tab.content}</div>
             </CardContent>
           </Card>
         </TabsContent>

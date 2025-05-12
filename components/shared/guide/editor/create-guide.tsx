@@ -1,5 +1,5 @@
-import { GuideProps } from "@/@types/prisma";
-import { TabsEditor } from "./tabs-editor";
+import { GuideProps } from '@/@types/prisma';
+import { TabsEditor } from './tabs-editor';
 
 interface Props {
   guide: GuideProps;
@@ -17,14 +17,14 @@ export const CreateGuide: React.FC<Props> = ({ guide }) => {
       updatedAt: tab.updatedAt,
       value: tab.value,
       label: tab.label,
-      iconUrl: tab.iconUrl || "",
+      iconUrl: tab.iconUrl || '',
       content: tab.content,
       heroTalentsId: tab.heroTalentsId,
     })) || [];
 
   return (
     <div>
-      <TabsEditor initialTabs={tabsData} defaultTab="tab1" guideId={guide.id} />
+      <TabsEditor initialTabs={tabsData} defaultTab='tab1' guideId={guide.id} />
     </div>
   );
 };

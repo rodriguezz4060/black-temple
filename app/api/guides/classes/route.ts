@@ -1,5 +1,5 @@
-import { prisma } from "@/prisma/prisma-client";
-import { NextResponse } from "next/server";
+import { prisma } from '@/prisma/prisma-client';
+import { NextResponse } from 'next/server';
 
 export async function GET() {
   try {
@@ -10,10 +10,10 @@ export async function GET() {
     });
     return NextResponse.json(classes, { status: 200 });
   } catch (error) {
-    console.error("Error fetching classes:", error);
+    console.error('Error fetching classes:', error);
     return NextResponse.json(
-      { error: "Failed to fetch classes" },
-      { status: 500 }
+      { error: 'Failed to fetch classes' },
+      { status: 500 },
     );
   }
 }
