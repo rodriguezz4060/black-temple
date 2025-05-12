@@ -7,7 +7,7 @@ export const createGuide = async (data: TCreateGuideSchemas) => {
   try {
     const baseUrl =
       process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:3000/";
-    const url = `${baseUrl}/api/guide`;
+    const url = `${baseUrl}/api/guides`;
 
     const response = await fetch(url, {
       method: "POST",
@@ -34,7 +34,7 @@ export const updateTabs = async (data: TUpdateTabsSchemas) => {
   try {
     const baseUrl =
       process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:3000/";
-    const url = `${baseUrl}/api/guide/tabs`;
+    const url = `${baseUrl}/api/guides/tabs`;
 
     const response = await fetch(url, {
       method: "PATCH",

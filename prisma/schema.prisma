@@ -23,13 +23,44 @@ model User {
     updateAt  DateTime @updatedAt
 }
 
-model Guide {
-    id Int @id @default(autoincrement())
+model ClassSelection {
+    id        Int    @id @default(autoincrement())
+    name      String @unique
+    classIcon String
 
-    spec  String
-    mode  String
-    title String?
-    patch String?
+    specializations ClassSpecialization[]
+    guides          Guide[]
+}
+
+model ClassSpecialization {
+    id       Int    @id @default(autoincrement())
+    name     String
+    specIcon String
+
+    class   ClassSelection @relation(fields: [classId], references: [id])
+    classId Int
+    guides  Guide[]
+}
+
+model Mode {
+    id   Int    @id @default(autoincrement())
+    name String @unique
+
+    guides Guide[]
+}
+
+model Guide {
+    id    Int    @id @default(autoincrement())
+    patch String
+
+    modeRelation Mode? @relation(fields: [modeId], references: [id])
+    modeId       Int
+
+    class   ClassSelection @relation(fields: [classId], references: [id])
+    classId Int
+
+    specialization   ClassSpecialization? @relation(fields: [specializationId], references: [id])
+    specializationId Int
 
     overviewDifficulty OverviewDifficulty?
     // overviewGear       OverviewGear?

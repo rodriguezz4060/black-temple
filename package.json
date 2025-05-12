@@ -6,7 +6,7 @@
     "dev": "next dev --turbopack",
     "postinstall": "prisma generate",
     "build": "prisma generate && next build",
-    "tunnel": "@prisma/ppg-tunnel",
+    "tunnel": "npx @prisma/ppg-tunnel",
     "start": "next start",
     "lint": "next lint",
     "prisma:push": "prisma db push"
