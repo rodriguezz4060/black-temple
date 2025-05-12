@@ -1,38 +1,28 @@
+// app/components/CreateGuideModal.tsx
 "use client";
 
+import { createGuide, getClasses } from "@/app/guide";
 import { useState } from "react";
-import { ClassSelection, ClassSpecialization } from "@prisma/client";
 
-interface CreateGuideModalProps {
-  classes: ClassSelection[];
-  onClose: () => void;
-  onCreate: (guideData: {
-    classId: number;
-    specializationId?: number;
-    patch: string;
-  }) => Promise<void>;
-}
-
-export default function CreateGuideModal({
-  classes,
-  onClose,
-  onCreate,
-}: CreateGuideModalProps) {
-  const [selectedClass, setSelectedClass] = useState<ClassSelection | null>(
-    null
-  );
-  const [selectedSpecialization, setSelectedSpecialization] =
-    useState<ClassSpecialization | null>(null);
+export default function CreateGuideModal() {
+  const [isOpen, setIsOpen] = useState(false);
+  const [classes, setClasses] = useState<
+    Awaited<ReturnType<typeof getClasses>>
+  >([]);
+  const [selectedClass, setSelectedClass] = useState<number | null>(null);
+  const [selectedSpec, setSelectedSpec] = useState<number | null>(null);
   const [patch, setPatch] = useState("");
   const [isLoading, setIsLoading] = useState(false);
 
-  const handleClassSelect = (cls: ClassSelection) => {
-    setSelectedClass(cls);
-    setSelectedSpecialization(null);
-  };
-
-  const handleSpecializationSelect = (spec: ClassSpecialization) => {
-    setSelectedSpecialization(spec);
+  const openModal = async () => {
+    setIsLoading(true);
+    try {
+      const classesData = await getClasses();
+      setClasses(classesData);
+      setIsOpen(true);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -41,112 +31,132 @@ export default function CreateGuideModal({
 
     setIsLoading(true);
     try {
-      await onCreate({
-        classId: selectedClass.id,
-        specializationId: selectedSpecialization?.id,
+      await createGuide({
+        classId: selectedClass,
+        specializationId: selectedSpec || undefined,
         patch,
       });
-      onClose();
+      setIsOpen(false);
+      // Сброс формы
+      setSelectedClass(null);
+      setSelectedSpec(null);
+      setPatch("");
     } catch (error) {
-      console.error("Failed to create guide:", error);
+      console.error("Error creating guide:", error);
     } finally {
       setIsLoading(false);
     }
   };
 
+  const selectedClassData = classes.find((c) => c.id === selectedClass);
+
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4">
-      <div className="bg-white dark:bg-gray-800 rounded-lg p-6 max-w-2xl w-full max-h-[90vh] overflow-y-auto">
-        <h2 className="text-xl font-bold mb-4">Создать новый гайд</h2>
+    <>
+      <button
+        onClick={openModal}
+        disabled={isLoading}
+        className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded"
+      >
+        {isLoading ? "Загрузка..." : "Создать гайд"}
+      </button>
 
-        <form onSubmit={handleSubmit}>
-          <div className="mb-6">
-            <h3 className="font-medium mb-2">Выберите класс:</h3>
-            <div className="grid grid-cols-3 md:grid-cols-4 gap-3">
-              {classes.map((cls) => (
-                <button
-                  key={cls.id}
-                  type="button"
-                  onClick={() => handleClassSelect(cls)}
-                  className={`p-3 rounded-lg border flex flex-col items-center ${
-                    selectedClass?.id === cls.id
-                      ? "border-blue-500 bg-blue-50 dark:bg-blue-900/30"
-                      : "border-gray-200 dark:border-gray-700"
-                  }`}
-                >
-                  <img
-                    src={cls.classIcon}
-                    alt={cls.name}
-                    className="w-10 h-10 mb-1"
-                  />
-                  <span>{cls.name}</span>
-                </button>
-              ))}
-            </div>
-          </div>
+      {isOpen && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+          <div className="bg-white rounded-lg p-6 w-full max-w-md">
+            <h2 className="text-xl font-bold mb-4">Создание нового гайда</h2>
 
-          {selectedClass && (
-            <div className="mb-6">
-              <h3 className="font-medium mb-2">
-                Выберите специализацию (опционально):
-              </h3>
-              <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
-                {selectedClass.specializations.map((spec) => (
-                  <button
-                    key={spec.id}
-                    type="button"
-                    onClick={() => handleSpecializationSelect(spec)}
-                    className={`p-3 rounded-lg border flex flex-col items-center ${
-                      selectedSpecialization?.id === spec.id
-                        ? "border-blue-500 bg-blue-50 dark:bg-blue-900/30"
-                        : "border-gray-200 dark:border-gray-700"
-                    }`}
-                  >
-                    <img
-                      src={spec.specIcon}
-                      alt={spec.name}
-                      className="w-10 h-10 mb-1"
-                    />
-                    <span>{spec.name}</span>
-                  </button>
-                ))}
+            <form onSubmit={handleSubmit}>
+              <div className="mb-4">
+                <label className="block mb-2 font-medium">
+                  Выберите класс:
+                </label>
+                <div className="grid grid-cols-3 gap-2">
+                  {classes.map((cls) => (
+                    <button
+                      key={cls.id}
+                      type="button"
+                      onClick={() => setSelectedClass(cls.id)}
+                      className={`p-2 border rounded flex flex-col items-center ${
+                        selectedClass === cls.id
+                          ? "bg-blue-100 border-blue-500"
+                          : "hover:bg-gray-50"
+                      }`}
+                    >
+                      <img
+                        src={cls.classIcon}
+                        alt={cls.name}
+                        className="w-8 h-8 mb-1"
+                      />
+                      <span>{cls.name}</span>
+                    </button>
+                  ))}
+                </div>
               </div>
-            </div>
-          )}
 
-          <div className="mb-6">
-            <label htmlFor="patch" className="block font-medium mb-2">
-              Номер патча:
-            </label>
-            <input
-              id="patch"
-              type="text"
-              value={patch}
-              onChange={(e) => setPatch(e.target.value)}
-              className="w-full p-2 border border-gray-300 dark:border-gray-700 rounded-lg dark:bg-gray-700"
-              placeholder="Например: 10.2.5"
-              required
-            />
-          </div>
+              {selectedClass && (
+                <div className="mb-4">
+                  <label className="block mb-2 font-medium">
+                    Выберите специализацию (опционально):
+                  </label>
+                  <div className="grid grid-cols-3 gap-2">
+                    {selectedClassData?.specializations.map((spec) => (
+                      <button
+                        key={spec.id}
+                        type="button"
+                        onClick={() => setSelectedSpec(spec.id)}
+                        className={`p-2 border rounded flex flex-col items-center ${
+                          selectedSpec === spec.id
+                            ? "bg-blue-100 border-blue-500"
+                            : "hover:bg-gray-50"
+                        }`}
+                      >
+                        <img
+                          src={spec.specIcon}
+                          alt={spec.name}
+                          className="w-8 h-8 mb-1"
+                        />
+                        <span>{spec.name}</span>
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              )}
 
-          <div className="flex justify-end gap-3">
-            <button
-              type="button"
-              onClick={onClose}
-              className="px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg"
-            >
-              Отмена
-            </button>
-            <button
-              type="submit"
-              disabled={isLoading || !selectedClass || !patch}
-              className="px-4 py-2 bg-blue-600 text-white rounded-lg disabled:opacity-50"
-            >
-              {isLoading ? "Создание..." : "Создать гайд"}
-            </button>
+              <div className="mb-4">
+                <label htmlFor="patch" className="block mb-2 font-medium">
+                  Номер патча:
+                </label>
+                <input
+                  id="patch"
+                  type="text"
+                  value={patch}
+                  onChange={(e) => setPatch(e.target.value)}
+                  className="w-full p-2 border rounded"
+                  placeholder="Например: 10.2.5"
+                  required
+                />
+              </div>
+
+              <div className="flex justify-end gap-2">
+                <button
+                  type="button"
+                  onClick={() => setIsOpen(false)}
+                  className="px-4 py-2 border rounded hover:bg-gray-50"
+                >
+                  Отмена
+                </button>
+                <button
+                  type="submit"
+                  disabled={isLoading || !selectedClass || !patch}
+                  className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 disabled:bg-blue-300"
+                >
+                  {isLoading ? "Создание..." : "Создать гайд"}
+                </button>
+              </div>
+            </form>
           </div>
-        </form>
-      </div>
-    </div>
+        </div>
+      )}
+    </>
   );
 }

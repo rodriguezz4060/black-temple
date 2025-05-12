@@ -25,6 +25,7 @@ import {
   createGuideSchemas,
   TCreateGuideSchemas,
 } from "@/components/shared/guide/editor/schemas/create-guide-schemas";
+import CreateGuideModal from "@/components/shared/guide/create-guide/create-guide-modal";
 
 export default function HavocPage() {
   const [isLoading, setIsLoading] = useState(false);
@@ -60,7 +61,7 @@ export default function HavocPage() {
     <>
       <Container className="secondary dark:bg-zinc-900 px-4 pb-10">
         <Title text="Истребление" size="lg" className="font-extrabold pt-4" />
-
+        <CreateGuideModal />
         <Dialog>
           <DialogTrigger asChild>
             <Button variant="outline">Новый гайд</Button>
