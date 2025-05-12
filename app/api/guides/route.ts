@@ -1,4 +1,3 @@
-import { createGuideSchemas } from "@/components/shared/guide/editor/schemas/create-guide-schemas";
 import { prisma } from "@/prisma/prisma-client";
 import { NextResponse } from "next/server";
 

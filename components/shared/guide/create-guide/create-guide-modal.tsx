@@ -2,6 +2,7 @@
 "use client";
 
 import { createGuide, getClasses } from "@/app/guide";
+import Image from 'next/image';
 import { useState } from "react";
 
 export default function CreateGuideModal() {
@@ -76,16 +77,15 @@ export default function CreateGuideModal() {
                       key={cls.id}
                       type="button"
                       onClick={() => setSelectedClass(cls.id)}
-                      className={`p-2 border rounded flex flex-col items-center ${
-                        selectedClass === cls.id
-                          ? "bg-blue-100 border-blue-500"
-                          : "hover:bg-gray-50"
-                      }`}
+                      className={`p-2 border rounded flex flex-col items-center ${selectedClass === cls.id
+                        ? "bg-blue-100 border-blue-500"
+                        : "hover:bg-gray-50"
+                        }`}
                     >
-                      <img
+                      <Image
                         src={cls.classIcon}
                         alt={cls.name}
-                        className="w-8 h-8 mb-1"
+                        className='w-8 h-8 mb-1'
                       />
                       <span>{cls.name}</span>
                     </button>
@@ -104,16 +104,15 @@ export default function CreateGuideModal() {
                         key={spec.id}
                         type="button"
                         onClick={() => setSelectedSpec(spec.id)}
-                        className={`p-2 border rounded flex flex-col items-center ${
-                          selectedSpec === spec.id
-                            ? "bg-blue-100 border-blue-500"
-                            : "hover:bg-gray-50"
-                        }`}
+                        className={`p-2 border rounded flex flex-col items-center ${selectedSpec === spec.id
+                          ? "bg-blue-100 border-blue-500"
+                          : "hover:bg-gray-50"
+                          }`}
                       >
-                        <img
-                          src={spec.specIcon}
+                        <Image
+                          src={spec.classIcon}
                           alt={spec.name}
-                          className="w-8 h-8 mb-1"
+                          className='w-8 h-8 mb-1'
                         />
                         <span>{spec.name}</span>
                       </button>
