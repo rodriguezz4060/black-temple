@@ -66,7 +66,7 @@ export default function CreateGuideModal() {
       });
 
       toast.success("Гайд успешно создан!");
-
+      //test
       // Редирект через 1 секунду после успешного сообщения
       setTimeout(() => {
         router.push(`/havoc/${createdGuide.id}`);
