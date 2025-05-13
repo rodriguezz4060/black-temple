@@ -1,8 +1,7 @@
-// app/actions/guide.ts
 "use server";
 
 import { revalidatePath } from "next/cache";
-import { prisma } from '@prisma/prisma-client';
+import { prisma } from "@prisma/prisma-client";
 
 export async function getClasses() {
   return await prisma.classSelection.findMany({
@@ -12,19 +11,26 @@ export async function getClasses() {
   });
 }
 
+export async function getModes() {
+  return await prisma.mode.findMany();
+}
+
 export async function createGuide({
   classId,
   specializationId,
+  modeId,
   patch,
 }: {
   classId: number;
-  specializationId?: number;
+  specializationId: number;
+  modeId: number;
   patch: string;
 }) {
   const guide = await prisma.guide.create({
     data: {
       classId,
-      specializationId: specializationId || null,
+      specializationId,
+      modeId,
       patch,
       heroTalents: {
         create: {
@@ -48,6 +54,7 @@ export async function createGuide({
     include: {
       class: true,
       specialization: true,
+      modeRelation: true,
     },
   });
 

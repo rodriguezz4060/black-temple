@@ -21,6 +21,7 @@ const buttonVariants = cva(
           "hover:bg-secondary hover:text-secondary-foreground cursor-pointer",
         link: "text-primary underline-offset-4 hover:underline",
         blue: "bg-blue-700 text-white rounded-[5px] hover:bg-blue-800",
+        wowIcon: "",
       },
       size: {
         default: "h-9 px-4 py-2",
@@ -30,6 +31,7 @@ const buttonVariants = cva(
         sort: "h-7 px-2 py-4 rounded-[6px]",
         custom: "h-7 rounded-md px-3",
         trash: "h-8 w-8",
+        wowIcon: "h-7 w-7",
       },
     },
     defaultVariants: {
