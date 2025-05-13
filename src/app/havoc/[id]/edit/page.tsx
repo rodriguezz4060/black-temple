@@ -1,7 +1,7 @@
-import { Container } from "@root/components/shared";
-import { CreateGuide } from "@root/components/shared/guide/editor/create-guide";
-import { prisma } from "@prisma/prisma-client";
-import { notFound } from "next/navigation";
+import { prisma } from '@prisma/prisma-client';
+import { Container } from '@root/components/shared';
+import { CreateGuide } from '@root/components/shared/guide/editor/create-guide';
+import { notFound } from 'next/navigation';
 
 export default async function EditGuidePage({
   params,
@@ -27,7 +27,7 @@ export default async function EditGuidePage({
 
   return (
     <>
-      <Container className="secondary px-4 pb-10">
+      <Container className='secondary px-4 pb-10'>
         <CreateGuide guide={guide} />
       </Container>
     </>

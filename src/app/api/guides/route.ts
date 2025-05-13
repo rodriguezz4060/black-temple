@@ -1,5 +1,5 @@
-import { prisma } from "@prisma/prisma-client";
-import { NextResponse } from "next/server";
+import { prisma } from '@prisma/prisma-client';
+import { NextResponse } from 'next/server';
 
 export async function GET() {
   const guide = await prisma.guide.findMany();
@@ -24,14 +24,14 @@ export async function POST(request: Request) {
             tabs: {
               create: [
                 {
-                  value: "tab1",
-                  label: "Таланты",
-                  content: "Здесь будет ваш контент по талантам...",
+                  value: 'tab1',
+                  label: 'Таланты',
+                  content: 'Здесь будет ваш контент по талантам...',
                 },
                 {
-                  value: "tab2",
-                  label: "Ротация",
-                  content: "Здесь будет ротация способностей...",
+                  value: 'tab2',
+                  label: 'Ротация',
+                  content: 'Здесь будет ротация способностей...',
                 },
               ],
             },
@@ -47,10 +47,10 @@ export async function POST(request: Request) {
 
     return NextResponse.json(newGuide, { status: 201 });
   } catch (error) {
-    console.error("Error creating guide:", error);
+    console.error('Error creating guide:', error);
     return NextResponse.json(
-      { error: "Failed to create guide" },
-      { status: 500 }
+      { error: 'Failed to create guide' },
+      { status: 500 },
     );
   }
 }

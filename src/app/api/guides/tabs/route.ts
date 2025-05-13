@@ -1,6 +1,6 @@
-import { NextResponse } from "next/server";
-import { prisma } from "@prisma/prisma-client";
-import { updateTabsSchemas } from "@root/components/shared/guide/editor/schemas/update-tabs-schemas";
+import { prisma } from '@prisma/prisma-client';
+import { updateTabsSchemas } from '@root/components/shared/guide/editor/schemas/update-tabs-schemas';
+import { NextResponse } from 'next/server';
 
 export async function PATCH(request: Request) {
   try {
@@ -33,8 +33,8 @@ export async function PATCH(request: Request) {
               iconUrl: tab.iconUrl,
               content: tab.content,
             },
-          })
-        )
+          }),
+        ),
       );
 
       return {
@@ -45,18 +45,18 @@ export async function PATCH(request: Request) {
 
     return NextResponse.json({
       success: true,
-      message: "Tabs updated successfully",
+      message: 'Tabs updated successfully',
       data: result,
     });
   } catch (error) {
-    console.error("Error updating tabs:", error);
+    console.error('Error updating tabs:', error);
     return NextResponse.json(
       {
         success: false,
-        error: "Invalid data or server error",
+        error: 'Invalid data or server error',
         details: error instanceof Error ? error.message : String(error),
       },
-      { status: 400 }
+      { status: 400 },
     );
   }
 }

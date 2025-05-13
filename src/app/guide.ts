@@ -1,8 +1,8 @@
 // app/actions/guide.ts
-"use server";
+'use server';
 
-import { revalidatePath } from "next/cache";
 import { prisma } from '@prisma/prisma-client';
+import { revalidatePath } from 'next/cache';
 
 export async function getClasses() {
   return await prisma.classSelection.findMany({
@@ -31,14 +31,14 @@ export async function createGuide({
           tabs: {
             create: [
               {
-                value: "tab1",
-                label: "Таланты",
-                content: "Здесь будет ваш контент...",
+                value: 'tab1',
+                label: 'Таланты',
+                content: 'Здесь будет ваш контент...',
               },
               {
-                value: "tab2",
-                label: "Ротация",
-                content: "Описание ротации...",
+                value: 'tab2',
+                label: 'Ротация',
+                content: 'Описание ротации...',
               },
             ],
           },
@@ -51,6 +51,6 @@ export async function createGuide({
     },
   });
 
-  revalidatePath("/guides");
+  revalidatePath('/guides');
   return guide;
 }

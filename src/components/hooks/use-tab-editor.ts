@@ -1,15 +1,15 @@
-import { TabData } from "@root/@types/prisma";
-import { updateTabs } from "@root/app/actions";
-import { useState, useRef, useEffect } from "react";
-import toast from "react-hot-toast";
+import { TabData } from '@root/@types/prisma';
+import { updateTabs } from '@root/app/actions';
+import { useEffect, useRef, useState } from 'react';
+import toast from 'react-hot-toast';
 
 export const useTabsManagement = (
   initialTabs: TabData[],
-  defaultTab?: string
+  defaultTab?: string,
 ) => {
   const [tabs, setTabs] = useState<TabData[]>(initialTabs);
   const [activeTab, setActiveTab] = useState(
-    defaultTab || initialTabs[0]?.value || ""
+    defaultTab || initialTabs[0]?.value || '',
   );
 
   const addNewTab = (guideId: number) => {
@@ -17,8 +17,8 @@ export const useTabsManagement = (
     const newTab: TabData = {
       value: `Tab${newTabNumber}`,
       label: `New Tab ${newTabNumber}`,
-      iconUrl: "",
-      content: "**Edit this content** using Markdown",
+      iconUrl: '',
+      content: '**Edit this content** using Markdown',
       heroTalentsId: guideId,
     };
     setTabs([...tabs, newTab]);
@@ -28,8 +28,8 @@ export const useTabsManagement = (
   const updateTabContent = (value: string, newContent: string) => {
     setTabs(
       tabs.map((tab) =>
-        tab.value === value ? { ...tab, content: newContent } : tab
-      )
+        tab.value === value ? { ...tab, content: newContent } : tab,
+      ),
     );
   };
 
@@ -46,8 +46,8 @@ export const useTabsManagement = (
 export const useTabEdit = () => {
   const [editingTab, setEditingTab] = useState<TabData | null>(null);
   const [editForm, setEditForm] = useState({
-    label: "",
-    iconUrl: "",
+    label: '',
+    iconUrl: '',
   });
 
   const openEditDialog = (tab: TabData) => {
@@ -60,7 +60,7 @@ export const useTabEdit = () => {
 
   const saveTabChanges = (
     tabs: TabData[],
-    setTabs: React.Dispatch<React.SetStateAction<TabData[]>>
+    setTabs: React.Dispatch<React.SetStateAction<TabData[]>>,
   ) => {
     if (!editingTab) return;
 
@@ -68,8 +68,8 @@ export const useTabEdit = () => {
       tabs.map((tab) =>
         tab.value === editingTab.value
           ? { ...tab, label: editForm.label, iconUrl: editForm.iconUrl }
-          : tab
-      )
+          : tab,
+      ),
     );
     setEditingTab(null);
   };
@@ -78,18 +78,18 @@ export const useTabEdit = () => {
     tabs: TabData[],
     setTabs: React.Dispatch<React.SetStateAction<TabData[]>>,
     activeTab: string,
-    setActiveTab: React.Dispatch<React.SetStateAction<string>>
+    setActiveTab: React.Dispatch<React.SetStateAction<string>>,
   ) => {
     if (!editingTab) return;
 
     const deletedIndex = tabs.findIndex(
-      (tab) => tab.value === editingTab.value
+      (tab) => tab.value === editingTab.value,
     );
     const newTabs = tabs.filter((tab) => tab.value !== editingTab.value);
     setTabs(newTabs);
 
     if (activeTab === editingTab.value) {
-      let newActiveTab = "";
+      let newActiveTab = '';
       if (deletedIndex > 0) {
         newActiveTab = tabs[deletedIndex - 1].value;
       } else if (deletedIndex < tabs.length - 1) {
@@ -130,9 +130,9 @@ export const useTabsScroll = (activeTab: string) => {
 
     if (activeTabNode && scrollAreaNode) {
       activeTabNode.scrollIntoView({
-        behavior: "smooth",
-        block: "nearest",
-        inline: "center",
+        behavior: 'smooth',
+        block: 'nearest',
+        inline: 'center',
       });
     }
   }, [activeTab]);
@@ -159,9 +159,9 @@ export const useSaveTabs = (tabs: TabData[], guideId: number) => {
       };
 
       await updateTabs(dataToSend);
-      toast.success("Табы успешно обновлены");
+      toast.success('Табы успешно обновлены');
     } catch {
-      toast.error("Ошибка при обновлении табов");
+      toast.error('Ошибка при обновлении табов');
     } finally {
       setIsSaving(false);
     }
