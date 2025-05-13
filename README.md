@@ -1,3 +1,18 @@
+## Getting Started
+First, run the development server:
+
+```bash
+npm i
+
+npm run dev
+# or
+yarn dev
+# or
+pnpm dev
+# or
+bun dev
+```
+
 ## TODO
 
 ### Users
@@ -20,24 +35,7 @@
 - [ ] Подключения скрипта wowhead для тултипов
 - [ ] Собрать рендер страници по разделам Left Side menu
 - [ ] Changelog компонента которая будет отображать когда изменялся гайд
-## Getting Started
-
-First, run the development server:
-
-```bash
-npm i
-
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
-
-## TODO
-
+- [ ] 
 #### Create Guide
 - [ ] Кнопка по клику на которую будет предложено выбрать класс спек, режим и ввести номер патча для того чтоб создать страницу гайда, после успешного создания происходит редикрект в едитор. Создание гайда это создание полей в таблице для всех разделов гайда
 
