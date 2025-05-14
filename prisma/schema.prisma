@@ -103,6 +103,37 @@ model OverviewDifficulty {
     updatedAt DateTime @updatedAt
 }
 
+model HeroTalents {
+    id Int @id @default(autoincrement())
+
+    guide   Guide @relation(fields: [guideId], references: [id])
+    guideId Int   @unique
+
+    tabs Tab[] // Один HeroTalents имеет много Tab
+
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+}
+
+model Tab {
+    id Int @id @default(autoincrement())
+
+    value   String // Уникальный идентификатор таба (например "tab1")
+    label   String // Название таба (отображаемый текст)
+    iconUrl String? // URL иконки (может быть null)
+    content String // Markdown-контент
+
+    // Связь с HeroTalents
+    heroTalents   HeroTalents @relation(fields: [heroTalentsId], references: [id])
+    heroTalentsId Int // Внешний ключ
+
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+
+    @@unique([value, heroTalentsId], name: "value_heroTalentsId")
+    @@index([value])
+}
+
 // model OverviewGear {
 //     id Int @id @default(autoincrement())
 
@@ -182,44 +213,6 @@ model OverviewDifficulty {
 //     createdAt DateTime @default(now())
 //     updatedAt DateTime @updatedAt
 // }
-
-model HeroTalents {
-    id Int @id @default(autoincrement())
-
-    guide   Guide @relation(fields: [guideId], references: [id])
-    guideId Int   @unique
-
-    tabs Tab[] // Один HeroTalents имеет много Tab
-
-    createdAt DateTime @default(now())
-    updatedAt DateTime @updatedAt
-}
-
-// model Talents {
-//     id Int @id @default(autoincrement())
-
-//     createdAt DateTime @default(now())
-//     updatedAt DateTime @updatedAt
-// }
-
-model Tab {
-    id Int @id @default(autoincrement())
-
-    value   String // Уникальный идентификатор таба (например "tab1")
-    label   String // Название таба (отображаемый текст)
-    iconUrl String? // URL иконки (может быть null)
-    content String // Markdown-контент
-
-    // Связь с HeroTalents
-    heroTalents   HeroTalents @relation(fields: [heroTalentsId], references: [id])
-    heroTalentsId Int // Внешний ключ
-
-    createdAt DateTime @default(now())
-    updatedAt DateTime @updatedAt
-
-    @@unique([value, heroTalentsId], name: "value_heroTalentsId")
-    @@index([value])
-}
 
 enum UserRole {
     USER
