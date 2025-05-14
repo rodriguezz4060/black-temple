@@ -31,7 +31,7 @@ const buttonVariants = cva(
         sort: "h-7 px-2 py-4 rounded-[6px]",
         custom: "h-7 rounded-md px-3",
         trash: "h-8 w-8",
-        wowIcon: "h-7 w-7",
+        wowIcon: "h-10 w-10",
       },
     },
     defaultVariants: {

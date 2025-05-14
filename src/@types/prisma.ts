@@ -14,6 +14,10 @@ export type ClassChoice = ClassSelection & {
   specializations: ClassSpecialization[];
 };
 
+export type InitialClassSelection = ClassSelection & {
+  specializations: ClassSpecialization[];
+};
+
 export type TabData = {
   value: string;
   label: string;

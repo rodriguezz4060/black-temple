@@ -7,8 +7,6 @@ interface Props {
 }
 
 export const CreateGuide: React.FC<Props> = ({ guide }) => {
-  console.log(guide);
-
   // Преобразуем данные для компонента TabsEditor
   const tabsData =
     guide.heroTalents?.tabs.map((tab) => ({

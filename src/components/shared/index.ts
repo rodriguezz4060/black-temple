@@ -4,3 +4,4 @@ export { DarkModeToggle } from "./dark-mode-toggle";
 
 export * from "./guide";
 export * from "./guide/overview";
+export * from "./wrapper";

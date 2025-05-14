@@ -1,4 +1,5 @@
 import { prisma } from "@prisma/prisma-client";
+import { revalidatePath } from "next/cache";
 import { NextResponse } from "next/server";
 
 export async function GET() {
@@ -9,29 +10,38 @@ export async function GET() {
 
 export async function POST(request: Request) {
   try {
-    const { classId, specializationId, patch } = await request.json();
+    const body = await request.json();
+    console.log("Received request body:", body);
 
-    // Создаем новый гайд
-    const newGuide = await prisma.guide.create({
+    const { classId, specializationId, modeId, patch } = body;
+
+    if (!classId || !specializationId || !modeId || !patch) {
+      console.error("Missing fields in request body:", body);
+      return NextResponse.json(
+        { success: false, error: "Missing required fields" },
+        { status: 400 }
+      );
+    }
+
+    const guide = await prisma.guide.create({
       data: {
         classId,
-        specializationId: specializationId || null,
+        specializationId,
+        modeId,
         patch,
-        // Создаем связанную запись HeroTalents
         heroTalents: {
           create: {
-            // Можно добавить дефолтные табы, если нужно
             tabs: {
               create: [
                 {
                   value: "tab1",
                   label: "Таланты",
-                  content: "Здесь будет ваш контент по талантам...",
+                  content: "Здесь будет ваш контент...",
                 },
                 {
                   value: "tab2",
                   label: "Ротация",
-                  content: "Здесь будет ротация способностей...",
+                  content: "Описание ротации...",
                 },
               ],
             },
@@ -41,59 +51,18 @@ export async function POST(request: Request) {
       include: {
         class: true,
         specialization: true,
-        heroTalents: true,
+        modeRelation: true,
       },
     });
 
-    return NextResponse.json(newGuide, { status: 201 });
+    console.log("Created guide:", guide);
+    revalidatePath("/guides");
+    return NextResponse.json({ success: true, guide }, { status: 201 });
   } catch (error) {
-    console.error("Error creating guide:", error);
+    console.error("Error in POST /api/guides:", error);
     return NextResponse.json(
-      { error: "Failed to create guide" },
+      { success: false, error: "Failed to create guide" },
       { status: 500 }
     );
   }
 }
-
-// export async function POST(req: Request) {
-//   try {
-//     const body = await req.json();
-//     const validatedData = createGuideSchemas.parse(body);
-
-//     // Создаем гайд с пустыми табами по умолчанию
-//     const newGuide = await prisma.guide.create({
-//       data: {
-//         ...validatedData,
-//         heroTalents: {
-//           create: {
-//             tabs: {
-//               create: [
-//                 {
-//                   value: "tab1",
-//                   label: "Основное",
-//                   iconUrl: "",
-//                   content: "**Редактируйте этот контент**",
-//                 },
-//               ],
-//             },
-//           },
-//         },
-//       },
-//       include: {
-//         heroTalents: {
-//           include: {
-//             tabs: true,
-//           },
-//         },
-//       },
-//     });
-
-//     return NextResponse.json(newGuide, { status: 201 });
-//   } catch (error) {
-//     console.error(error);
-//     return NextResponse.json(
-//       { error: "Failed to create guide" },
-//       { status: 500 }
-//     );
-//   }
-// }
