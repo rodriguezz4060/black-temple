@@ -3,15 +3,12 @@ import {
   ClassSpecialization,
   Guide,
   HeroTalents,
+  Prisma,
   Tab,
 } from "@prisma/client";
 
 export type GuideProps = Guide & {
   heroTalents: (HeroTalents & { tabs: Tab[] }) | null;
-};
-
-export type ClassChoice = ClassSelection & {
-  specializations: ClassSpecialization[];
 };
 
 export type InitialClassSelection = ClassSelection & {
@@ -25,3 +22,15 @@ export type TabData = {
   content: string;
   heroTalentsId: number;
 };
+
+export type GuideButtonWithRelations = Prisma.GuideGetPayload<{
+  include: {
+    class: true;
+    specialization: {
+      include: {
+        specRole: true;
+      };
+    };
+    modeRelation: true;
+  };
+}>;

@@ -33,18 +33,32 @@ model ClassSelection {
 }
 
 model ClassSpecialization {
-    id       Int    @id @default(autoincrement())
-    name     String
-    specIcon String
+    id             Int    @id @default(autoincrement())
+    name           String
+    specIcon       String
+    specBackground String
 
     class   ClassSelection @relation(fields: [classId], references: [id])
     classId Int
     guides  Guide[]
+
+    specRole   SpecRole @relation(fields: [specRoleId], references: [id])
+    specRoleId Int
+}
+
+model SpecRole {
+    id       Int    @id @default(autoincrement())
+    name     String @unique
+    roleIcon String
+
+    specialization ClassSpecialization[]
 }
 
 model Mode {
-    id   Int    @id @default(autoincrement())
-    name String @unique
+    id           Int    @id @default(autoincrement())
+    name         String @unique
+    activityBg   String
+    activityIcon String
 
     guides Guide[]
 }
@@ -53,13 +67,13 @@ model Guide {
     id    Int    @id @default(autoincrement())
     patch String
 
-    modeRelation Mode? @relation(fields: [modeId], references: [id])
+    modeRelation Mode @relation(fields: [modeId], references: [id])
     modeId       Int
 
     class   ClassSelection @relation(fields: [classId], references: [id])
     classId Int
 
-    specialization   ClassSpecialization? @relation(fields: [specializationId], references: [id])
+    specialization   ClassSpecialization @relation(fields: [specializationId], references: [id])
     specializationId Int
 
     overviewDifficulty OverviewDifficulty?
