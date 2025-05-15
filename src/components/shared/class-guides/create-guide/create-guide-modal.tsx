@@ -1,7 +1,8 @@
 "use client";
 
-import { Button } from "@root/components/ui/button";
 import Image from "next/image";
+import { Button } from "@root/components/ui/button";
+import { InitialClassSelection } from "@root/@types/prisma";
 import {
   Dialog,
   DialogContent,
@@ -12,10 +13,10 @@ import {
 } from "@root/components/ui/dialog";
 import { Label } from "@root/components/ui/label";
 import { Mode } from "@prisma/client";
-import { InitialClassSelection } from "@root/@types/prisma";
 import { Badge } from "@root/components/ui/badge";
 import { useCreateGuide } from "@root/components/hooks";
-import { TooltipWrapper } from "@root/components/shared/wrapper";
+import { TooltipWrapper } from "@root/components/shared/";
+import { Separator } from "@root/components/ui/separator";
 
 interface InitialData {
   classes: InitialClassSelection[];
@@ -47,7 +48,7 @@ export default function CreateGuideModal({
     <>
       <Dialog>
         <DialogTrigger asChild>
-          <Button variant="default" className="font-bold mb-4">
+          <Button variant="default" className="font-bold ">
             Создание нового гайда
           </Button>
         </DialogTrigger>
@@ -55,9 +56,11 @@ export default function CreateGuideModal({
           <form onSubmit={handleSubmit}>
             <DialogHeader>
               <DialogTitle>Создание нового гайда</DialogTitle>
-
-              <Label className="font-medium text-md">Выберите класс:</Label>
-              <div className="grid grid-cols-3 gap-2">
+              <Label className="font-medium my-2 text-md">
+                Выберите класс:
+              </Label>
+              <Separator className="" />
+              <div className="flex flex-wrap gap-2">
                 {classes.map((cls) => (
                   <Button
                     key={cls.id}
@@ -70,7 +73,9 @@ export default function CreateGuideModal({
                     className={`border rounded flex flex-col items-center ${
                       selectedClass === cls.id
                         ? "bg-blue-100 border-blue-500 grayscale-0"
-                        : "hover:bg-gray-50"
+                        : selectedClass
+                          ? "grayscale"
+                          : "grayscale-0 hover:bg-gray-50"
                     }`}
                   >
                     <TooltipWrapper content={cls.name}>
@@ -85,12 +90,14 @@ export default function CreateGuideModal({
                   </Button>
                 ))}
               </div>
+              <Separator className="" />
 
               {selectedClass && (
                 <div className=" mt-2">
                   <Label className="block mb-2 font-medium text-md">
                     Выберите специализацию:
                   </Label>
+                  <Separator className="my-2" />
                   <div className="flex flex-wrap gap-2">
                     {selectedClassData?.specializations.map((spec) => (
                       <Button
@@ -102,7 +109,9 @@ export default function CreateGuideModal({
                         className={`border rounded flex flex-col items-center ${
                           selectedSpec === spec.id
                             ? "bg-blue-100 border-blue-500 grayscale-0"
-                            : "hover:bg-gray-50 "
+                            : selectedSpec
+                              ? "grayscale"
+                              : "grayscale-0 hover:bg-gray-50"
                         }`}
                       >
                         <TooltipWrapper content={spec.name}>
@@ -119,21 +128,21 @@ export default function CreateGuideModal({
                   </div>
                 </div>
               )}
-
+              <Separator />
               <div className="mb-4">
                 <Label className="block mb-2 font-medium text-md">
                   Выберите режим:
                 </Label>
-                <div className="grid grid-cols-2 gap-2">
+                <div className="grid grid-cols-2 lg:grid-cols-3 gap-2">
                   {modes.map((mode) => (
                     <Button
                       key={mode.id}
                       type="button"
                       onClick={() => setSelectedMode(mode.id)}
-                      className={`p-2 border rounded ${
+                      className={`h-8 border rounded font-bold ${
                         selectedMode === mode.id
-                          ? "dark:bg-blue-500 bg-blue-500 border-blue-500"
-                          : "dark:hover:bg-gray-50"
+                          ? "dark:bg-blue-500 bg-blue-500 border-blue-500 text-amber-50"
+                          : "dark:hover:bg-gray-50 "
                       }`}
                     >
                       {mode.name}
@@ -149,12 +158,14 @@ export default function CreateGuideModal({
                 </Badge>
                 <Button
                   type="submit"
+                  loading={isLoading}
                   disabled={
                     isLoading ||
                     !selectedClass ||
                     !selectedSpec ||
                     !selectedMode
                   }
+                  className="font-bold"
                 >
                   {isLoading ? "Создание..." : "Создать гайд"}
                 </Button>

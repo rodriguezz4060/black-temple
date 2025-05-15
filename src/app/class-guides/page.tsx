@@ -1,8 +1,5 @@
-import { Container } from '@root/components/shared';
-import GuideButton from '@root/components/shared/guide-button';
-import CreateGuideModal from '@root/components/shared/guide/create-guide/create-guide-modal';
-import { GuideData } from './_actions/create-guide';
-import { prisma } from '@prisma/prisma-client';
+import { ClassGuidesPage, Container } from "@root/components/shared";
+import { prisma } from "@prisma/prisma-client";
 
 export default async function Page() {
   const guides = await prisma.guide.findMany({
@@ -17,16 +14,21 @@ export default async function Page() {
     },
   });
 
-  const initialData = await GuideData();
+  const modeFilter = await prisma.mode.findMany({});
+  const specFilter = await prisma.classSpecialization.findMany({
+    include: {
+      class: true,
+      specRole: true,
+    },
+  });
 
   return (
-    <Container className='dark:bg-zinc-900'>
-      <CreateGuideModal initialData={initialData} />
-      {guides.length === 0 ? (
-        <p>Гайды пока не созданы. Нажмите кнопку, чтобы добавить новый гайд.</p>
-      ) : (
-        <GuideButton guides={guides} />
-      )}
+    <Container>
+      <ClassGuidesPage
+        guides={guides}
+        specFilter={specFilter}
+        modeFilter={modeFilter}
+      />
     </Container>
   );
 }

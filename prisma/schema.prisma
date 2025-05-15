@@ -24,19 +24,22 @@ model User {
 }
 
 model ClassSelection {
-    id        Int    @id @default(autoincrement())
-    name      String @unique
-    classIcon String
+    id         Int    @id @default(autoincrement())
+    name       String @unique
+    classIcon  String
+    classColor String
 
     specializations ClassSpecialization[]
     guides          Guide[]
 }
 
 model ClassSpecialization {
-    id             Int    @id @default(autoincrement())
-    name           String
-    specIcon       String
-    specBackground String
+    id                  Int    @id @default(autoincrement())
+    name                String
+    specIcon            String
+    specBackground      String
+    difficultyBarBanner String
+    gearBanner          String
 
     class   ClassSelection @relation(fields: [classId], references: [id])
     classId Int

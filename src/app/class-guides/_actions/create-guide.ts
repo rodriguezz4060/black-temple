@@ -1,7 +1,7 @@
 "use server";
 
 import { prisma } from "@prisma/prisma-client";
-import { createGuideSchemas } from "@root/components/shared/guide/editor/schemas/create-guide-schemas";
+import { createGuideSchemas } from "@root/components/shared/class-guides/editor/schemas/create-guide-schemas";
 import { z } from "zod";
 
 export async function GuideData() {
@@ -47,7 +47,7 @@ export const getPatchNumber = async () => {
         },
         cache: "force-cache",
         next: { revalidate: 3600 },
-      }
+      },
     );
 
     const patchData = await patchRes.json();

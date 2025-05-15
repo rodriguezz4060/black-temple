@@ -1,9 +1,11 @@
+import { classSelection } from "./../../prisma/constants";
 import {
   ClassSelection,
   ClassSpecialization,
   Guide,
   HeroTalents,
   Prisma,
+  SpecRole,
   Tab,
 } from "@prisma/client";
 
@@ -22,6 +24,13 @@ export type TabData = {
   content: string;
   heroTalentsId: number;
 };
+
+export type ClassFilter = Prisma.ClassSpecializationGetPayload<{
+  include: {
+    class: true;
+    specRole: true;
+  };
+}>;
 
 export type GuideButtonWithRelations = Prisma.GuideGetPayload<{
   include: {

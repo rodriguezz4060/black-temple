@@ -21,7 +21,7 @@ const buttonVariants = cva(
           "hover:bg-secondary hover:text-secondary-foreground cursor-pointer",
         link: "text-primary underline-offset-4 hover:underline",
         blue: "bg-blue-700 text-white rounded-[5px] hover:bg-blue-800",
-        wowIcon: "",
+        wowIcon: "hover:grayscale-0",
       },
       size: {
         default: "h-9 px-4 py-2",
