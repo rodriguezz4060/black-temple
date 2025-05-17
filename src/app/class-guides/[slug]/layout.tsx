@@ -1,6 +1,10 @@
 import { prisma } from '@prisma/prisma-client';
 
-// Экспортируем generateMetadata для динамического заголовка
+// Задаем metadataBase в зависимости от окружения
+const metadataBase = process.env.NEXT_PUBLIC_BASE_URL
+  ? new URL(process.env.NEXT_PUBLIC_BASE_URL)
+  : new URL('http://localhost:3000');
+
 export async function generateMetadata({
   params,
 }: {
@@ -11,6 +15,7 @@ export async function generateMetadata({
   // Если slug отсутствует (например, для /class-guides), возвращаем общий заголовок
   if (!slug) {
     return {
+      metadataBase, // Указываем metadataBase
       title: 'Гайды по классам - World of Warcraft',
       description:
         'Список гайдов по классам и специализациям для World of Warcraft',
@@ -23,6 +28,7 @@ export async function generateMetadata({
 
   if (isNaN(id)) {
     return {
+      metadataBase,
       title: 'Гайд не найден',
     };
   }
@@ -38,6 +44,7 @@ export async function generateMetadata({
 
   if (!guide) {
     return {
+      metadataBase,
       title: 'Гайд не найден',
       description: 'Запрошенный гайд не найден',
     };
@@ -47,18 +54,32 @@ export async function generateMetadata({
   const title = `${guide.class.name} ${guide.specialization.name} - Гайд`;
 
   return {
+    metadataBase, // Указываем metadataBase
     title,
     description: `Гайд для ${guide.class.name} (${guide.specialization.name}) в World of Warcraft`,
     openGraph: {
       title,
       description: `Гайд для ${guide.class.name} (${guide.specialization.name})`,
       url: `/class-guides/${slug}`,
+      images: [
+        {
+          url: guide.specialization.specBackground || '/default-image.jpg', // Теперь URL будет абсолютным
+          width: 1200,
+          height: 630,
+          alt: `${guide.class.name} ${guide.specialization.name}`,
+        },
+      ],
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title,
+      description: `Гайд для ${guide.class.name} (${guide.specialization.name})`,
       images: [guide.specialization.specBackground || '/default-image.jpg'],
     },
   };
 }
 
-// Компонент Layout
+// Layout
 export default async function ClassGuidesLayout({
   children,
 }: {
