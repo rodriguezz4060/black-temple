@@ -1,7 +1,8 @@
-"use client";
+'use client';
 
-import { Button } from "@root/components/ui/button";
-import Image from "next/image";
+import Image from 'next/image';
+import { Button } from '@root/components/ui/button';
+import { InitialClassSelection } from '@root/@types/prisma';
 import {
   Dialog,
   DialogContent,
@@ -9,13 +10,13 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from "@root/components/ui/dialog";
-import { Label } from "@root/components/ui/label";
-import { Mode } from "@prisma/client";
-import { InitialClassSelection } from "@root/@types/prisma";
-import { Badge } from "@root/components/ui/badge";
-import { useCreateGuide } from "@root/components/hooks";
-import { TooltipWrapper } from "@root/components/shared/wrapper";
+} from '@root/components/ui/dialog';
+import { Label } from '@root/components/ui/label';
+import { Mode } from '@prisma/client';
+import { Badge } from '@root/components/ui/badge';
+import { useCreateGuide } from '@root/components/hooks';
+import { TooltipWrapper } from '@root/components/shared/';
+import { Separator } from '@root/components/ui/separator';
 
 interface InitialData {
   classes: InitialClassSelection[];
@@ -41,13 +42,13 @@ export default function CreateGuideModal({
     handleSubmit,
   } = useCreateGuide();
 
-  const selectedClassData = classes.find((c) => c.id === selectedClass);
+  const selectedClassData = classes.find(c => c.id === selectedClass);
 
   return (
     <>
       <Dialog>
         <DialogTrigger asChild>
-          <Button variant="default" className="font-bold mb-4">
+          <Button variant='default' className='font-bold'>
             Создание нового гайда
           </Button>
         </DialogTrigger>
@@ -55,22 +56,26 @@ export default function CreateGuideModal({
           <form onSubmit={handleSubmit}>
             <DialogHeader>
               <DialogTitle>Создание нового гайда</DialogTitle>
-
-              <Label className="font-medium text-md">Выберите класс:</Label>
-              <div className="grid grid-cols-3 gap-2">
-                {classes.map((cls) => (
+              <Label className='text-md my-2 font-medium'>
+                Выберите класс:
+              </Label>
+              <Separator className='' />
+              <div className='flex flex-wrap gap-2'>
+                {classes.map(cls => (
                   <Button
                     key={cls.id}
-                    variant="wowIcon"
-                    size="wowIcon"
+                    variant='wowIcon'
+                    size='wowIcon'
                     onClick={() => {
                       setSelectedClass(cls.id);
                       setSelectedSpec(null); // Сброс специализации при смене класса
                     }}
-                    className={`border rounded flex flex-col items-center ${
+                    className={`flex flex-col items-center rounded border ${
                       selectedClass === cls.id
-                        ? "bg-blue-100 border-blue-500 grayscale-0"
-                        : "hover:bg-gray-50"
+                        ? 'border-blue-500 bg-blue-100 grayscale-0'
+                        : selectedClass
+                          ? 'grayscale'
+                          : 'grayscale-0 hover:bg-gray-50'
                     }`}
                   >
                     <TooltipWrapper content={cls.name}>
@@ -79,30 +84,34 @@ export default function CreateGuideModal({
                         alt={cls.name}
                         width={40}
                         height={40}
-                        className="cursor-pointer"
+                        className='cursor-pointer'
                       />
                     </TooltipWrapper>
                   </Button>
                 ))}
               </div>
+              <Separator className='' />
 
               {selectedClass && (
-                <div className=" mt-2">
-                  <Label className="block mb-2 font-medium text-md">
+                <div className='mt-2'>
+                  <Label className='text-md mb-2 block font-medium'>
                     Выберите специализацию:
                   </Label>
-                  <div className="flex flex-wrap gap-2">
-                    {selectedClassData?.specializations.map((spec) => (
+                  <Separator className='my-2' />
+                  <div className='flex flex-wrap gap-2'>
+                    {selectedClassData?.specializations.map(spec => (
                       <Button
                         key={spec.id}
-                        type="button"
-                        variant="wowIcon"
-                        size="wowIcon"
+                        type='button'
+                        variant='wowIcon'
+                        size='wowIcon'
                         onClick={() => setSelectedSpec(spec.id)}
-                        className={`border rounded flex flex-col items-center ${
+                        className={`flex flex-col items-center rounded border ${
                           selectedSpec === spec.id
-                            ? "bg-blue-100 border-blue-500 grayscale-0"
-                            : "hover:bg-gray-50 "
+                            ? 'border-blue-500 bg-blue-100 grayscale-0'
+                            : selectedSpec
+                              ? 'grayscale'
+                              : 'grayscale-0 hover:bg-gray-50'
                         }`}
                       >
                         <TooltipWrapper content={spec.name}>
@@ -111,7 +120,7 @@ export default function CreateGuideModal({
                             alt={spec.name}
                             width={40}
                             height={40}
-                            className="cursor-pointer"
+                            className='cursor-pointer'
                           />
                         </TooltipWrapper>
                       </Button>
@@ -119,21 +128,21 @@ export default function CreateGuideModal({
                   </div>
                 </div>
               )}
-
-              <div className="mb-4">
-                <Label className="block mb-2 font-medium text-md">
+              <Separator />
+              <div className='mb-4'>
+                <Label className='text-md mb-2 block font-medium'>
                   Выберите режим:
                 </Label>
-                <div className="grid grid-cols-2 gap-2">
-                  {modes.map((mode) => (
+                <div className='grid grid-cols-2 gap-2 lg:grid-cols-3'>
+                  {modes.map(mode => (
                     <Button
                       key={mode.id}
-                      type="button"
+                      type='button'
                       onClick={() => setSelectedMode(mode.id)}
-                      className={`p-2 border rounded ${
+                      className={`h-8 rounded border font-bold ${
                         selectedMode === mode.id
-                          ? "dark:bg-blue-500 bg-blue-500 border-blue-500"
-                          : "dark:hover:bg-gray-50"
+                          ? 'border-blue-500 bg-blue-500 text-amber-50 dark:bg-blue-500'
+                          : 'dark:hover:bg-gray-50'
                       }`}
                     >
                       {mode.name}
@@ -143,20 +152,22 @@ export default function CreateGuideModal({
               </div>
             </DialogHeader>
             <DialogFooter>
-              <div className="flex items-center justify-between w-full">
-                <Badge className="mr-auto">
+              <div className='flex w-full items-center justify-between'>
+                <Badge className='mr-auto'>
                   Версия игры: {initialData.patch}
                 </Badge>
                 <Button
-                  type="submit"
+                  type='submit'
+                  loading={isLoading}
                   disabled={
                     isLoading ||
                     !selectedClass ||
                     !selectedSpec ||
                     !selectedMode
                   }
+                  className='font-bold'
                 >
-                  {isLoading ? "Создание..." : "Создать гайд"}
+                  {isLoading ? 'Создание...' : 'Создать гайд'}
                 </Button>
               </div>
             </DialogFooter>

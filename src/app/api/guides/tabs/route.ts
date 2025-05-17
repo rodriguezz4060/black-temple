@@ -1,6 +1,6 @@
-import { NextResponse } from "next/server";
-import { prisma } from "@prisma/prisma-client";
-import { updateTabsSchemas } from "@root/components/shared/guide/editor/schemas/update-tabs-schemas";
+import { NextResponse } from 'next/server';
+import { prisma } from '@prisma/prisma-client';
+import { updateTabsSchemas } from '@root/components/shared/class-guides/editor/schemas/update-tabs-schemas';
 
 export async function PATCH(request: Request) {
   try {
@@ -8,18 +8,18 @@ export async function PATCH(request: Request) {
     const validatedData = updateTabsSchemas.parse(body);
     const { tabs, guideId } = validatedData;
 
-    const result = await prisma.$transaction(async (tx) => {
+    const result = await prisma.$transaction(async tx => {
       // 1. Удаляем табы, которых нет в новых данных
       const deleteResult = await tx.tab.deleteMany({
         where: {
           heroTalentsId: guideId,
-          NOT: { value: { in: tabs.map((t) => t.value) } },
+          NOT: { value: { in: tabs.map(t => t.value) } },
         },
       });
 
       // 2. Обновляем или создаем табы
       const upsertResults = await Promise.all(
-        tabs.map((tab) =>
+        tabs.map(tab =>
           tx.tab.upsert({
             where: {
               value_heroTalentsId: {
@@ -45,15 +45,15 @@ export async function PATCH(request: Request) {
 
     return NextResponse.json({
       success: true,
-      message: "Tabs updated successfully",
+      message: 'Tabs updated successfully',
       data: result,
     });
   } catch (error) {
-    console.error("Error updating tabs:", error);
+    console.error('Error updating tabs:', error);
     return NextResponse.json(
       {
         success: false,
-        error: "Invalid data or server error",
+        error: 'Invalid data or server error',
         details: error instanceof Error ? error.message : String(error),
       },
       { status: 400 }

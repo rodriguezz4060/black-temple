@@ -24,27 +24,44 @@ model User {
 }
 
 model ClassSelection {
-    id        Int    @id @default(autoincrement())
-    name      String @unique
-    classIcon String
+    id         Int    @id @default(autoincrement())
+    name       String @unique
+    classIcon  String
+    classColor String
 
     specializations ClassSpecialization[]
     guides          Guide[]
 }
 
 model ClassSpecialization {
-    id       Int    @id @default(autoincrement())
-    name     String
-    specIcon String
+    id                  Int    @id @default(autoincrement())
+    name                String
+    specIcon            String
+    specBackground      String
+    difficultyBarBanner String
+    gearBanner          String
 
     class   ClassSelection @relation(fields: [classId], references: [id])
     classId Int
     guides  Guide[]
+
+    specRole   SpecRole @relation(fields: [specRoleId], references: [id])
+    specRoleId Int
+}
+
+model SpecRole {
+    id       Int    @id @default(autoincrement())
+    name     String @unique
+    roleIcon String
+
+    specialization ClassSpecialization[]
 }
 
 model Mode {
-    id   Int    @id @default(autoincrement())
-    name String @unique
+    id           Int    @id @default(autoincrement())
+    name         String @unique
+    activityBg   String
+    activityIcon String
 
     guides Guide[]
 }
@@ -53,13 +70,13 @@ model Guide {
     id    Int    @id @default(autoincrement())
     patch String
 
-    modeRelation Mode? @relation(fields: [modeId], references: [id])
+    modeRelation Mode @relation(fields: [modeId], references: [id])
     modeId       Int
 
     class   ClassSelection @relation(fields: [classId], references: [id])
     classId Int
 
-    specialization   ClassSpecialization? @relation(fields: [specializationId], references: [id])
+    specialization   ClassSpecialization @relation(fields: [specializationId], references: [id])
     specializationId Int
 
     overviewDifficulty OverviewDifficulty?
@@ -68,6 +85,10 @@ model Guide {
 
     createdAt DateTime @default(now())
     updatedAt DateTime @updatedAt
+
+    @@index([classId])
+    @@index([specializationId])
+    @@index([modeId])
 }
 
 model OverviewDifficulty {
@@ -87,6 +108,37 @@ model OverviewDifficulty {
 
     createdAt DateTime @default(now())
     updatedAt DateTime @updatedAt
+}
+
+model HeroTalents {
+    id Int @id @default(autoincrement())
+
+    guide   Guide @relation(fields: [guideId], references: [id])
+    guideId Int   @unique
+
+    tabs Tab[] // Один HeroTalents имеет много Tab
+
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+}
+
+model Tab {
+    id Int @id @default(autoincrement())
+
+    value   String // Уникальный идентификатор таба (например "tab1")
+    label   String // Название таба (отображаемый текст)
+    iconUrl String? // URL иконки (может быть null)
+    content String // Markdown-контент
+
+    // Связь с HeroTalents
+    heroTalents   HeroTalents @relation(fields: [heroTalentsId], references: [id])
+    heroTalentsId Int // Внешний ключ
+
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+
+    @@unique([value, heroTalentsId], name: "value_heroTalentsId")
+    @@index([value])
 }
 
 // model OverviewGear {
@@ -168,44 +220,6 @@ model OverviewDifficulty {
 //     createdAt DateTime @default(now())
 //     updatedAt DateTime @updatedAt
 // }
-
-model HeroTalents {
-    id Int @id @default(autoincrement())
-
-    guide   Guide @relation(fields: [guideId], references: [id])
-    guideId Int   @unique
-
-    tabs Tab[] // Один HeroTalents имеет много Tab
-
-    createdAt DateTime @default(now())
-    updatedAt DateTime @updatedAt
-}
-
-// model Talents {
-//     id Int @id @default(autoincrement())
-
-//     createdAt DateTime @default(now())
-//     updatedAt DateTime @updatedAt
-// }
-
-model Tab {
-    id Int @id @default(autoincrement())
-
-    value   String // Уникальный идентификатор таба (например "tab1")
-    label   String // Название таба (отображаемый текст)
-    iconUrl String? // URL иконки (может быть null)
-    content String // Markdown-контент
-
-    // Связь с HeroTalents
-    heroTalents   HeroTalents @relation(fields: [heroTalentsId], references: [id])
-    heroTalentsId Int // Внешний ключ
-
-    createdAt DateTime @default(now())
-    updatedAt DateTime @updatedAt
-
-    @@unique([value, heroTalentsId], name: "value_heroTalentsId")
-    @@index([value])
-}
 
 enum UserRole {
     USER

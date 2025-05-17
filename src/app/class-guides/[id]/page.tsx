@@ -1,7 +1,7 @@
 import { Container } from "@root/components/shared";
-import { CreateGuide } from "@root/components/shared/guide/editor/create-guide";
+import { CreateGuide } from "@root/components/shared/class-guides/editor/create-guide";
 import { notFound } from "next/navigation";
-import { prisma } from '@prisma/prisma-client';
+import { prisma } from "@prisma/prisma-client";
 
 export default async function GuidePage({
   params,
