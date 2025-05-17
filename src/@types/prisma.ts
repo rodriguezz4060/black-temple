@@ -1,13 +1,11 @@
-import { classSelection } from "./../../prisma/constants";
 import {
   ClassSelection,
   ClassSpecialization,
   Guide,
   HeroTalents,
   Prisma,
-  SpecRole,
   Tab,
-} from "@prisma/client";
+} from '@prisma/client';
 
 export type GuideProps = Guide & {
   heroTalents: (HeroTalents & { tabs: Tab[] }) | null;
@@ -26,20 +24,46 @@ export type TabData = {
 };
 
 export type ClassFilter = Prisma.ClassSpecializationGetPayload<{
-  include: {
-    class: true;
-    specRole: true;
+  select: {
+    id: true;
+    name: true;
+    specIcon: true;
+    specBackground: true;
+    class: { select: { name: true; classColor: true; classIcon: true } };
+    specRole: { select: { name: true; roleIcon: true } };
   };
 }>;
 
 export type GuideButtonWithRelations = Prisma.GuideGetPayload<{
-  include: {
-    class: true;
-    specialization: {
-      include: {
-        specRole: true;
+  select: {
+    id: true;
+    patch: true;
+    class: {
+      select: {
+        name: true;
+        classColor: true;
+        classIcon: true;
       };
     };
-    modeRelation: true;
+    specialization: {
+      select: {
+        name: true;
+        specIcon: true;
+        specBackground: true;
+        specRole: {
+          select: {
+            name: true;
+            roleIcon: true;
+          };
+        };
+      };
+    };
+    modeRelation: {
+      select: {
+        name: true;
+        activityIcon: true;
+        activityBg: true;
+      };
+    };
   };
 }>;
