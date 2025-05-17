@@ -62,7 +62,7 @@ export default function ClassGuidesPage({
       {/* Title */}
       <div className='flex flex-col'>
         <div className='flex flex-col border-b border-[#2B2B2B] contain-inline-size'>
-          <div className='flex flex-col md:flex-row md:items-center md:justify-between'>
+          <div className='flex flex-col pb-2 md:flex-row md:items-center md:justify-between'>
             <div className='flex flex-wrap items-center gap-y-0'>
               <div className='flex max-w-80 items-center gap-1 p-3'>
                 <span className='h-3 w-3 rounded-[2px] bg-blue-500'></span>
@@ -88,7 +88,7 @@ export default function ClassGuidesPage({
         setSelectedRole={setSelectedRole}
       />
 
-      <div className='mt-5'>
+      <div>
         {isLoading ? (
           <div className='flex justify-center py-8'>
             <div className='h-8 w-8 animate-spin rounded-full border-4 border-blue-500 border-t-transparent' />

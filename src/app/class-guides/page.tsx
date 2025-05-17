@@ -2,6 +2,7 @@ import { ClassGuidesPage, Container } from '@root/components/shared';
 import { prisma } from '@prisma/prisma-client';
 import { GuideData } from './_actions/create-guide';
 import { unstable_cache } from 'next/cache';
+import { cn } from '@root/lib/utils';
 
 // Кэшируем запрос гайдов
 const getCachedGuides = unstable_cache(
@@ -79,7 +80,7 @@ export default async function Page() {
   const initialData = await GuideData();
 
   return (
-    <Container>
+    <Container className={cn('px-5 md:pr-6 md:pl-[120px]')}>
       <ClassGuidesPage
         guides={guides}
         specFilter={specFilter}

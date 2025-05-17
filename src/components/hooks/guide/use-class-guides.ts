@@ -76,7 +76,7 @@ export function useClassGuides({
     isLoading,
     error,
   } = useSWR(
-    `/api/guides/filters?${params}`, // Всегда отправляем запрос
+    `/api/guides/filters?${filterParams}`, // Всегда отправляем запрос
     fetcher,
     {
       fallbackData: initialGuides, // Начальные данные для первого рендера

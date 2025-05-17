@@ -5,6 +5,13 @@ import Image from 'next/image';
 import { ClassFilter } from '@root/@types/prisma';
 import { Mode } from '@prisma/client';
 import { useGuideFilters } from '@root/components/hooks';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@root/components/ui/select';
 
 interface GuidesFiltersProps {
   specFilter: ClassFilter[];
@@ -37,7 +44,77 @@ export default function GuidesFilters(props: GuidesFiltersProps) {
 
   return (
     <>
-      <div className='flex flex-col gap-3'>
+      {/* Mobile/Tablet Select (visible on small screens) */}
+      <div className='flex flex-1 flex-col gap-1 md:p-4'>
+        <div className='grid grid-cols-2 gap-x-4 gap-y-2 md:flex md:flex-wrap md:items-center lg:hidden'>
+          {/* Селект класса (всегда виден) */}
+          <Select>
+            <SelectTrigger size='xs' className='w-full'>
+              <SelectValue placeholder='Класс' />
+            </SelectTrigger>
+            <SelectContent avoidCollisions={false}>
+              {uniqueClass.map(filter => (
+                <SelectItem key={filter.id} value={filter.class.name}>
+                  <span onClick={() => handleClassClick(filter.class.name)}>
+                    {filter.class.name}
+                  </span>
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+
+          {/* Селект специализации (виден только при выбранном классе) */}
+          {selectedClass && (
+            <Select>
+              <SelectTrigger size='xs' className='w-full'>
+                <SelectValue placeholder='Специализация' />
+              </SelectTrigger>
+              <SelectContent avoidCollisions={false}>
+                {uniqueSpec.map(filter => (
+                  <SelectItem key={filter.id} value={filter.name}>
+                    <span onClick={() => handleSpecClick(filter.name)}>
+                      {filter.name}
+                    </span>
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          )}
+
+          <Select>
+            <SelectTrigger size='xs' className='w-full'>
+              <SelectValue placeholder='Режим' />
+            </SelectTrigger>
+            <SelectContent avoidCollisions={false}>
+              {modeFilter.map(filter => (
+                <SelectItem key={filter.id} value={filter.name}>
+                  <span onClick={() => handleModeClick(filter.name)}>
+                    {filter.name}
+                  </span>
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+
+          <Select>
+            <SelectTrigger size='xs' className='w-full'>
+              <SelectValue placeholder='Роль' />
+            </SelectTrigger>
+            <SelectContent avoidCollisions={false}>
+              {uniqueRole.map(filter => (
+                <SelectItem key={filter.id} value={filter.specRole.name}>
+                  <span onClick={() => handleRoleClick(filter.specRole.name)}>
+                    {filter.specRole.name}
+                  </span>
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
+      </div>
+
+      {/* Filter full screen (hidden on small screens, visible on large screens) */}
+      <div className='hidden flex-col gap-3 lg:block'>
         <div className='flex w-full items-center'>
           <div className='flex w-full flex-col rounded-2xl bg-[#171717] p-4'>
             <div className='px-1.5'>Выберите класс:</div>
@@ -71,7 +148,7 @@ export default function GuidesFilters(props: GuidesFiltersProps) {
           </div>
         </div>
 
-        <div className='flex flex-col justify-between gap-4 md:flex-row'>
+        <div className='flex flex-col justify-between gap-4 py-1 md:flex-row'>
           <div className='flex basis-1/3 items-center'>
             {uniqueSpec.length > 0 && (
               <div className='flex flex-col rounded-2xl border border-[#333333] p-4'>
