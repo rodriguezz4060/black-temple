@@ -1,6 +1,7 @@
 import { GuideButtonWithRelations } from '@root/@types/prisma';
 import Image from 'next/image';
 import Link from 'next/link';
+import { transliterate } from 'transliteration';
 
 interface GuideButtonProps {
   guides: GuideButtonWithRelations[];
@@ -8,6 +9,17 @@ interface GuideButtonProps {
 
 export default function GuideButton({ guides }: GuideButtonProps) {
   // console.log(guides);
+  // Функция для генерации slug
+  const generateSlug = (guide: GuideButtonWithRelations) => {
+    const className = transliterate(guide.class.name)
+      .toLowerCase()
+      .replace(/\s+/g, '-');
+    const specName = transliterate(guide.specialization.name)
+      .toLowerCase()
+      .replace(/\s+/g, '-');
+    return `${className}-${specName}-${guide.id}`;
+  };
+
   return (
     <>
       <div className='flex-1 pb-20'>
@@ -18,7 +30,10 @@ export default function GuideButton({ guides }: GuideButtonProps) {
               key={guide.id}
               className='group relative overflow-hidden rounded-lg border-2 hover:border-blue-500'
             >
-              <Link href={`/class-guides/${guide.id}`} className='block h-full'>
+              <Link
+                href={`/class-guides/${generateSlug(guide)}`}
+                className='block h-full'
+              >
                 {/* Background pattern */}
                 <div
                   className='absolute inset-0 bg-cover bg-center opacity-70 transition-opacity group-hover:opacity-90'
