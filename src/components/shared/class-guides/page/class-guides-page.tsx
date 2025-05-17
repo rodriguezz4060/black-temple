@@ -90,11 +90,19 @@ export default function ClassGuidesPage({
 
       <div className='mt-5'>
         {isLoading ? (
-          <p>Загрузка гайдов...</p>
+          <div className='flex justify-center py-8'>
+            <div className='h-8 w-8 animate-spin rounded-full border-4 border-blue-500 border-t-transparent' />
+          </div>
         ) : error ? (
-          <p>Ошибка при загрузке гайдов. Попробуйте позже.</p>
+          <p className='py-4 text-center text-red-400'>
+            Ошибка при загрузке гайдов. Попробуйте позже.
+          </p>
         ) : filteredGuides.length === 0 ? (
-          <p>Гайды пока не созданы или не найдены по выбранным фильтрам.</p>
+          <p className='py-4 text-center text-gray-400'>
+            {selectedClass || selectedSpec || selectedMode
+              ? 'Гайды по выбранным фильтрам не найдены'
+              : 'Гайды пока не созданы'}
+          </p>
         ) : (
           <GuideButton guides={filteredGuides} />
         )}
