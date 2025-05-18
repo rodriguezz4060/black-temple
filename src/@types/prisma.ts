@@ -80,3 +80,20 @@ export type GuideButtonWithRelations = Prisma.GuideGetPayload<{
     };
   };
 }>;
+
+export interface GearItem {
+  slot: string;
+  name: string;
+  icon: string;
+  gem?: string[];
+  enchantments: string[];
+}
+
+export interface GuideSpecGearProps {
+  gearBanner: string;
+  characterClass: string;
+  classColor: string;
+  gameMode: string;
+  spec: string;
+  gearData: GearItem[];
+}

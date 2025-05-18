@@ -9,12 +9,14 @@ import { GuideDifficultyBar } from './guide-difficulty-bar';
 import { GuideSpecGear } from './guide-spec-gear';
 import { GuidePageProps } from '@root/@types/prisma';
 import ItemFetcher from '@root/components/shared/blizzard/ItemFetcher';
+import { GearData } from '@root/components/constants/geatData';
 
 interface GuideProps {
   guide: GuidePageProps;
 }
 
 export const GuidePageContent = ({ guide }: GuideProps) => {
+  const gearData = GearData();
   console.log(guide);
   return (
     <div>
@@ -61,7 +63,14 @@ export const GuidePageContent = ({ guide }: GuideProps) => {
                   />
                 </div>
               </div>
-              <GuideSpecGear gearBanner={guide.specialization.gearBanner} />
+              <GuideSpecGear
+                gearBanner={guide.specialization.gearBanner}
+                characterClass={guide.class.name}
+                classColor={guide.class.classColor}
+                spec={guide.specialization.name}
+                gameMode={guide.modeRelation.name}
+                gearData={gearData}
+              />
             </div>
             <GuideAnchorWrapper
               anchorId='hero-talents-header'
