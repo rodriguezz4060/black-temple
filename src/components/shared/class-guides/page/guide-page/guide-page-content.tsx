@@ -1,0 +1,80 @@
+import {
+  Container,
+  GuideAnchorWrapper,
+  LeftSideBar,
+} from '@root/components/shared';
+import { GuideTitle } from './guide-title';
+import { GuideSpecBanner } from './guide-spec-banner';
+import { GuideDifficultyBar } from './guide-difficulty-bar';
+import { GuideSpecGear } from './guide-spec-gear';
+import { GuidePageProps } from '@root/@types/prisma';
+
+interface GuideProps {
+  guide: GuidePageProps;
+}
+
+export const GuidePageContent = ({ guide }: GuideProps) => {
+  console.log(guide);
+  return (
+    <div>
+      <Container className='secondary max-w-[1250px] px-4 pb-10'>
+        <div className='post-page flex h-max flex-col justify-center pt-10 lg:flex-row'>
+          <LeftSideBar />
+
+          <div className='flex w-full flex-1 flex-col pt-2 lg:w-[815px] lg:pt-0 xl:mx-auto'>
+            <GuideTitle
+              characterClass={guide.class.name}
+              classColor={guide.class.classColor}
+              spec={guide.specialization.name}
+              patch={guide.patch}
+              mode={guide.modeRelation.name}
+              updateDate={guide.updatedAt.toISOString()}
+            />
+            <GuideAnchorWrapper
+              anchorId='overview-header'
+              title='Обзор'
+              characterClass={guide.class.name}
+              spec={guide.specialization.name}
+              patch={guide.patch}
+            />
+
+            <div className='flex flex-wrap gap-x-2.5 gap-y-5 lg:flex-nowrap'>
+              <div className='w-full grow-[1] md:flex-1 md:grow-[1]'>
+                <div className='flex w-full gap-4 contain-inline-size'>
+                  <GuideSpecBanner
+                    specBanner={guide.specialization.difficultyBarBanner}
+                    spec={guide.specialization.name}
+                  />
+                  <GuideDifficultyBar
+                    icon={guide.specialization.specIcon}
+                    spec={guide.specialization.name}
+                    classColor={guide.class.classColor}
+                    gameMode={guide.modeRelation.name}
+                    ratings={[
+                      { label: 'Урон по одной цели', value: 4, max: 5 },
+                      { label: 'АоЕ', value: 2, max: 5 },
+                      { label: 'Утилити', value: 5, max: 5 },
+                      { label: 'Выживаемость', value: 1, max: 5 },
+                      { label: 'Мобильность', value: 3, max: 5 },
+                    ]}
+                  />
+                </div>
+              </div>
+              <GuideSpecGear gearBanner={guide.specialization.gearBanner} />
+            </div>
+            <GuideAnchorWrapper
+              anchorId='hero-talents-header'
+              title='Героические таланты'
+              characterClass={guide.class.name}
+              spec={guide.specialization.name}
+              patch={guide.patch}
+            />
+            <div>
+              <p></p>
+            </div>
+          </div>
+        </div>
+      </Container>
+    </div>
+  );
+};

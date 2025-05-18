@@ -1,10 +1,9 @@
-import { Container } from '@root/components/shared';
-import { CreateGuide } from '@root/components/shared/class-guides/editor/create-guide';
 import { notFound } from 'next/navigation';
 import { prisma } from '@prisma/prisma-client';
 import { transliterate } from 'transliteration';
+import { GuidePageContent } from '@root/components/shared/class-guides/page/guide-page';
 
-export default async function GuidePage({
+export default async function GuidePageRoute({
   params,
 }: {
   params: Promise<{ slug: string }>;
@@ -26,6 +25,7 @@ export default async function GuidePage({
       },
       class: true, // Подключаем модель Class
       specialization: true, // Подключаем модель Specialization
+      modeRelation: true,
     },
   });
 
@@ -50,9 +50,5 @@ export default async function GuidePage({
     };
   }
 
-  return (
-    <Container className='secondary px-4 pb-10'>
-      <CreateGuide guide={guide} />
-    </Container>
-  );
+  return <GuidePageContent guide={guide} />;
 }

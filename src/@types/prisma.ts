@@ -11,6 +11,19 @@ export type GuideProps = Guide & {
   heroTalents: (HeroTalents & { tabs: Tab[] }) | null;
 };
 
+export type GuidePageProps = Prisma.GuideGetPayload<{
+  include: {
+    class: true;
+    specialization: true;
+    modeRelation: true;
+    heroTalents: {
+      include: {
+        tabs: true;
+      };
+    };
+  };
+}>;
+
 export type InitialClassSelection = ClassSelection & {
   specializations: ClassSpecialization[];
 };
