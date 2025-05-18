@@ -8,6 +8,7 @@ import { GuideSpecBanner } from './guide-spec-banner';
 import { GuideDifficultyBar } from './guide-difficulty-bar';
 import { GuideSpecGear } from './guide-spec-gear';
 import { GuidePageProps } from '@root/@types/prisma';
+import ItemFetcher from '@root/components/shared/blizzard/ItemFetcher';
 
 interface GuideProps {
   guide: GuidePageProps;
@@ -70,7 +71,7 @@ export const GuidePageContent = ({ guide }: GuideProps) => {
               patch={guide.patch}
             />
             <div>
-              <p></p>
+              <ItemFetcher />
             </div>
           </div>
         </div>

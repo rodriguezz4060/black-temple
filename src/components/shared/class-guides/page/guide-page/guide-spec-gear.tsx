@@ -16,7 +16,7 @@ export const GuideSpecGear = ({ gearBanner }: GuideSpecGearProps) => {
                   <div className='absolute inset-0 grayscale-50'>
                     <Image
                       src={gearBanner}
-                      alt='DH Havoc spec icon'
+                      alt='DH Havoc'
                       width={340}
                       height={500}
                       className=''

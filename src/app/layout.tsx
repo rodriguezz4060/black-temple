@@ -37,8 +37,8 @@ export default function RootLayout({
       <body className={nunito.className}>
         <main className='min-h-screen'>
           <ThemeProvider attribute='class' defaultTheme='dark' enableSystem>
-            <Header />
             <NextTopLoader />
+            <Header />
             {children}
             <Toaster />
           </ThemeProvider>
