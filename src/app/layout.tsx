@@ -4,7 +4,6 @@ import type { Metadata } from 'next';
 import { Nunito } from 'next/font/google';
 import Script from 'next/script';
 import { Toaster } from 'react-hot-toast';
-import NextTopLoader from 'nextjs-toploader';
 import './globals.css';
 
 const nunito = Nunito({
@@ -37,7 +36,6 @@ export default function RootLayout({
       <body className={nunito.className}>
         <main className='min-h-screen'>
           <ThemeProvider attribute='class' defaultTheme='dark' enableSystem>
-            <NextTopLoader />
             <Header />
             {children}
             <Toaster />

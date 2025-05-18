@@ -79,9 +79,7 @@ export const GuidePageContent = ({ guide }: GuideProps) => {
               spec={guide.specialization.name}
               patch={guide.patch}
             />
-            <div>
-              <ItemFetcher />
-            </div>
+            <div>{/* <ItemFetcher /> */}</div>
           </div>
         </div>
       </Container>
