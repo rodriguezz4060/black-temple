@@ -16,6 +16,7 @@ export type GuidePageProps = Prisma.GuideGetPayload<{
     class: true;
     specialization: true;
     modeRelation: true;
+    overviewGear: true;
     heroTalents: {
       include: {
         tabs: true;
@@ -96,4 +97,35 @@ export interface GuideSpecGearProps {
   gameMode: string;
   spec: string;
   gearData: GearItem[];
+}
+
+// Интерфейсы для работы с бис листом
+export interface Socket {
+  id: string;
+  img: string; // Ссылка на иконку сокета
+  link: string; // Ссылка на Wowhead
+}
+
+export interface Enchant {
+  id: string;
+  icon: string; // Ссылка на иконку зачарования
+  enchantUrl: string; // Ссылка на Wowhead
+}
+
+export interface ItemData {
+  name?: string; // headName
+  icon?: string; // headImg
+  gearUrl?: string; // headLink
+  sockets: Socket[]; // headSockets
+  enchant: Enchant | null; // headEnchantImg, headEnchantUrl
+}
+
+export interface OverviewGear {
+  id: number;
+  headName?: string;
+  headImg?: string;
+  headLink?: string;
+  headEnchantImg?: string;
+  headEnchantUrl?: string;
+  headSockets: { id: number; img?: string; link?: string }[];
 }

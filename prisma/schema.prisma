@@ -79,16 +79,13 @@ model Guide {
     specialization   ClassSpecialization @relation(fields: [specializationId], references: [id])
     specializationId Int
 
+    overviewGear OverviewGear?
+
     overviewDifficulty OverviewDifficulty?
-    // overviewGear       OverviewGear?
     heroTalents        HeroTalents?
 
     createdAt DateTime @default(now())
     updatedAt DateTime @updatedAt
-
-    @@index([classId])
-    @@index([specializationId])
-    @@index([modeId])
 }
 
 model OverviewDifficulty {
@@ -141,85 +138,40 @@ model Tab {
     @@index([value])
 }
 
-// model OverviewGear {
-//     id Int @id @default(autoincrement())
+model OverviewGear {
+    id Int @id @default(autoincrement())
 
-//     headImg     String?
-//     headLink    String?
-//     headSocket  String?
-//     headEnchant String?
+    headName       String?
+    headImg        String?
+    headLink       String?
+    headEnchantImg String?
+    headEnchantUrl String?
+    headSockets    Socket[]
 
-//     neckImg     String?
-//     neckLink    String?
-//     neckSocket1 String?
-//     neckSocket2 String?
+    guide   Guide @relation(fields: [guideId], references: [id])
+    guideId Int   @unique
 
-//     shouldersImg  String?
-//     shouldersLink String?
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+}
 
-//     backImg     String?
-//     backLink    String?
-//     backEnchant String?
+model Socket {
+    id Int @id @default(autoincrement())
 
-//     chestImg     String?
-//     chestLink    String?
-//     chestEnchant String?
+    name String?
+    img  String?
+    link String?
 
-//     wristImg     String?
-//     wristLink    String?
-//     wristSocket1 String?
-//     wristEnchant String?
+    overviewGear   OverviewGear @relation(fields: [overviewGearId], references: [id])
+    overviewGearId Int
 
-//     handsImg     String?
-//     handsLink    String?
-//     handsEnchant String?
+    slotType String?
 
-//     waistImg     String?
-//     waistLink    String?
-//     waistSocket1 String?
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
 
-//     legsImg     String?
-//     legsLink    String?
-//     legsEnchant String?
-
-//     feetImg     String?
-//     feetLink    String?
-//     feetEnchant String?
-
-//     fingerOneImg     String?
-//     fingerOneLink1   String?
-//     fingerOneSocket1 String?
-//     fingerOneSocket2 String?
-//     fingerOneSocket3 String?
-//     fingerOneEnchant String?
-
-//     fingerTwoImg     String?
-//     fingerTwoLink    String?
-//     fingerTwoSocket1 String?
-//     fingerTwoSocket2 String?
-//     fingerTwoSocket3 String?
-//     fingerTwoEnchant String?
-
-//     trinketOneImg  String?
-//     trinketOneLink String?
-
-//     trinketTwoImg  String?
-//     trinketTwoLink String?
-
-//     mainHandImg     String?
-//     mainHandLink    String?
-//     mainHandEnchant String?
-
-//     offHandImg     String?
-//     offHandLink    String?
-//     offHandEnchant String?
-
-//     guide   Guide @relation(fields: [guideId], references: [id])
-//     guideId Int   @unique
-
-//     createdAt DateTime @default(now())
-//     updatedAt DateTime @updatedAt
-// }
+    @@index([overviewGearId])
+}
 
 enum UserRole {
     USER

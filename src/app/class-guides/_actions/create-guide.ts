@@ -2,6 +2,7 @@
 
 import { prisma } from '@prisma/prisma-client';
 import { createGuideSchemas } from '@root/components/shared/class-guides/editor/schemas/create-guide-schemas';
+import { revalidatePath } from 'next/cache';
 import { z } from 'zod';
 
 export async function GuideData() {
@@ -82,30 +83,39 @@ export async function createGuideAction(formData: FormData) {
     // Валидация с помощью Zod
     const validatedData = createGuideSchemas.parse(data);
 
-    const baseUrl =
-      process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:3000';
-    const url = `${baseUrl}/api/guides`;
-
-    // Вызываем API route для создания гайда
-    const response = await fetch(url, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
+    // Создаём гайд через Prisma с пустым OverviewGear
+    const guide = await prisma.guide.create({
+      data: {
+        classId: validatedData.classId,
+        specializationId: validatedData.specializationId,
+        modeId: validatedData.modeId,
+        patch: validatedData.patch,
+        overviewGear: {
+          create: {},
+        },
       },
-      body: JSON.stringify(validatedData),
+      include: {
+        class: true,
+        specialization: true,
+        overviewGear: true,
+      },
     });
 
-    const result = await response.json();
+    // Обновляем кэш страницы
+    revalidatePath('/class-guides');
 
-    if (!response.ok || !result.success) {
-      throw new Error(result.error || 'Не удалось создать гайд');
-    }
-
-    return { success: true, guideId: result.guide.id };
+    return {
+      success: true,
+      guide: {
+        id: guide.id,
+        className: guide.class.name,
+        specializationName: guide.specialization.name,
+        overviewGearId: guide.overviewGear?.id, // Возвращаем ID OverviewGear, если нужно
+      },
+    };
   } catch (error) {
     console.error('Ошибка в createGuideAction:', error);
     if (error instanceof z.ZodError) {
-      // Формируем читаемые сообщения об ошибках
       const errorMessages = error.errors.map(err => err.message).join(', ');
       return { success: false, error: `Ошибка валидации: ${errorMessages}` };
     }

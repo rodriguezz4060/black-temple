@@ -1,15 +1,20 @@
-import { Container } from '@root/components/shared';
-import { prisma } from '@prisma/prisma-client';
 import { notFound } from 'next/navigation';
+import { prisma } from '@prisma/prisma-client';
+import { transliterate } from 'transliteration';
 import { CreateGuide } from '@root/components/shared/class-guides/editor/create-guide';
 
-export default async function EditGuidePage({
+export default async function GuidePageRoute({
   params,
 }: {
-  params: Promise<{ id: string }>;
+  params: Promise<{ slug: string }>;
 }) {
-  const { id } = await params;
+  const { slug } = await params;
 
+  // Разделяем slug на части
+  const slugParts = slug.split('-');
+  const id = slugParts.pop(); // Последняя часть — это ID
+
+  // Ищем гайд по ID
   const guide = await prisma.guide.findFirst({
     where: { id: Number(id) },
     include: {
@@ -18,6 +23,10 @@ export default async function EditGuidePage({
           tabs: true,
         },
       },
+      class: true, // Подключаем модель Class
+      specialization: true, // Подключаем модель Specialization
+      overviewGear: true,
+      modeRelation: true,
     },
   });
 
@@ -25,11 +34,22 @@ export default async function EditGuidePage({
     return notFound();
   }
 
-  return (
-    <>
-      <Container className='secondary px-4 pb-10'>
-        <CreateGuide guide={guide} />
-      </Container>
-    </>
-  );
+  // Проверяем, что slug соответствует ожидаемому формату
+  const expectedSlug = `${transliterate(guide.class.name)}-${transliterate(
+    guide.specialization.name
+  )}-${guide.id}`
+    .toLowerCase()
+    .replace(/\s+/g, '-');
+
+  if (slug !== expectedSlug) {
+    // Если slug не совпадает, делаем редирект на правильный
+    return {
+      redirect: {
+        destination: `/class-guides/${expectedSlug}`,
+        permanent: true,
+      },
+    };
+  }
+
+  return <CreateGuide guide={guide} />;
 }
