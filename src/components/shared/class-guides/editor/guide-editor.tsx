@@ -3,12 +3,12 @@ import { TabsEditor } from './tabs-editor';
 import { Container } from '@root/components/shared/container';
 import { BisGearEditor } from './bis-gear-editor';
 
-interface Props {
+interface GuideEditorProps {
   guide: GuidePageProps;
   className?: string;
 }
 
-export const CreateGuide: React.FC<Props> = ({ guide }) => {
+export const GuideEditor: React.FC<GuideEditorProps> = ({ guide }) => {
   // Преобразуем данные для компонента TabsEditor
   const tabsData =
     guide.heroTalents?.tabs.map(tab => ({
@@ -25,7 +25,14 @@ export const CreateGuide: React.FC<Props> = ({ guide }) => {
   return (
     <div>
       <Container className='secondary max-w-[1250px] px-4 pb-10'>
-        <BisGearEditor guideId={guide.id} overviewGear={guide.overviewGear} />
+        <BisGearEditor
+          overviewGear={guide.overviewGear}
+          gearCover={guide.specialization.gearBanner}
+          spec={guide.specialization.name}
+          characterClass={guide.class.name}
+          classColor={guide.class.classColor}
+          gameMode={guide.modeRelation.name}
+        />
         {/* <TabsEditor
           initialTabs={tabsData}
           defaultTab='tab1'
