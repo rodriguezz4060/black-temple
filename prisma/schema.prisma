@@ -79,7 +79,7 @@ model Guide {
     specialization   ClassSpecialization @relation(fields: [specializationId], references: [id])
     specializationId Int
 
-    overviewGear OverviewGear?
+    overviewGears OverviewGear[]
 
     overviewDifficulty OverviewDifficulty?
     heroTalents        HeroTalents?
@@ -141,31 +141,36 @@ model Tab {
 model OverviewGear {
     id Int @id @default(autoincrement())
 
-    headName       String?
-    headImg        String?
-    headLink       String?
-    headEnchantImg String?
-    headEnchantUrl String?
-    headSockets    Socket[]
+    itemSlot        String?
+    itemName        String?
+    itemImg         String?
+    itemLink        String?
+    itemEnchantName String?
+    itemEnchantImg  String?
+    itemEnchantUrl  String?
+
+    itemSockets Socket[]
 
     guide   Guide @relation(fields: [guideId], references: [id])
-    guideId Int   @unique
+    guideId Int // Связь с Guide
 
     createdAt DateTime @default(now())
     updatedAt DateTime @updatedAt
+
+    @@index([guideId])
 }
 
 model Socket {
     id Int @id @default(autoincrement())
 
-    name String?
-    img  String?
-    link String?
+    socketName String?
+    socketImg  String?
+    socketUrl  String?
+
+    slotType SlotType? // Тип слота для сокета (опционально)
 
     overviewGear   OverviewGear @relation(fields: [overviewGearId], references: [id])
-    overviewGearId Int
-
-    slotType String?
+    overviewGearId Int // Связь с OverviewGear
 
     createdAt DateTime @default(now())
     updatedAt DateTime @updatedAt
@@ -176,4 +181,25 @@ model Socket {
 enum UserRole {
     USER
     ADMIN
+}
+
+enum SlotType {
+    HEAD
+    NECK
+    SHOULDER
+    BACK
+    CHEST
+    SHIRT
+    TABARD
+    WRIST
+    HAND
+    BELT
+    LEGS
+    FEET
+    FINGER
+    SECOND_FINGER
+    TRINKET
+    SECOND_TRINKET
+    MAIN_HAND
+    OFF_HAND
 }

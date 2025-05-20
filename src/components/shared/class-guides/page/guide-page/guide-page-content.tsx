@@ -8,15 +8,13 @@ import { GuideSpecBanner } from './guide-spec-banner';
 import { GuideDifficultyBar } from './guide-difficulty-bar';
 import { GuideSpecGear } from './guide-spec-gear';
 import { GuidePageProps } from '@root/@types/prisma';
-import { GearData } from '@root/components/constants/geatData';
 
 interface GuideProps {
   guide: GuidePageProps;
 }
 
 export const GuidePageContent = ({ guide }: GuideProps) => {
-  const gearData = GearData();
-  console.log(guide);
+  // console.log(guide);
   return (
     <div>
       <Container className='secondary max-w-[1250px] px-4 pb-10'>
@@ -68,7 +66,7 @@ export const GuidePageContent = ({ guide }: GuideProps) => {
                 classColor={guide.class.classColor}
                 spec={guide.specialization.name}
                 gameMode={guide.modeRelation.name}
-                gearData={gearData}
+                gearData={guide.overviewGears}
               />
             </div>
             <GuideAnchorWrapper

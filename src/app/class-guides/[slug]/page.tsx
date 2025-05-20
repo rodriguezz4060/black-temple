@@ -26,6 +26,11 @@ export default async function GuidePageRoute({
       class: true, // Подключаем модель Class
       specialization: true, // Подключаем модель Specialization
       modeRelation: true,
+      overviewGears: {
+        include: {
+          itemSockets: true,
+        },
+      },
     },
   });
 

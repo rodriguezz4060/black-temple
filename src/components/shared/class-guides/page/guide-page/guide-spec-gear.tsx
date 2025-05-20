@@ -11,26 +11,26 @@ export const GuideSpecGear = ({
   gearData,
 }: GuideSpecGearProps) => {
   const leftSlots = [
-    'Head',
-    'Neck',
-    'Shoulder',
-    'Back',
-    'Chest',
-    'Shirt',
-    'Tabard',
-    'Wrist',
+    'HEAD',
+    'NECK',
+    'SHOULDER',
+    'BACK',
+    'CHEST',
+    'SHIRT',
+    'TABARD',
+    'WRIST',
   ];
   const rightSlots = [
-    'Hand',
-    'Belt',
-    'Legs',
-    'Feet',
-    'Finger1',
-    'Finger2',
-    'Trinket1',
-    'Trinket2',
+    'HAND',
+    'BELT',
+    'LEGS',
+    'FEET',
+    'FINGER',
+    'SECOND_FINGER',
+    'TRINKET',
+    'SECOND_TRINKET',
   ];
-  const middleSlots = ['MainHand', 'OffHand'];
+  const middleSlots = ['MAIN_HAND', 'OFF_HAND'];
 
   return (
     <div className='w-full grow-[1] md:flex-1 md:grow-[1]'>
@@ -52,7 +52,9 @@ export const GuideSpecGear = ({
                   {/* Левая колонка */}
                   <div className='absolute top-2.5 left-2.5 flex flex-col gap-1.5'>
                     {leftSlots.map((slot, index) => {
-                      const item = gearData.find(gear => gear.slot === slot);
+                      const item = gearData.find(
+                        gear => gear.itemSlot === slot
+                      );
                       return (
                         <GearSlot
                           key={slot}
@@ -67,7 +69,9 @@ export const GuideSpecGear = ({
                   {/* Правая колонка */}
                   <div className='absolute top-2.5 right-2.5 flex flex-col gap-1.5'>
                     {rightSlots.map((slot, index) => {
-                      const item = gearData.find(gear => gear.slot === slot);
+                      const item = gearData.find(
+                        gear => gear.itemSlot === slot
+                      );
                       return (
                         <GearSlot
                           key={slot}
@@ -82,7 +86,9 @@ export const GuideSpecGear = ({
                   {/* Центральная колонка */}
                   <div className='absolute bottom-2.5 left-[50%] flex translate-x-[-50%] flex-row gap-1.5'>
                     {middleSlots.map((slot, index) => {
-                      const item = gearData.find(gear => gear.slot === slot);
+                      const item = gearData.find(
+                        gear => gear.itemSlot === slot
+                      );
                       return (
                         <GearSlot
                           key={slot}

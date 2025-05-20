@@ -16,9 +16,9 @@ export type GuidePageProps = Prisma.GuideGetPayload<{
     class: true;
     specialization: true;
     modeRelation: true;
-    overviewGear: {
+    overviewGears: {
       include: {
-        headSockets: true;
+        itemSockets: true;
       };
     };
     heroTalents: {
@@ -52,6 +52,7 @@ export type ClassFilter = Prisma.ClassSpecializationGetPayload<{
   };
 }>;
 
+// Тип который я использую в class-guides
 export type GuideButtonWithRelations = Prisma.GuideGetPayload<{
   select: {
     id: true;
@@ -86,15 +87,14 @@ export type GuideButtonWithRelations = Prisma.GuideGetPayload<{
   };
 }>;
 
-export interface GearItem {
-  slot: string;
-  name: string;
-  icon: string;
-  gem?: string[];
-  enchantments: string[];
-}
+export type GearItem = Prisma.OverviewGearGetPayload<{
+  include: {
+    itemSockets: true;
+  };
+}>;
 
 export interface GuideSpecGearProps {
+  guideId: number;
   gearBanner: string;
   characterClass: string;
   classColor: string;
@@ -103,8 +103,4 @@ export interface GuideSpecGearProps {
   gearData: GearItem[];
 }
 
-export type BisGearProps = Prisma.OverviewGearGetPayload<{
-  include: {
-    headSockets: true;
-  };
-}>;
+export type BisGearProps = Prisma.OverviewGearGetPayload<{}>;

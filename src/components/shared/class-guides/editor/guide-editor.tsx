@@ -1,4 +1,4 @@
-import { GuidePageProps, GuideProps } from '@root/@types/prisma';
+import { GuidePageProps } from '@root/@types/prisma';
 import { TabsEditor } from './tabs-editor';
 import { Container } from '@root/components/shared/container';
 import { BisGearEditor } from './bis-gear-editor';
@@ -26,12 +26,13 @@ export const GuideEditor: React.FC<GuideEditorProps> = ({ guide }) => {
     <div>
       <Container className='secondary max-w-[1250px] px-4 pb-10'>
         <BisGearEditor
-          overviewGear={guide.overviewGear}
-          gearCover={guide.specialization.gearBanner}
-          spec={guide.specialization.name}
+          guideId={guide.id}
+          gearBanner={guide.specialization.gearBanner}
           characterClass={guide.class.name}
           classColor={guide.class.classColor}
+          spec={guide.specialization.name}
           gameMode={guide.modeRelation.name}
+          gearData={guide.overviewGears}
         />
         {/* <TabsEditor
           initialTabs={tabsData}
