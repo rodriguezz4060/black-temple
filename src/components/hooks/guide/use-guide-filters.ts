@@ -74,9 +74,7 @@ export function useGuideFilters({
     (className: string) => {
       const newClass = selectedClass === className ? null : className;
       setSelectedClass(newClass);
-      if (newClass === null) {
-        setSelectedSpec(null); // Сбрасываем специализацию, если класс снят
-      }
+      setSelectedSpec(null);
     },
     [selectedClass, setSelectedClass, setSelectedSpec]
   );
