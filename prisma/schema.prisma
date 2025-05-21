@@ -91,14 +91,11 @@ model Guide {
 model OverviewDifficulty {
     id Int @id @default(autoincrement())
 
-    spec String
-    mode String
-
-    singleTarget  Int
-    multiTarget   Int
-    utility       Int
-    survivability Int
-    mobility      Int
+    singleTarget  Int?
+    multiTarget   Int?
+    utility       Int?
+    survivability Int?
+    mobility      Int?
 
     guide   Guide @relation(fields: [guideId], references: [id])
     guideId Int   @unique

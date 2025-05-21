@@ -18,3 +18,48 @@ export const slotBackgrounds: { [key: string]: string } = {
   OFF_HAND: '-16em',
   TABARD: '-18em',
 };
+
+export const slotNames: Record<string, string> = {
+  HEAD: 'Шлем',
+  NECK: 'Ожерелье',
+  SHOULDER: 'Наплечники',
+  SHIRT: 'Рубашка',
+  CHEST: 'Нагрудник',
+  BELT: 'Пояс',
+  LEGS: 'Штаны',
+  FEET: 'Сапоги',
+  WRIST: 'Наручи',
+  HAND: 'Перчатки',
+  FINGER: 'Кольцо',
+  SECOND_FINGER: 'Кольцо',
+  TRINKET: 'Аксессуар',
+  SECOND_TRINKET: 'Аксессуар',
+  BACK: 'Плащ',
+  MAIN_HAND: 'Основное оружие',
+  OFF_HAND: 'Левая рука',
+  TABARD: 'Гербовая накидка',
+};
+
+export const socketTableSlots = [
+  'HEAD',
+  'NECK',
+  'WRIST',
+  'BELT',
+  'FINGER',
+  'SECOND_FINGER',
+];
+
+export const enchantTableSlots = [
+  'HEAD',
+  'BACK',
+  'CHEST',
+  'WRIST',
+  'LEGS',
+  'FEET',
+  'FINGER',
+  'SECOND_FINGER',
+  'MAIN_HAND',
+  'OFF_HAND',
+];
+
+export const MAX_SOCKETS = 3;

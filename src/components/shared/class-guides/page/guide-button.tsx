@@ -8,7 +8,6 @@ interface GuideButtonProps {
 }
 
 export default function GuideButton({ guides }: GuideButtonProps) {
-  // console.log(guides);
   // Функция для генерации slug
   const generateSlug = (guide: GuideButtonWithRelations) => {
     const className = transliterate(guide.class.name)

@@ -2,7 +2,7 @@
 
 import { GearItem } from '@root/@types/prisma';
 import { Dialog, DialogTrigger } from '@root/components/ui/dialog';
-import { TooltipWrapper } from '../../wrapper';
+import { TooltipWrapper } from '@root/components/shared/wrapper';
 import { GearSlotEditorDialog } from './gear-slot-editor-dialog';
 import { slotBackgrounds } from '@root/utils/slot-backgrounds';
 

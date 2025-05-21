@@ -15,7 +15,7 @@ export async function generateMetadata({
   // Если slug отсутствует (например, для /class-guides), возвращаем общий заголовок
   if (!slug) {
     return {
-      metadataBase, // Указываем metadataBase
+      metadataBase,
       title: 'Гайды по классам - World of Warcraft',
       description:
         'Список гайдов по классам и специализациям для World of Warcraft',
@@ -63,7 +63,7 @@ export async function generateMetadata({
       url: `/class-guides/${slug}`,
       images: [
         {
-          url: guide.specialization.specBackground || '/default-image.jpg', // Теперь URL будет абсолютным
+          url: guide.specialization.specBackground,
           width: 1200,
           height: 630,
           alt: `${guide.class.name} ${guide.specialization.name}`,
@@ -74,7 +74,7 @@ export async function generateMetadata({
       card: 'summary_large_image',
       title,
       description: `Гайд для ${guide.class.name} (${guide.specialization.name})`,
-      images: [guide.specialization.specBackground || '/default-image.jpg'],
+      images: [guide.specialization.specBackground],
     },
   };
 }

@@ -1,39 +1,30 @@
+'use client';
+
+import { OverviewDifficulty } from '@prisma/client';
+import { useDifficultyEditor } from '@root/components/hooks/guide/edit';
 import Image from 'next/image';
 
 interface DifficultyBarProps {
+  guideId: number;
   icon: string;
   spec: string;
   classColor: string;
   gameMode: string;
-  ratings: {
-    label: string;
-    value: number;
-    max: number;
-  }[];
+  item: OverviewDifficulty;
 }
 
 export const GuideDifficultyBar = ({
+  guideId,
   icon,
   spec,
   classColor,
   gameMode,
-  ratings,
+  item,
 }: DifficultyBarProps) => {
-  // Функция для определения цвета в зависимости от значения
-  const getColorClass = (value: number) => {
-    if (value <= 1) return 'bg-[#E05B5B]'; // Красный
-    if (value <= 3) return 'bg-[#F09A18]'; // Желтый
-    return 'bg-[#199F2F]'; // Зеленый
-  };
-
-  // Функция для автоматического описания на основе значения
-  const getDescription = (value: number) => {
-    if (value <= 1) return 'Слабый';
-    if (value <= 2) return 'Ниже среднего';
-    if (value <= 3) return 'Средний';
-    if (value <= 4) return 'Сильный';
-    return 'Превосходный';
-  };
+  const { ratings, getDescription, getActiveColor } = useDifficultyEditor({
+    guideId,
+    item,
+  });
 
   return (
     <div className='relative max-w-[360px] flex-1 rounded-[12px] border'>
@@ -80,7 +71,7 @@ export const GuideDifficultyBar = ({
                     key={i}
                     className={`${
                       i < rating.value
-                        ? getColorClass(rating.value)
+                        ? getActiveColor(rating.value)
                         : 'bg-[#2B2C2C]'
                     } h-2 flex-1 rounded-[4px]`}
                   ></div>

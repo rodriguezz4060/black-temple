@@ -16,6 +16,7 @@ export type GuidePageProps = Prisma.GuideGetPayload<{
     class: true;
     specialization: true;
     modeRelation: true;
+    overviewDifficulty: true;
     overviewGears: {
       include: {
         itemSockets: true;
@@ -102,5 +103,3 @@ export interface GuideSpecGearProps {
   spec: string;
   gearData: GearItem[];
 }
-
-export type BisGearProps = Prisma.OverviewGearGetPayload<{}>;

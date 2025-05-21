@@ -2,6 +2,7 @@ import { notFound } from 'next/navigation';
 import { prisma } from '@prisma/prisma-client';
 import { transliterate } from 'transliteration';
 import { GuideEditor } from '@root/components/shared/class-guides/editor/guide-editor';
+import { Container } from '@root/components/shared';
 
 export default async function GuidePageRoute({
   params,
@@ -23,9 +24,10 @@ export default async function GuidePageRoute({
           tabs: true,
         },
       },
-      class: true, // Подключаем модель Class
-      specialization: true, // Подключаем модель Specialization
+      class: true,
+      specialization: true,
       modeRelation: true,
+      overviewDifficulty: true,
       overviewGears: {
         include: {
           itemSockets: true,
@@ -55,5 +57,9 @@ export default async function GuidePageRoute({
     };
   }
 
-  return <GuideEditor guide={guide} />;
+  return (
+    <Container className='secondary max-w-[1250px] px-4 pb-10'>
+      <GuideEditor guide={guide} />
+    </Container>
+  );
 }

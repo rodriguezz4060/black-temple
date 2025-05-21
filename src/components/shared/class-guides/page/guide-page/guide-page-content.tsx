@@ -14,7 +14,6 @@ interface GuideProps {
 }
 
 export const GuidePageContent = ({ guide }: GuideProps) => {
-  // console.log(guide);
   return (
     <div>
       <Container className='secondary max-w-[1250px] px-4 pb-10'>
@@ -45,22 +44,20 @@ export const GuidePageContent = ({ guide }: GuideProps) => {
                     specBanner={guide.specialization.difficultyBarBanner}
                     spec={guide.specialization.name}
                   />
-                  <GuideDifficultyBar
-                    icon={guide.specialization.specIcon}
-                    spec={guide.specialization.name}
-                    classColor={guide.class.classColor}
-                    gameMode={guide.modeRelation.name}
-                    ratings={[
-                      { label: 'Урон по одной цели', value: 4, max: 5 },
-                      { label: 'АоЕ', value: 2, max: 5 },
-                      { label: 'Утилити', value: 5, max: 5 },
-                      { label: 'Выживаемость', value: 1, max: 5 },
-                      { label: 'Мобильность', value: 3, max: 5 },
-                    ]}
-                  />
+                  {guide.overviewDifficulty && (
+                    <GuideDifficultyBar
+                      guideId={guide.id}
+                      icon={guide.specialization.specIcon}
+                      spec={guide.specialization.name}
+                      classColor={guide.class.classColor}
+                      gameMode={guide.modeRelation.name}
+                      item={guide.overviewDifficulty}
+                    />
+                  )}
                 </div>
               </div>
               <GuideSpecGear
+                guideId={guide.id}
                 gearBanner={guide.specialization.gearBanner}
                 characterClass={guide.class.name}
                 classColor={guide.class.classColor}

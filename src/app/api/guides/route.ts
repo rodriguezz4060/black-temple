@@ -47,15 +47,6 @@ export async function POST(request: Request) {
             },
           },
         },
-        overviewGear: {
-          create: {
-            headName: null,
-            headImg: null,
-            headLink: null,
-            headEnchantImg: null,
-            headEnchantUrl: null,
-          },
-        },
       },
 
       include: {
