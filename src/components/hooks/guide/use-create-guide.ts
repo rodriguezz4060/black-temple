@@ -16,7 +16,6 @@ export function useCreateGuide() {
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (!selectedClass || !selectedSpec || !selectedMode) {
-      toast.error('Все поля обязательны');
       return;
     }
 
@@ -40,7 +39,7 @@ export function useCreateGuide() {
         toast.success('Гайд успешно создан!');
         router.push(`/class-guides/${expectedSlug}`);
       } else {
-        toast.error(result.error || 'Не удалось создать гайд');
+        toast.error('Не удалось создать гайд');
       }
     } catch (error) {
       toast.error('Произошла ошибка при создании гайда');
