@@ -22,12 +22,12 @@ export const AuthModal: React.FC<Props> = ({ open, onClose }) => {
 
   return (
     <Dialog open={open} onOpenChange={handleClose}>
-      <DialogContent className='min-h-[700px] min-w-[700px] p-0'>
+      <DialogContent className='aria-describedby={undefined} min-h-[700px] min-w-[700px] p-0'>
         <div className='flex w-full'>
           <div className='w-[40%]'>
             <img
               className='h-full rounded-l-md object-cover'
-              src='/assets/images/login.jpg'
+              src='/assets/login.jpg'
               alt='logo'
             />
           </div>
