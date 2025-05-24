@@ -1,3 +1,5 @@
+'use client';
+
 import { GuidePageProps } from '@root/@types/prisma';
 import { BisGearEditor } from './bis-gear-editor';
 import { LeftSideBar } from '@root/components/shared/class-guides';
@@ -5,6 +7,7 @@ import { GuideSpecBanner } from '@root/components/shared/class-guides/page/guide
 import { GuideAnchorWrapper } from '@root/components/shared/wrapper';
 import { Title } from '@root/components/ui/title';
 import { DifficultyBarEditor } from './difficulty-bar-editor';
+import { GuideHeroTalentsEditor } from './guide-hero-talents-editor';
 
 interface GuideEditorProps {
   guide: GuidePageProps;
@@ -105,6 +108,13 @@ export const GuideEditor: React.FC<GuideEditorProps> = ({ guide }) => {
           spec={guide.specialization.name}
           patch={guide.patch}
         />
+        {guide.heroTalents && (
+          <GuideHeroTalentsEditor
+            heroTalents={guide.heroTalents}
+            initialTabs={guide.heroTalents.tabs}
+            guideId={guide.id}
+          />
+        )}
       </div>
     </div>
   );

@@ -5,6 +5,8 @@ import { Nunito } from 'next/font/google';
 import Script from 'next/script';
 import { Toaster } from 'react-hot-toast';
 import './globals.css';
+import { SessionProvider } from 'next-auth/react';
+import { Providers } from '@root/components/shared/provider';
 
 const nunito = Nunito({
   subsets: ['cyrillic'],
@@ -35,11 +37,10 @@ export default function RootLayout({
       </head>
       <body className={nunito.className}>
         <main className='min-h-screen'>
-          <ThemeProvider attribute='class' defaultTheme='dark' enableSystem>
+          <Providers>
             <Header />
             {children}
-            <Toaster />
-          </ThemeProvider>
+          </Providers>
         </main>
       </body>
     </html>

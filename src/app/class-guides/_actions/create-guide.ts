@@ -85,7 +85,6 @@ export async function createGuideAction(formData: FormData) {
     // Валидация с помощью Zod
     const validatedData = createGuideSchemas.parse(data);
 
-    // Создаём гайд через Prisma с пустым OverviewGear
     const guide = await prisma.guide.create({
       data: {
         classId: validatedData.classId,
@@ -97,11 +96,27 @@ export async function createGuideAction(formData: FormData) {
             itemSlot: slotType,
           })),
         },
+        overviewDifficulty: {
+          create: {
+            singleTarget: null,
+            multiTarget: null,
+            utility: null,
+            survivability: null,
+            mobility: null,
+          },
+        },
+        heroTalents: {
+          create: {
+            textArea: null,
+          },
+        },
       },
       include: {
         class: true,
         specialization: true,
         overviewGears: true,
+        overviewDifficulty: true,
+        heroTalents: true,
       },
     });
 
