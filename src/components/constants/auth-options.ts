@@ -1,8 +1,9 @@
+// components/constants/auth-options.ts
 import { AuthOptions } from 'next-auth';
 import GitHubProvider from 'next-auth/providers/github';
 import CredentialsProvider from 'next-auth/providers/credentials';
 import GoogleProvider from 'next-auth/providers/google';
-import { compare, hashSync } from 'bcrypt';
+import { compare, hash } from 'bcrypt';
 import { UserRole } from '@prisma/client';
 import { prisma } from '@prisma/prisma-client';
 
@@ -17,11 +18,11 @@ export const authOptions: AuthOptions = {
       clientSecret: process.env.GITHUB_SECRET || '',
       profile(profile) {
         return {
-          id: profile.id,
+          id: profile.id.toString(),
           name: profile.name || profile.login,
           email: profile.email,
           image: profile.avatar_url,
-          role: 'USER' as UserRole,
+          role: UserRole.USER,
         };
       },
     }),
@@ -36,31 +37,27 @@ export const authOptions: AuthOptions = {
           return null;
         }
 
-        const values = {
-          email: credentials.email,
-        };
-
-        const findUser = await prisma.user.findFirst({
-          where: values,
+        const user = await prisma.user.findFirst({
+          where: { email: credentials.email },
         });
 
-        if (!findUser) {
+        if (!user || !user.password) {
           return null;
         }
 
         const isPasswordValid = await compare(
           credentials.password,
-          findUser.password
+          user.password
         );
-
         if (!isPasswordValid) {
           return null;
         }
+
         return {
-          id: findUser.id,
-          email: findUser.email,
-          name: findUser.fullName,
-          role: findUser.role,
+          id: user.id.toString(),
+          email: user.email,
+          name: user.fullName,
+          role: user.role,
         };
       },
     }),
@@ -68,6 +65,7 @@ export const authOptions: AuthOptions = {
   secret: process.env.NEXTAUTH_SECRET,
   session: {
     strategy: 'jwt',
+    maxAge: 24 * 60 * 60, // 24 часа
   },
   callbacks: {
     async signIn({ user, account }) {
@@ -94,15 +92,12 @@ export const authOptions: AuthOptions = {
 
         if (findUser) {
           await prisma.user.update({
-            where: {
-              id: findUser.id,
-            },
+            where: { id: findUser.id },
             data: {
               provider: account?.provider,
               providerId: account?.providerAccountId,
             },
           });
-
           return true;
         }
 
@@ -110,9 +105,10 @@ export const authOptions: AuthOptions = {
           data: {
             email: user.email,
             fullName: user.name || 'User #' + user.id,
-            password: hashSync(user.id.toString(), 10),
+            password: await hash(user.id.toString(), 10), // Асинхронный hash
             provider: account?.provider,
             providerId: account?.providerAccountId,
+            role: UserRole.USER,
           },
         });
 
@@ -122,32 +118,24 @@ export const authOptions: AuthOptions = {
         return false;
       }
     },
-    async jwt({ token }) {
-      if (!token.email) {
-        return token;
+    async jwt({ token, user }) {
+      // При первом входе добавляем данные в токен
+      if (user) {
+        token.id = user.id;
+        token.email = user.email;
+        token.fullName = user.name;
+        token.role = user.role;
       }
-
-      const findUser = await prisma.user.findFirst({
-        where: {
-          email: token.email,
-        },
-      });
-
-      if (findUser) {
-        token.id = String(findUser.id);
-        token.email = findUser.email;
-        token.fullName = findUser.fullName;
-        token.role = findUser.role;
-      }
-
       return token;
     },
-    session({ session, token }) {
-      if (session?.user) {
-        session.user.id = token.id;
-        session.user.role = token.role;
+    async session({ session, token }) {
+      if (session.user) {
+        session.user.id = token.id as string;
+        session.user.email = token.email as string;
+        session.user.name = token.fullName as string | null;
+        session.user.role = token.role as UserRole;
+        session.user.image = token.image as string | null;
       }
-
       return session;
     },
   },

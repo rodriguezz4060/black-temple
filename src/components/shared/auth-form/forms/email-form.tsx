@@ -9,6 +9,7 @@ import toast from 'react-hot-toast';
 import { Button } from '@root/components/ui/button';
 import { FormInput } from '../../forms/input-form';
 import { Title } from '@root/components/ui/title';
+import { ArrowLeft } from 'lucide-react';
 
 interface Props {
   onClose?: VoidFunction;
@@ -53,8 +54,16 @@ export const EmailForm: React.FC<Props> = ({ setType, onClose }) => {
         onSubmit={form.handleSubmit(onSubmit)}
       >
         <div className='flex w-[85%] items-center justify-between'>
-          <div className='mr-2'>
-            <Title text='Вход' size='md' className='font-bold' />
+          <div className='flex flex-row items-center gap-2'>
+            <span
+              className='cursor-pointer text-blue-600 hover:text-blue-700'
+              onClick={() => setType('login')}
+            >
+              <ArrowLeft />
+            </span>
+            <div className='mr-2'>
+              <Title text='Вход' size='md' className='font-bold' />
+            </div>
           </div>
         </div>
 

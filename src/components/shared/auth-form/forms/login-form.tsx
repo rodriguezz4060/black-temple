@@ -1,14 +1,14 @@
 import { Button } from '@root/components/ui/button';
 import { Github, Mail } from 'lucide-react';
 import { signIn } from 'next-auth/react';
+import Image from 'next/image';
 import React from 'react';
 
 interface Props {
-  onClose?: VoidFunction;
   setType: React.Dispatch<React.SetStateAction<'login' | 'email' | 'register'>>;
 }
 
-export const LoginForm: React.FC<Props> = ({ setType, onClose }) => {
+export const LoginForm: React.FC<Props> = ({ setType }) => {
   return (
     <div className='flex w-[80%] flex-col gap-4'>
       <p className='text-center text-xl font-bold'>Вход</p>
@@ -24,7 +24,13 @@ export const LoginForm: React.FC<Props> = ({ setType, onClose }) => {
         type='button'
         className='bg-secondary flex items-center gap-2 text-sm font-bold'
       >
-        <img className='h-6 w-6' src='/google24px.svg' alt='Google' />
+        <Image
+          className='h-6 w-6'
+          src='/google24px.svg'
+          width={24}
+          height={24}
+          alt='Google'
+        />
         Google
       </Button>
 

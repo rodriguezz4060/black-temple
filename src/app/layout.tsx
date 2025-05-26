@@ -1,11 +1,8 @@
 import { Header } from '@root/components/shared';
-import { ThemeProvider } from '@root/components/shared/theme-provider';
 import type { Metadata } from 'next';
 import { Nunito } from 'next/font/google';
 import Script from 'next/script';
-import { Toaster } from 'react-hot-toast';
 import './globals.css';
-import { SessionProvider } from 'next-auth/react';
 import { Providers } from '@root/components/shared/provider';
 
 const nunito = Nunito({

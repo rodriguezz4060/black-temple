@@ -3,8 +3,6 @@
 import { cn } from '@root/lib/utils';
 import React from 'react';
 import Image from 'next/image';
-import { Button } from '../ui/button';
-import { User } from 'lucide-react';
 import { Container, DarkModeToggle } from '.';
 import { AuthModal } from './auth-form/auth-modal';
 import { ProfileButton } from './profile/profile-button';

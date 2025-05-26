@@ -5,22 +5,16 @@ import { FormProvider, useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { TFormRegisterSchema, formRegisterSchema } from './schemas';
 import toast from 'react-hot-toast';
-
-import { FormInput } from '../../forms/input-form';
+import { FormInput } from '@root/components/shared/forms/input-form';
 import { Button } from '@root/components/ui/button';
-import { registerUser } from '@root/app/_actions/create-user';
+import { registerUser } from '@root/app/profile/_actions/create-user';
 
 interface Props {
   onClose?: VoidFunction;
-  onClickLogin?: VoidFunction;
   setType: React.Dispatch<React.SetStateAction<'login' | 'email' | 'register'>>;
 }
 
-export const RegisterForm: React.FC<Props> = ({
-  setType,
-  onClose,
-  onClickLogin,
-}) => {
+export const RegisterForm: React.FC<Props> = ({ setType, onClose }) => {
   const form = useForm<TFormRegisterSchema>({
     resolver: zodResolver(formRegisterSchema),
     defaultValues: {
@@ -44,14 +38,12 @@ export const RegisterForm: React.FC<Props> = ({
       });
 
       onClose?.();
-    } catch (error) {
+    } catch {
       return toast.error('Неверный E-Mail или пароль', {
         icon: '❌',
       });
     }
   };
-
-  console.log(form.formState);
 
   return (
     <FormProvider {...form}>
@@ -63,7 +55,7 @@ export const RegisterForm: React.FC<Props> = ({
 
         <FormInput
           name='email'
-          label='email'
+          label='Email'
           placeholder='user@gmail.com'
           required
         />
