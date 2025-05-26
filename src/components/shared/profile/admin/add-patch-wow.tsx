@@ -50,8 +50,6 @@ export default function PatchesPage({
       );
       return;
     }
-
-    // Check if a patch with the same version already exists
     const existingPatch = expansions.find(
       expansion => expansion.patchVersion === currentPatch
     );
@@ -65,7 +63,7 @@ export default function PatchesPage({
     try {
       const response = await addPatchAction({
         ...data,
-        patchVersion: currentPatch, // Ensure we're using currentPatch
+        patchVersion: currentPatch,
       });
       if (response.success) {
         toast.success('Патч успешно добавлен');

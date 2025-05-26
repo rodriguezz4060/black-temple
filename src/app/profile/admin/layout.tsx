@@ -1,6 +1,6 @@
 'use client';
 
-import { AppSidebar } from '@root/components/app-sidebar';
+import { AppSidebar } from '@root/components/shared/app-sidebar';
 import {
   SidebarInset,
   SidebarProvider,
@@ -16,7 +16,7 @@ import {
 } from '@root/components/ui/breadcrumb';
 import { Separator } from '@root/components/ui/separator';
 import { usePathname } from 'next/navigation';
-import { data } from '@root/components/app-sidebar';
+import { data } from '@root/components/shared/app-sidebar';
 import Link from 'next/link';
 
 export default function AdminLayout({
