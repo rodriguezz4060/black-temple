@@ -33,7 +33,6 @@ export default function PatchesPage({
   currentPatch,
 }: ExpansionProps) {
   const { data: session } = useSession();
-  console.log('Current Patch:', currentPatch);
   const form = useForm<TAddPatchWowSchema>({
     resolver: zodResolver(addPatchWowSchema),
     defaultValues: {
@@ -78,9 +77,9 @@ export default function PatchesPage({
 
   return (
     <div className='flex flex-1 flex-col gap-4 p-4'>
-      {session?.user.role === 'ADMIN' && (
-        <div className='grid auto-rows-min gap-4 md:grid-cols-1'>
-          <div className='bg-muted/50 max-w-[700px] rounded-md p-5'>
+      <div className='grid grid-cols-1 gap-4 md:grid-cols-[40%_60%]'>
+        {session?.user.role === 'ADMIN' && (
+          <div className='bg-muted/50 rounded-md p-5'>
             <Title
               className='mb-4 text-2xl font-bold'
               text='Добавить новый патч'
@@ -104,10 +103,7 @@ export default function PatchesPage({
                 />
                 <div className='flex flex-col gap-2'>
                   <Label className='text-[16px]'>Текущая версия игры:</Label>
-                  <Badge
-                    variant='outline'
-                    className='mr-auto h-10 text-2xl md:flex-col'
-                  >
+                  <Badge variant='outline' className='mr-auto h-10 text-2xl'>
                     {currentPatch}
                   </Badge>
                 </div>
@@ -121,50 +117,54 @@ export default function PatchesPage({
               </form>
             </FormProvider>
           </div>
-        </div>
-      )}
-      <div className='bg-muted/50 max-w-[900px] flex-1 rounded-md p-5 md:min-h-min'>
-        <Title className='mb-4 text-2xl font-bold' text='База патчей WoW' />
-        <Table>
-          <TableCaption>База патчей WoW</TableCaption>
-          <TableHeader>
-            <TableRow>
-              <TableHead className='w-[100px]'>Аддон</TableHead>
-              <TableHead>Сезон</TableHead>
-              <TableHead>Версия</TableHead>
-              {session?.user.role === 'ADMIN' && (
-                <TableHead className='text-right'>Удалить</TableHead>
-              )}
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {expansions.length > 0 ? (
-              expansions.map(expansion => (
-                <TableRow key={expansion.id}>
-                  <TableCell className='font-medium'>
-                    {expansion.name}
-                  </TableCell>
-                  <TableCell>{expansion.patchName}</TableCell>
-                  <TableCell>{expansion.patchVersion}</TableCell>
-                  {session?.user.role === 'ADMIN' && (
-                    <TableCell className='text-right'>
-                      <Button variant='destructive' size='sm'>
-                        Удалить
-                      </Button>
-                    </TableCell>
-                  )}
-                </TableRow>
-              ))
-            ) : (
+        )}
+        <div className='bg-muted/50 rounded-md p-5'>
+          <Title className='mb-4 text-2xl font-bold' text='База патчей WoW' />
+          <Table>
+            <TableCaption>База патчей WoW</TableCaption>
+            <TableHeader>
               <TableRow>
-                <TableCell colSpan={4} className='py-4 text-center'>
-                  Нет данных о патчах. Добавьте первый патч используя форму
-                  выше.
-                </TableCell>
+                <TableHead className='w-[100px]'>Аддон</TableHead>
+                <TableHead>Сезон</TableHead>
+                <TableHead>Версия</TableHead>
+                {session?.user.role === 'ADMIN' && (
+                  <TableHead className='text-right'>Удалить</TableHead>
+                )}
               </TableRow>
-            )}
-          </TableBody>
-        </Table>
+            </TableHeader>
+            <TableBody>
+              {expansions.length > 0 ? (
+                expansions.map(expansion => (
+                  <TableRow key={expansion.id}>
+                    <TableCell className='font-medium'>
+                      {expansion.name}
+                    </TableCell>
+                    <TableCell>{expansion.patchName}</TableCell>
+                    <TableCell>{expansion.patchVersion}</TableCell>
+                    {session?.user.role === 'ADMIN' && (
+                      <TableCell className='text-right'>
+                        <Button variant='destructive' size='sm'>
+                          Удалить
+                        </Button>
+                      </TableCell>
+                    )}
+                  </TableRow>
+                ))
+              ) : (
+                <TableRow>
+                  <TableCell
+                    colSpan={session?.user.role === 'ADMIN' ? 4 : 3}
+                    className='py-4 text-center'
+                  >
+                    Нет данных о патчах.{' '}
+                    {session?.user.role === 'ADMIN' &&
+                      'Добавьте первый патч используя форму слева.'}
+                  </TableCell>
+                </TableRow>
+              )}
+            </TableBody>
+          </Table>
+        </div>
       </div>
     </div>
   );
