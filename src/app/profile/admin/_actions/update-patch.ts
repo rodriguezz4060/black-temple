@@ -1,4 +1,3 @@
-// app/profile/admin/_actions/add-patch-action.ts
 'use server';
 
 import { prisma } from '@prisma/prisma-client';
@@ -10,34 +9,21 @@ import {
 } from '@root/components/shared/profile/admin/schemas/add-patch';
 import { revalidatePath } from 'next/cache';
 
-export async function addPatchAction(data: TAddPatchWowSchema) {
+export async function updatePatchAction(id: number, data: TAddPatchWowSchema) {
   const session = await getServerSession(authOptions);
 
   if (!session || session.user.role !== 'ADMIN') {
     return {
       success: false,
-      error: 'Только администраторы могут добавлять патчи',
+      error: 'Только администраторы могут редактировать патчи',
     };
   }
 
   try {
     const validatedData = addPatchWowSchema.parse(data);
 
-    const existingPatch = await prisma.expansion.findFirst({
-      where: {
-        name: validatedData.name,
-        patchVersion: validatedData.patchVersion,
-      },
-    });
-
-    if (existingPatch) {
-      return {
-        success: false,
-        error: 'Патч с таким названием и версией уже существует',
-      };
-    }
-
-    const newPatch = await prisma.expansion.create({
+    const updatedPatch = await prisma.expansion.update({
+      where: { id: Number(id) },
       data: {
         name: validatedData.name,
         patchName: validatedData.patchName,
@@ -46,8 +32,9 @@ export async function addPatchAction(data: TAddPatchWowSchema) {
     });
 
     revalidatePath('/admin/add-patch'); // Ревалидируем страницу админ-панели
-    return { success: true, data: newPatch };
-  } catch {
-    return { success: false, error: 'Произошла ошибка при добавлении патча' };
+    return { success: true, data: updatedPatch };
+  } catch (error) {
+    console.error('Ошибка при обновлении патча:', error);
+    return { success: false, error: 'Произошла ошибка при обновлении патча' };
   }
 }

@@ -10,9 +10,9 @@ datasource db {
 
 model Expansion {
     id           Int      @id @default(autoincrement())
-    name         String?
+    name         String
     patchVersion String   @unique
-    patchName    String?
+    patchName    String
     guides       Guide[]  @relation("ExpansionGuides")
     createdAt    DateTime @default(now())
     updatedAt    DateTime @updatedAt

@@ -1,5 +1,4 @@
 import { prisma } from '@prisma/prisma-client';
-import { deletePatchAction } from '@root/app/profile/admin/_actions/delete-patch';
 import { NextResponse } from 'next/server';
 
 export async function GET() {
@@ -18,19 +17,23 @@ export async function GET() {
   }
 }
 
-export async function DELETE(
-  request: Request,
-  { params }: { params: { id: number } }
-) {
+export async function DELETE(req: Request) {
+  const { id } = await req.json();
+
   try {
-    const result = await deletePatchAction(params.id);
+    await prisma.expansion.delete({
+      where: { id: Number(id) },
+    });
 
-    if (!result.success) {
-      return NextResponse.json({ error: result.error }, { status: 403 });
-    }
-
-    return NextResponse.json({ success: true });
-  } catch {
-    return NextResponse.json({ error: 'Ошибка сервера' }, { status: 500 });
+    return NextResponse.json(
+      { message: 'Патч успешно удален' },
+      { status: 200 }
+    );
+  } catch (error) {
+    console.error('Ошибка при удалении патча:', error);
+    return NextResponse.json(
+      { error: 'Ошибка при удалении патча' },
+      { status: 500 }
+    );
   }
 }
