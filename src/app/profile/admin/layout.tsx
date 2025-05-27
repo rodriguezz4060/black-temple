@@ -7,6 +7,11 @@ import {
 import { Separator } from '@root/components/ui/separator';
 import { ClientBreadcrumbs } from '@root/components/shared/profile/admin/breadcrumbs-client';
 
+export const metadata = {
+  title: 'Admin Panel',
+  description: 'Admin panel for managing the application',
+};
+
 export default function AdminLayout({
   children,
 }: {

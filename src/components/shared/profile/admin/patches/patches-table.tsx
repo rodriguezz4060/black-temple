@@ -20,7 +20,7 @@ interface PatchTableProps {
   isDeleting: number | null;
   onEdit: (patch: Expansion) => void;
   onDelete: (id: number) => void;
-  isAdmin: boolean;
+
   isSubmitting: boolean;
 }
 
@@ -29,7 +29,7 @@ export default function PatchTable({
   isDeleting,
   onEdit,
   onDelete,
-  isAdmin,
+
   isSubmitting,
 }: PatchTableProps) {
   return (
@@ -46,7 +46,7 @@ export default function PatchTable({
             <TableHead className='w-[100px]'>Аддон</TableHead>
             <TableHead>Сезон</TableHead>
             <TableHead>Версия</TableHead>
-            {isAdmin && <TableHead className='text-right'>Действия</TableHead>}
+            <TableHead className='text-right'>Действия</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
@@ -56,37 +56,35 @@ export default function PatchTable({
                 <TableCell className='font-medium'>{expansion.name}</TableCell>
                 <TableCell>{expansion.patchName}</TableCell>
                 <TableCell>{expansion.patchVersion}</TableCell>
-                {isAdmin && (
-                  <TableCell className='flex justify-end gap-2 text-right'>
-                    <Button
-                      size='icon'
-                      onClick={() => onEdit(expansion)}
-                      disabled={isDeleting === expansion.id}
-                    >
-                      <TooltipWrapper content='Редактировать'>
-                        <SquarePen />
-                      </TooltipWrapper>
-                    </Button>
-                    <Button
-                      variant='destructive'
-                      size='icon'
-                      onClick={() => onDelete(expansion.id)}
-                      disabled={isDeleting === expansion.id}
-                      loading={isDeleting === expansion.id}
-                    >
-                      <TooltipWrapper content='Удалить'>
-                        <Trash2 className='text-white' />
-                      </TooltipWrapper>
-                    </Button>
-                  </TableCell>
-                )}
+
+                <TableCell className='flex justify-end gap-2 text-right'>
+                  <Button
+                    size='icon'
+                    onClick={() => onEdit(expansion)}
+                    disabled={isDeleting === expansion.id}
+                  >
+                    <TooltipWrapper content='Редактировать'>
+                      <SquarePen />
+                    </TooltipWrapper>
+                  </Button>
+                  <Button
+                    variant='destructive'
+                    size='icon'
+                    onClick={() => onDelete(expansion.id)}
+                    disabled={isDeleting === expansion.id}
+                    loading={isDeleting === expansion.id}
+                  >
+                    <TooltipWrapper content='Удалить'>
+                      <Trash2 className='text-white' />
+                    </TooltipWrapper>
+                  </Button>
+                </TableCell>
               </TableRow>
             ))
           ) : (
             <TableRow>
-              <TableCell colSpan={isAdmin ? 4 : 3} className='py-4 text-center'>
-                Нет данных о патчах.{' '}
-                {isAdmin && 'Добавьте первый патч используя форму слева.'}
+              <TableCell className='py-4 text-center'>
+                Нет данных о патчах. Добавьте первый патч используя форму слева.
               </TableCell>
             </TableRow>
           )}

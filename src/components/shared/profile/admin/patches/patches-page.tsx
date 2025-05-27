@@ -10,13 +10,11 @@ import EditPatchForm from './edit-patch-form';
 interface PatchesClientProps {
   initialExpansions: ExpansionProps[];
   currentPatch: string;
-  isAdmin: boolean;
 }
 
 export default function PatchesClient({
   initialExpansions,
   currentPatch,
-  isAdmin,
 }: PatchesClientProps) {
   const {
     expansions,
@@ -29,24 +27,22 @@ export default function PatchesClient({
     handleEditPatch,
     handleEditSubmit,
     setEditingPatch,
-  } = usePatchManager(initialExpansions, currentPatch, isAdmin);
+  } = usePatchManager(initialExpansions, currentPatch);
 
   return (
     <div className='flex flex-1 flex-col gap-4 p-4'>
       <div className='grid grid-cols-1 gap-4 md:grid-cols-[40%_60%]'>
-        {isAdmin && (
-          <AddPatchForm
-            form={addForm}
-            onSubmit={handleAddPatch}
-            currentPatch={currentPatch}
-          />
-        )}
+        <AddPatchForm
+          form={addForm}
+          onSubmit={handleAddPatch}
+          currentPatch={currentPatch}
+        />
+
         <PatchTable
           expansions={expansions}
           isDeleting={isDeleting}
           onEdit={handleEditPatch}
           onDelete={handleDeletePatch}
-          isAdmin={isAdmin}
           isSubmitting={
             addForm.formState.isSubmitting || editForm.formState.isSubmitting
           }

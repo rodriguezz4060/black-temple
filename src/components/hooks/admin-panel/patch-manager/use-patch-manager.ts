@@ -15,8 +15,7 @@ import toast from 'react-hot-toast';
 
 export const usePatchManager = (
   initialExpansions: ExpansionProps[],
-  currentPatch: string,
-  isAdmin: boolean
+  currentPatch: string
 ) => {
   const [expansions, setExpansions] =
     useState<ExpansionProps[]>(initialExpansions);
@@ -42,11 +41,6 @@ export const usePatchManager = (
   });
 
   const handleAddPatch = async (data: TAddPatchWowSchema) => {
-    if (!isAdmin) {
-      toast.error('Недостаточно прав');
-      return;
-    }
-
     const existingPatch = expansions.find(
       expansion => expansion.patchVersion === currentPatch
     );
@@ -73,11 +67,6 @@ export const usePatchManager = (
   };
 
   const handleDeletePatch = async (id: number) => {
-    if (!isAdmin) {
-      toast.error('Только администраторы могут удалять патчи');
-      return;
-    }
-
     setIsDeleting(id);
     try {
       const response = await deletePatch(id);
@@ -104,7 +93,7 @@ export const usePatchManager = (
   };
 
   const handleEditSubmit = async (data: TAddPatchWowSchema) => {
-    if (!editingPatch || !isAdmin) {
+    if (!editingPatch) {
       toast.error('Недостаточно прав или патч не выбран');
       return;
     }
@@ -141,6 +130,5 @@ export const usePatchManager = (
     handleEditPatch,
     handleEditSubmit,
     setEditingPatch,
-    isAdmin,
   };
 };

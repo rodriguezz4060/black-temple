@@ -1,16 +1,20 @@
 import React from 'react';
-import { User } from '@prisma/client';
 import { Container } from '@root/components/shared/container';
 import Image from 'next/image';
 import { Settings } from 'lucide-react';
 import { Button } from '@root/components/ui/button';
 import Link from 'next/link';
+import { User } from '@prisma/client';
 
 interface Props {
-  data: User;
+  user: User | null;
+  data: {
+    id: string;
+    role: string;
+  };
 }
 
-export const ProfilePage: React.FC<Props> = ({ data }) => {
+export const ProfilePage: React.FC<Props> = ({ data, user }) => {
   const canAccessAdmin = data.role === 'ADMIN';
 
   return (
