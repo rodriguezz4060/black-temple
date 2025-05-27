@@ -1,8 +1,8 @@
 import { prisma } from '@prisma/prisma-client';
-import AddPatchWow from '@root/components/shared/profile/admin/add-patch-wow';
 import { getUserSession } from '@root/lib/get-user-session';
 import { redirect } from 'next/navigation';
 import { PatchData } from '../_actions/get-patch-number';
+import PatchesPage from '@root/components/shared/profile/admin/patches/patches-page';
 
 export default async function AdminPanel() {
   const session = await getUserSession();
@@ -23,6 +23,8 @@ export default async function AdminPanel() {
     return redirect('/not-auth');
   }
 
+  const isAdmin = user.role === 'ADMIN';
+
   const currentPatch = await PatchData();
   const expansions = await prisma.expansion.findMany({
     orderBy: {
@@ -31,9 +33,10 @@ export default async function AdminPanel() {
   });
 
   return (
-    <AddPatchWow
+    <PatchesPage
       currentPatch={currentPatch.patch}
-      expansions={expansions || []}
+      initialExpansions={expansions || []}
+      isAdmin={isAdmin}
     />
   );
 }

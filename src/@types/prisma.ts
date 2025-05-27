@@ -1,4 +1,9 @@
-import { ClassSelection, ClassSpecialization, Prisma } from '@prisma/client';
+import {
+  ClassSelection,
+  ClassSpecialization,
+  Expansion,
+  Prisma,
+} from '@prisma/client';
 
 export type GuidePageProps = Prisma.GuideGetPayload<{
   include: {
@@ -97,3 +102,5 @@ export type HeroTalentsProps = Prisma.SectionGetPayload<{
     tabs: true;
   };
 }>;
+
+export type ExpansionProps = Expansion & {};
