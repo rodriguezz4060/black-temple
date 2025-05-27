@@ -27,6 +27,7 @@ model User {
     bio        String?
     website    String?
     discord    String?
+    battleTag  String?
     twitter    String?
     youtube    String?
     twitch     String?

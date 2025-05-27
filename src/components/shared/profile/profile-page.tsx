@@ -4,17 +4,15 @@ import Image from 'next/image';
 import { Settings } from 'lucide-react';
 import { Button } from '@root/components/ui/button';
 import Link from 'next/link';
-import { User } from '@prisma/client';
 
 interface Props {
-  user: User | null;
   data: {
     id: string;
     role: string;
   };
 }
 
-export const ProfilePage: React.FC<Props> = ({ data, user }) => {
+export const ProfilePage: React.FC<Props> = ({ data }) => {
   const canAccessAdmin = data.role === 'ADMIN';
 
   return (
@@ -48,7 +46,11 @@ export const ProfilePage: React.FC<Props> = ({ data, user }) => {
                       <Button>Admin</Button>
                     </Link>
                   )}
-                  <Settings width={24} hanging={24} />
+                  <Link href={'/profile/settings'}>
+                    <Button variant={'outline'} size={'icon'}>
+                      <Settings width={24} hanging={24} />
+                    </Button>
+                  </Link>
                 </div>
               </div>
             </div>

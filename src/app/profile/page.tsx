@@ -1,4 +1,3 @@
-import { prisma } from '@prisma/prisma-client';
 import { ProfilePage } from '@root/components/shared/profile/profile-page';
 import { getUserSession } from '@root/lib/get-user-session';
 import { redirect } from 'next/navigation';
@@ -10,9 +9,5 @@ export default async function Profile() {
     return redirect('/not-auth');
   }
 
-  const user = await prisma.user.findFirst({
-    where: { id: Number(session.user.id) },
-  });
-
-  return <ProfilePage data={session.user} user={user} />;
+  return <ProfilePage data={session.user} />;
 }
