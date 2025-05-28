@@ -89,7 +89,7 @@ export const ProfilePage: React.FC<Props> = ({ data, user }) => {
                         <Image
                           src='assets/icons/battlenet.svg'
                           alt='Battle.net'
-                          className='h-5 w-5 opacity-70'
+                          className='h-5 w-5'
                           width={20}
                           height={20}
                         />
@@ -101,7 +101,7 @@ export const ProfilePage: React.FC<Props> = ({ data, user }) => {
                         <Image
                           src='assets/icons/discord.svg'
                           alt='Discord'
-                          className='h-5 w-5 opacity-70'
+                          className='h-5 w-5'
                           width={20}
                           height={20}
                         />
@@ -113,7 +113,7 @@ export const ProfilePage: React.FC<Props> = ({ data, user }) => {
                         <Image
                           src='/assets/icons/telegram.svg'
                           alt='Telegram'
-                          className='h-5 w-5 opacity-70'
+                          className='h-5 w-5'
                           width={20}
                           height={20}
                         />
@@ -180,7 +180,7 @@ export const ProfilePage: React.FC<Props> = ({ data, user }) => {
                         <Image
                           src='/assets/icons/patreon.svg'
                           alt='Patreon'
-                          className='h-5 w-5 opacity-70'
+                          className='h-5 w-5'
                           width={20}
                           height={20}
                         />
@@ -195,7 +195,7 @@ export const ProfilePage: React.FC<Props> = ({ data, user }) => {
                         <Image
                           src='/assets/icons/boosty.svg'
                           alt='Boosty'
-                          className='h-5 w-5 opacity-70'
+                          className='h-5 w-5'
                           width={20}
                           height={20}
                         />

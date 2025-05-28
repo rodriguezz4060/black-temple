@@ -8,6 +8,8 @@ import toast from 'react-hot-toast';
 import { FormInput } from '@root/components/shared/forms/input-form';
 import { Button } from '@root/components/ui/button';
 import { registerUser } from '@root/app/profile/_actions/create-user';
+import { signIn } from 'next-auth/react';
+import { useRouter } from 'next/navigation';
 
 interface Props {
   onClose?: VoidFunction;
@@ -25,23 +27,49 @@ export const RegisterForm: React.FC<Props> = ({ setType, onClose }) => {
     },
   });
 
+  const router = useRouter();
+
   const onSubmit = async (data: TFormRegisterSchema) => {
     try {
+      // Регистрация пользователя
       await registerUser({
         email: data.email,
         fullName: data.fullName,
         password: data.password,
       });
 
-      toast.error('Регистрация успешна 📝.', {
+      // Автоматическая авторизация через next-auth
+      const signInResponse = await signIn('credentials', {
+        email: data.email,
+        password: data.password,
+        redirect: true,
+      });
+
+      if (signInResponse?.error) {
+        throw new Error('Ошибка авторизации');
+      }
+
+      toast.success('Регистрация и авторизация успешны 📝.', {
         icon: '✅',
       });
 
       onClose?.();
-    } catch {
-      return toast.error('Неверный E-Mail или пароль', {
-        icon: '❌',
-      });
+      router.push('/');
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        toast.error(
+          error.message === 'Такой пользователь уже существует'
+            ? 'Пользователь с таким email уже зарегистрирован'
+            : 'Ошибка при регистрации или авторизации',
+          {
+            icon: '❌',
+          }
+        );
+      } else {
+        toast.error('Неизвестная ошибка при регистрации или авторизации', {
+          icon: '❌',
+        });
+      }
     }
   };
 
