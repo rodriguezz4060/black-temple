@@ -42,7 +42,7 @@ export default function ProfileSettingsPage({ data }: SettingsProps) {
       <div className='flex flex-1 flex-col gap-4 overflow-y-auto p-4 pt-0'>
         <FormProvider {...form}>
           <form
-            className='mt-2 flex w-90 flex-col gap-5 lg:ml-10'
+            className='mt-2 flex w-90 flex-col gap-2 lg:ml-10'
             onSubmit={form.handleSubmit(onSubmit)}
           >
             <div className='relative flex gap-4'>

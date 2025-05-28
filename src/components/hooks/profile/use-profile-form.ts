@@ -18,6 +18,7 @@ export const useProfileForm = () => {
       const updatedData = {
         email: data.email,
         fullName: data.fullName,
+        bio: data.bio,
         password: data.password || undefined,
       };
 
