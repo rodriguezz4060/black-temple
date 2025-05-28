@@ -21,7 +21,9 @@ export async function updateUserAvatar(body: Prisma.UserUpdateInput) {
         avatar: body.avatar,
       },
     });
+
     revalidatePath('/settings');
+    return { success: true };
   } catch (err) {
     console.log('Error [UPDATE_USER]', err);
     throw err;

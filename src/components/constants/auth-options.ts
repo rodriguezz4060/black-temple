@@ -96,6 +96,8 @@ export const authOptions: AuthOptions = {
             data: {
               provider: account?.provider,
               providerId: account?.providerAccountId,
+              avatar: user.image || findUser.avatar,
+              fullName: user.name || findUser.fullName,
             },
           });
           return true;
@@ -105,10 +107,11 @@ export const authOptions: AuthOptions = {
           data: {
             email: user.email,
             fullName: user.name || 'User #' + user.id,
-            password: await hash(user.id.toString(), 10), // Асинхронный hash
+            password: await hash(user.id.toString(), 10),
             provider: account?.provider,
             providerId: account?.providerAccountId,
             role: UserRole.USER,
+            avatar: user.image || null,
           },
         });
 
@@ -118,7 +121,14 @@ export const authOptions: AuthOptions = {
         return false;
       }
     },
-    async jwt({ token, user }) {
+    async jwt({ token, user, trigger, session }) {
+      // Обновление токена при вызове updateSession()
+      if (trigger === 'update' && session?.user) {
+        token.role = session.user.role;
+        token.image = session.user.image;
+        token.fullName = session.user.name;
+      }
+
       // При первом входе добавляем данные в токен
       if (user) {
         token.id = user.id;
@@ -127,6 +137,28 @@ export const authOptions: AuthOptions = {
         token.role = user.role;
         token.image = user.image;
       }
+
+      // Всегда проверяем актуальные данные из БД
+      if (token.email) {
+        const dbUser = await prisma.user.findUnique({
+          where: { email: token.email },
+          select: {
+            id: true,
+            role: true,
+            avatar: true,
+            fullName: true,
+            email: true,
+          },
+        });
+
+        if (dbUser) {
+          token.id = dbUser.id.toString();
+          token.role = dbUser.role;
+          token.image = dbUser.avatar;
+          token.fullName = dbUser.fullName;
+        }
+      }
+
       return token;
     },
     async session({ session, token }) {
@@ -136,9 +168,42 @@ export const authOptions: AuthOptions = {
         session.user.name = token.fullName as string | null;
         session.user.role = token.role as UserRole;
         session.user.image = token.image as string | null;
-        session.user.image = token.image as string | null;
       }
+
       return session;
     },
   },
 };
+
+// Вспомогательная функция для обновления данных пользователя и сессии
+export async function updateUserAndSession(
+  userId: number,
+  updateData: {
+    role?: UserRole;
+    avatar?: string | null;
+    fullName?: string;
+  }
+) {
+  // Обновляем данные в БД
+  const updatedUser = await prisma.user.update({
+    where: { id: userId },
+    data: updateData,
+    select: {
+      id: true,
+      email: true,
+      role: true,
+      avatar: true,
+      fullName: true,
+    },
+  });
+
+  return {
+    user: {
+      id: updatedUser.id.toString(),
+      email: updatedUser.email,
+      name: updatedUser.fullName,
+      role: updatedUser.role,
+      image: updatedUser.avatar || null,
+    },
+  };
+}
