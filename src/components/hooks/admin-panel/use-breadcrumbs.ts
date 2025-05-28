@@ -1,7 +1,7 @@
 'use client';
 
+import { data } from '@root/components/shared/profile/admin/app-sidebar';
 import { usePathname } from 'next/navigation';
-import { data } from '@root/components/shared/app-sidebar';
 
 export function useBreadcrumbs() {
   const pathname = usePathname();

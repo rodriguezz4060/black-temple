@@ -1,4 +1,4 @@
-import { AppSidebar } from '@root/components/shared/app-sidebar';
+import { AppSidebar } from '@root/components/shared/profile/admin/app-sidebar';
 import {
   SidebarInset,
   SidebarProvider,

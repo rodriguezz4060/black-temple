@@ -20,7 +20,7 @@ model Expansion {
 
 model User {
     id         Int      @id @default(autoincrement())
-    fullName   String
+    fullName   String   @unique
     email      String   @unique
     password   String
     avatar     String?
@@ -33,6 +33,7 @@ model User {
     twitch     String?
     patreon    String?
     boosty     String?
+    telegram   String?
     guides     Guide[]
     role       UserRole @default(USER)
     provider   String?

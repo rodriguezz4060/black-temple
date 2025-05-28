@@ -3,9 +3,9 @@
 import { Prisma } from '@prisma/client';
 import { prisma } from '@prisma/prisma-client';
 import { getUserSession } from '@root/lib/get-user-session';
-import { hashSync } from 'bcrypt';
+import { revalidatePath } from 'next/cache';
 
-export async function updateUserInfo(body: Prisma.UserUpdateInput) {
+export async function updateSocialInfo(body: Prisma.UserUpdateInput) {
   try {
     const currentUser = await getUserSession();
 
@@ -13,25 +13,23 @@ export async function updateUserInfo(body: Prisma.UserUpdateInput) {
       throw new Error('Пользователь не найден');
     }
 
-    const findUser = await prisma.user.findFirst({
-      where: {
-        id: Number(currentUser.user.id),
-      },
-    });
-
     await prisma.user.update({
       where: {
         id: Number(currentUser.user.id),
       },
       data: {
-        fullName: body.fullName,
-        bio: body.bio,
-        email: body.email,
-        password: body.password
-          ? hashSync(body.password as string, 10)
-          : findUser?.password,
+        battleTag: body.battleTag,
+        discord: body.discord,
+        twitch: body.twitch,
+        youtube: body.youtube,
+        website: body.website,
+        telegram: body.telegram,
+        twitter: body.twitter,
+        patreon: body.patreon,
+        boosty: body.boosty,
       },
     });
+    revalidatePath('/settings/social');
   } catch (err) {
     console.log('Error [UPDATE_USER]', err);
     throw err;
