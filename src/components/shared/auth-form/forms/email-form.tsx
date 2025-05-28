@@ -7,7 +7,7 @@ import { FormProvider, useForm } from 'react-hook-form';
 import { formLoginSchema, TFormLoginSchema } from './schemas';
 import toast from 'react-hot-toast';
 import { Button } from '@root/components/ui/button';
-import { FormInput } from '../../forms/input-form';
+import { FormInput } from '@root/components/shared/forms/input-form';
 import { Title } from '@root/components/ui/title';
 import { ArrowLeft } from 'lucide-react';
 

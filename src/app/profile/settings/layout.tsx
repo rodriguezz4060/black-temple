@@ -46,13 +46,13 @@ export default function SettingsLayout({
   const pathname = usePathname();
 
   return (
-    <Container className='my-3 max-w-[850px]'>
+    <Container className='my-3 max-w-[810px]'>
       <SidebarProvider className='items-start'>
         <Sidebar
           collapsible={isMobile ? 'icon' : 'none'}
           className={cn(isMobile ? 'md:flex' : 'hidden md:flex')}
         >
-          <SidebarContent className={cn('min-h-[500px]')}>
+          <SidebarContent className={cn('min-h-[200px] border')}>
             <SidebarGroup>
               <SidebarGroupContent>
                 <SidebarMenu>

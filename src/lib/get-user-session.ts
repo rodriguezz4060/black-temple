@@ -6,6 +6,7 @@ interface UserSession {
   user: {
     id: string;
     role: string;
+    image: string | null;
   };
 }
 
@@ -15,7 +16,7 @@ export const getUserSession = async (): Promise<UserSession | null> => {
 
   const user = await prisma.user.findFirst({
     where: { id: Number(session.user.id) },
-    select: { id: true, role: true },
+    select: { id: true, role: true, avatar: true },
   });
 
   if (!user) return null;
@@ -25,6 +26,7 @@ export const getUserSession = async (): Promise<UserSession | null> => {
     user: {
       ...session.user,
       role: user.role,
+      image: user.avatar || null,
     },
   };
 };

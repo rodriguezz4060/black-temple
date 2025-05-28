@@ -1,18 +1,22 @@
 'use client';
 
 import React from 'react';
-import { CircleUser, LogIn } from 'lucide-react';
+import { LogIn } from 'lucide-react';
 import Link from 'next/link';
 import { Button } from '@root/components/ui/button';
 import { cn } from '@root/lib/utils';
+import { ProfileAvatar } from './profile-avatar';
 
 interface Props {
+  name?: string | null;
+  avatar?: string | null;
   isAuthenticated: boolean;
   onClickSignIn: () => void;
   className?: string;
 }
 
 export const ProfileButton: React.FC<Props> = ({
+  avatar,
   isAuthenticated,
   onClickSignIn,
   className,
@@ -26,10 +30,11 @@ export const ProfileButton: React.FC<Props> = ({
         </Button>
       ) : (
         <Link href='/profile'>
-          <Button aria-label='Перейти в профиль'>
-            <CircleUser size={18} className='mr-2' />
-            Профиль
-          </Button>
+          <ProfileAvatar
+            className='h-12 w-12'
+            fullName={name ?? ''}
+            avatar={avatar ?? ''}
+          />
         </Link>
       )}
     </div>

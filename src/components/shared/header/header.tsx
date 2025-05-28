@@ -6,16 +6,10 @@ import { HeaderRight } from './header-right';
 import Link from 'next/link';
 
 interface Props {
-  isAuthenticated: boolean;
-  user?: { name?: string; avatar?: string; role?: string }; // Заглушка для пользователя
   className?: string;
 }
 
-export const Header: React.FC<Props> = ({
-  className,
-  isAuthenticated,
-  user,
-}) => {
+export const Header: React.FC<Props> = ({ className }) => {
   return (
     <header className={cn('bg-[#F0F8FF] dark:bg-black', className)}>
       <Container className='flex items-center justify-between py-3 dark:bg-black'>
@@ -23,7 +17,6 @@ export const Header: React.FC<Props> = ({
         <div className='flex items-center gap-2'>
           <Link href='/' className='flex items-center gap-2'>
             <Image src='/logo.png' alt='Logo' width={50} height={50} />
-
             <div>
               <h1 className='text-2xl font-black uppercase'>Black Temple</h1>
             </div>
@@ -31,7 +24,7 @@ export const Header: React.FC<Props> = ({
         </div>
 
         {/* Правая часть */}
-        <HeaderRight isAuthenticated={isAuthenticated} />
+        <HeaderRight />
       </Container>
     </header>
   );

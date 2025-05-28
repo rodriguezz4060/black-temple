@@ -8,14 +8,9 @@ import { FormInput } from '@root/components/shared/forms/input-form';
 import { Button } from '@root/components/ui/button';
 import { useProfileForm } from '@root/components/hooks/profile/use-profile-form';
 import { User } from '@prisma/client';
-import {
-  Avatar,
-  AvatarFallback,
-  AvatarImage,
-} from '@root/components/ui/avatar';
-import { Loader2 } from 'lucide-react';
 import { Textarea } from '@root/components/ui/textarea';
 import { Label } from '@root/components/ui/label';
+import { ProfileAvatar } from '../profile-avatar';
 
 interface SettingsProps {
   data: User;
@@ -46,23 +41,16 @@ export default function ProfileSettingsPage({ data }: SettingsProps) {
             onSubmit={form.handleSubmit(onSubmit)}
           >
             <div className='relative flex gap-4'>
-              <Avatar className='h-18 w-18'>
-                <AvatarImage src={data.avatar ?? ''} />
-                <AvatarFallback className='text-[36px] font-bold'>
-                  {data.fullName?.trim()
-                    ? data.fullName.trim().charAt(0).toUpperCase()
-                    : 'U'}
-                </AvatarFallback>
-                {isAvatarLoading && (
-                  <div className='bg-opacity-50 absolute inset-0 flex items-center justify-center rounded-full'>
-                    <Loader2 className='h-8 w-8 animate-spin' />
-                  </div>
-                )}
-              </Avatar>
+              <ProfileAvatar
+                fullName={data.fullName}
+                avatar={data.avatar}
+                className='h-20 w-20'
+              />
+
               <FormInput name='avatar' label='Аватар' />
               <Button
                 onClick={form.handleSubmit(onUpdate)}
-                className='self-end'
+                className='mb-2.5 self-end'
                 disabled={isAvatarLoading}
               >
                 Изменить

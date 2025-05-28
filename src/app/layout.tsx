@@ -4,8 +4,6 @@ import { Nunito } from 'next/font/google';
 import Script from 'next/script';
 import './globals.css';
 import { Providers } from '@root/components/shared/provider';
-import { authOptions } from '@root/components/constants/auth-options';
-import { getServerSession } from 'next-auth';
 
 const nunito = Nunito({
   subsets: ['cyrillic'],
@@ -23,7 +21,6 @@ export default async function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const session = await getServerSession(authOptions);
   return (
     <html lang='en'>
       <head>
@@ -38,7 +35,7 @@ export default async function RootLayout({
       <body className={nunito.className}>
         <main className='min-h-screen'>
           <Providers>
-            <Header isAuthenticated={!!session} user={session?.user} />
+            <Header />
             {children}
           </Providers>
         </main>

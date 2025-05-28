@@ -5,12 +5,8 @@ import { Settings, Twitch } from 'lucide-react';
 import { Button } from '@root/components/ui/button';
 import Link from 'next/link';
 import { User } from '@prisma/client';
-import {
-  Avatar,
-  AvatarFallback,
-  AvatarImage,
-} from '@root/components/ui/avatar';
 import { Twitter, Youtube } from 'lucide-react';
+import { ProfileAvatar } from './profile-avatar';
 
 interface Props {
   data: {
@@ -48,14 +44,11 @@ export const ProfilePage: React.FC<Props> = ({ data, user }) => {
           />
           <div className='mx-4 -mt-10 lg:mx-6'>
             <div className='mb-2 flex w-full justify-between'>
-              <Avatar className='h-24 w-24'>
-                <AvatarImage src={user.avatar ?? ''} />
-                <AvatarFallback className='text-[36px] font-bold'>
-                  {user.fullName?.trim()
-                    ? user.fullName.trim().charAt(0).toUpperCase()
-                    : 'U'}
-                </AvatarFallback>
-              </Avatar>
+              <ProfileAvatar
+                fullName={user.fullName}
+                avatar={user.avatar}
+                className='h-26 w-26'
+              />
 
               <div className='flex items-center'>
                 <div className='mt-16'></div>
