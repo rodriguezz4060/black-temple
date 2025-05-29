@@ -17,6 +17,7 @@ interface Props {
 
 export const ProfileButton: React.FC<Props> = ({
   avatar,
+  name,
   isAuthenticated,
   onClickSignIn,
   className,
@@ -31,7 +32,7 @@ export const ProfileButton: React.FC<Props> = ({
       ) : (
         <Link href='/profile'>
           <ProfileAvatar
-            className='h-12 w-12'
+            className='h-12 w-12 text-[26px]'
             fullName={name ?? ''}
             avatar={avatar ?? ''}
           />

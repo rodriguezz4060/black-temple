@@ -5,6 +5,7 @@ import GoogleProvider from 'next-auth/providers/google';
 import { compare, hash } from 'bcrypt';
 import { UserRole } from '@prisma/client';
 import { prisma } from '@prisma/prisma-client';
+import crypto from 'crypto';
 
 export const authOptions: AuthOptions = {
   providers: [
@@ -33,6 +34,7 @@ export const authOptions: AuthOptions = {
       },
       async authorize(credentials) {
         if (!credentials) {
+          console.error('Credentials are missing');
           return null;
         }
 
@@ -41,6 +43,9 @@ export const authOptions: AuthOptions = {
         });
 
         if (!user || !user.password) {
+          console.error(
+            `User not found or password missing for email: ${credentials.email}`
+          );
           return null;
         }
 
@@ -49,6 +54,7 @@ export const authOptions: AuthOptions = {
           user.password
         );
         if (!isPasswordValid) {
+          console.error('Invalid password');
           return null;
         }
 
@@ -70,23 +76,21 @@ export const authOptions: AuthOptions = {
   callbacks: {
     async signIn({ user, account }) {
       try {
+        if (!user.email) {
+          console.error('User email is missing');
+          return false;
+        }
+
+        // Для CredentialsProvider просто возвращаем true, так как authorize уже проверил данные
         if (account?.provider === 'credentials') {
           return true;
         }
 
-        if (!user.email) {
-          return false;
-        }
-
+        // Для OAuth-провайдеров (Google, GitHub)
         const findUser = await prisma.user.findFirst({
           where: {
-            OR: [
-              {
-                provider: account?.provider,
-                providerId: account?.providerAccountId,
-              },
-              { email: user.email },
-            ],
+            provider: account?.provider,
+            providerId: account?.providerAccountId,
           },
         });
 
@@ -103,11 +107,12 @@ export const authOptions: AuthOptions = {
           return true;
         }
 
+        // Создаем нового пользователя для OAuth
         await prisma.user.create({
           data: {
             email: user.email,
             fullName: user.name || 'User #' + user.id,
-            password: await hash(user.id.toString(), 10),
+            password: await hash(crypto.randomUUID(), 10), // Случайный пароль
             provider: account?.provider,
             providerId: account?.providerAccountId,
             role: UserRole.USER,
@@ -118,6 +123,12 @@ export const authOptions: AuthOptions = {
         return true;
       } catch (error) {
         console.error('Error [SIGNIN]', error);
+        if (
+          error instanceof Error &&
+          error.message.includes('Unique constraint')
+        ) {
+          return '/auth/error?error=EmailAlreadyExists';
+        }
         return false;
       }
     },
@@ -138,8 +149,8 @@ export const authOptions: AuthOptions = {
         token.image = user.image;
       }
 
-      // Всегда проверяем актуальные данные из БД
-      if (token.email) {
+      // Обновляем данные из БД только если необходимо
+      if (token.email && (!token.id || trigger === 'update')) {
         const dbUser = await prisma.user.findUnique({
           where: { email: token.email },
           select: {
@@ -175,7 +186,6 @@ export const authOptions: AuthOptions = {
   },
 };
 
-// Вспомогательная функция для обновления данных пользователя и сессии
 export async function updateUserAndSession(
   userId: number,
   updateData: {
@@ -184,13 +194,11 @@ export async function updateUserAndSession(
     fullName?: string;
   }
 ) {
-  // Обновляем данные в БД
   const updatedUser = await prisma.user.update({
     where: { id: userId },
     data: updateData,
     select: {
       id: true,
-      email: true,
       role: true,
       avatar: true,
       fullName: true,
@@ -200,7 +208,6 @@ export async function updateUserAndSession(
   return {
     user: {
       id: updatedUser.id.toString(),
-      email: updatedUser.email,
       name: updatedUser.fullName,
       role: updatedUser.role,
       image: updatedUser.avatar || null,

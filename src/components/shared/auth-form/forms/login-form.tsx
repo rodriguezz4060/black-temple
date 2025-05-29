@@ -22,7 +22,7 @@ export const LoginForm: React.FC<Props> = ({ setType }) => {
           })
         }
         type='button'
-        className='bg-secondary flex items-center gap-2 text-sm font-bold'
+        className='bg-secondary flex cursor-pointer items-center gap-2 text-sm font-bold'
       >
         <Image
           className='h-6 w-6'
@@ -43,7 +43,7 @@ export const LoginForm: React.FC<Props> = ({ setType }) => {
           })
         }
         type='button'
-        className='bg-secondary flex items-center gap-2 text-sm font-bold'
+        className='bg-secondary flex cursor-pointer items-center gap-2 text-sm font-bold'
       >
         <Github size={24} />
         GitHub
@@ -53,7 +53,7 @@ export const LoginForm: React.FC<Props> = ({ setType }) => {
         variant='blue'
         onClick={() => setType('email')}
         type='button'
-        className='bg-secondary flex items-center gap-2 text-sm font-bold'
+        className='bg-secondary flex cursor-pointer items-center gap-2 text-sm font-bold'
       >
         <Mail size={24} />
         Войти по E-Mail

@@ -111,7 +111,7 @@ export const RegisterForm: React.FC<Props> = ({ setType, onClose }) => {
         <Button
           variant='blue'
           loading={form.formState.isSubmitting}
-          className='bg-secondary flex items-center gap-2 text-sm font-bold'
+          className='bg-secondary flex cursor-pointer items-center gap-2 text-sm font-bold'
           type='submit'
         >
           Зарегистрироваться

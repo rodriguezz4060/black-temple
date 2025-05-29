@@ -26,7 +26,7 @@ export const ProfileAvatar = ({
     <div>
       <Avatar className={cn('h-18 w-18', className)}>
         <AvatarImage src={avatar ?? ''} />
-        <AvatarFallback className='text-[36px] font-bold'>
+        <AvatarFallback className={cn('text-[36px] font-bold', className)}>
           {fullName?.trim() ? fullName.trim().charAt(0).toUpperCase() : 'U'}
         </AvatarFallback>
         {isAvatarLoading && (

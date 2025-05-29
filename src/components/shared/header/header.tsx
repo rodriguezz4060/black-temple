@@ -16,7 +16,14 @@ export const Header: React.FC<Props> = ({ className }) => {
         {/* Левая часть */}
         <div className='flex items-center gap-2'>
           <Link href='/' className='flex items-center gap-2'>
-            <Image src='/logo.png' alt='Logo' width={50} height={50} />
+            <Image
+              src='/logo.png'
+              alt='Logo'
+              width={40}
+              height={40}
+              className='h-auto w-auto'
+              priority
+            />
             <div>
               <h1 className='text-2xl font-black uppercase'>Black Temple</h1>
             </div>

@@ -37,17 +37,18 @@ export const ProfilePage: React.FC<Props> = ({ data, user }) => {
         <div>
           <Image
             src={'/assets/profile/covers/profile-cover-silvana.jpg'}
-            alt={''}
+            alt={'Обложка профиля'}
             width={1100}
             height={170}
-            className='h-[170px] rounded-t-xl object-cover object-center'
+            className='rounded-t-xl object-contain object-center'
+            priority
           />
           <div className='mx-4 -mt-10 lg:mx-6'>
             <div className='mb-2 flex w-full justify-between'>
               <ProfileAvatar
                 fullName={user.fullName}
                 avatar={user.avatar}
-                className='h-26 w-26'
+                className='h-26 w-26 text-6xl'
               />
 
               <div className='flex items-center'>
