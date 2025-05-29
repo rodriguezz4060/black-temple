@@ -9,6 +9,7 @@ import { User } from '@prisma/client';
 import { addSocialLinkSchema } from '../schemas/social-page-schemas';
 import { useProfileSocialForm } from '@root/components/hooks/profile/use-social-form';
 import { Loader2, Trash2 } from 'lucide-react';
+import { cn } from '@root/lib/utils';
 
 interface SettingsProps {
   data: User;
@@ -20,6 +21,7 @@ export default function ProfileSettingsSocial({ data }: SettingsProps) {
     defaultValues: {
       battleTag: data.battleTag ?? '',
       discord: data.discord ?? '',
+      discordServer: data.discordServer ?? '',
       twitch: data.twitch ?? '',
       youtube: data.youtube ?? '',
       website: data.website ?? '',
@@ -36,6 +38,7 @@ export default function ProfileSettingsSocial({ data }: SettingsProps) {
   const socialFields = [
     { name: 'battleTag', label: 'BattleTag' },
     { name: 'discord', label: 'Discord' },
+    { name: 'discordServer', label: 'Discord' },
     { name: 'twitch', label: 'Twitch' },
     { name: 'youtube', label: 'Youtube' },
     { name: 'website', label: 'Ваш сайт' },
@@ -64,49 +67,60 @@ export default function ProfileSettingsSocial({ data }: SettingsProps) {
               const isFieldFilled =
                 !!data[field.name as keyof User] && !isFieldDirty;
 
+              const hasError =
+                !!form.formState.errors[
+                  field.name as keyof typeof form.formState.errors
+                ];
+
               return (
                 <div key={field.name} className='flex items-end gap-2'>
-                  <div className='flex-1'>
-                    <FormInput name={field.name} label={field.label} />
+                  <div className='flex w-full items-end gap-2'>
+                    <div className='flex-1'>
+                      <FormInput name={field.name} label={field.label} />
+                    </div>
+                    {isFieldFilled ? (
+                      <Button
+                        type='button'
+                        variant='outline'
+                        size='icon'
+                        onClick={() => onDeleteField(field.name)}
+                        disabled={loadingFields[field.name]}
+                        className={cn('my-0.5 h-9 w-9', {
+                          '-translate-y-7': hasError,
+                        })}
+                      >
+                        {loadingFields[field.name] ? (
+                          <Loader2 className='h-4 w-4 animate-spin' />
+                        ) : (
+                          <Trash2 className='h-4 w-4 text-red-500' />
+                        )}
+                      </Button>
+                    ) : (
+                      <Button
+                        type='button'
+                        variant='outline'
+                        size='icon'
+                        onClick={() =>
+                          form.handleSubmit(data =>
+                            onSingleFieldSubmit(field.name, data)
+                          )()
+                        }
+                        disabled={
+                          loadingFields[field.name] ||
+                          (!isFieldDirty && !fieldValue)
+                        }
+                        className={cn('my-0.5 h-9 w-9', {
+                          '-translate-y-7': hasError,
+                        })}
+                      >
+                        {loadingFields[field.name] ? (
+                          <Loader2 className='h-4 w-4 animate-spin' />
+                        ) : (
+                          '💾'
+                        )}
+                      </Button>
+                    )}
                   </div>
-                  {isFieldFilled ? (
-                    <Button
-                      type='button'
-                      variant='outline'
-                      size='icon'
-                      onClick={() => onDeleteField(field.name)}
-                      disabled={loadingFields[field.name]}
-                      className='my-0.5 h-9 w-9'
-                    >
-                      {loadingFields[field.name] ? (
-                        <Loader2 className='h-4 w-4 animate-spin' />
-                      ) : (
-                        <Trash2 className='h-4 w-4 text-red-500' />
-                      )}
-                    </Button>
-                  ) : (
-                    <Button
-                      type='button'
-                      variant='outline'
-                      size='icon'
-                      onClick={() =>
-                        form.handleSubmit(data =>
-                          onSingleFieldSubmit(field.name, data)
-                        )()
-                      }
-                      disabled={
-                        loadingFields[field.name] ||
-                        (!isFieldDirty && !fieldValue)
-                      }
-                      className='my-0.5 h-9 w-9'
-                    >
-                      {loadingFields[field.name] ? (
-                        <Loader2 className='h-4 w-4 animate-spin' />
-                      ) : (
-                        '💾'
-                      )}
-                    </Button>
-                  )}
                 </div>
               );
             })}

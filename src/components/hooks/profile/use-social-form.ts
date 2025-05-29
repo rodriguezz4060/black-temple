@@ -21,6 +21,7 @@ export const useProfileSocialForm = (
       const updatedData = {
         battleTag: data.battleTag,
         discord: data.discord,
+        discordServer: data.discordServer,
         twitch: data.twitch,
         youtube: data.youtube,
         website: data.website,
@@ -35,7 +36,7 @@ export const useProfileSocialForm = (
       toast.success('Все данные обновлены 📝', {
         icon: '✅',
       });
-      form.reset(data); // Сбрасываем dirtyFields после успешного сохранения
+      form.reset(data);
     } catch {
       return toast.error('Ошибка при обновлении данных', {
         icon: '❌',

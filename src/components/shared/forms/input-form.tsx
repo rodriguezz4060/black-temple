@@ -37,7 +37,7 @@ export const FormInput: React.FC<Props> = ({
   };
 
   return (
-    <div className={className}>
+    <div className={cn('w-full', className)}>
       {label && (
         <p className='mb-2 font-medium'>
           {label} {required && <RequiredSymbol />}
@@ -47,14 +47,21 @@ export const FormInput: React.FC<Props> = ({
       <div className='relative'>
         <Input
           className={cn(
-            'text-md h-10 rounded-sm dark:border-2 dark:border-[#1e293b] dark:bg-[#121212]',
-            className
+            'text-md h-10 w-full rounded-sm pr-8 dark:border-2 dark:border-[#1e293b] dark:bg-[#121212]',
+            {
+              'border-red-500 dark:border-red-500': errorText,
+            }
           )}
           {...register(name, { valueAsNumber: props.type === 'number' })}
           {...props}
         />
 
-        {value && <ClearButton onClick={onClickClear} />}
+        {value && (
+          <ClearButton
+            onClick={onClickClear}
+            className='absolute top-1/2 right-2 -translate-y-1/2'
+          />
+        )}
       </div>
 
       {errorText && <ErrorText text={errorText} className='mt-2' />}

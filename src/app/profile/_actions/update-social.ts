@@ -20,6 +20,7 @@ export async function updateSocialInfo(body: Prisma.UserUpdateInput) {
       data: {
         battleTag: body.battleTag,
         discord: body.discord,
+        discordServer: body.discordServer,
         twitch: body.twitch,
         youtube: body.youtube,
         website: body.website,
