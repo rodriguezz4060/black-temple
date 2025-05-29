@@ -13,7 +13,7 @@ export const LoginForm: React.FC<Props> = ({ setType }) => {
     <div className='flex w-[80%] flex-col gap-4'>
       <p className='text-center text-xl font-bold'>Вход</p>
 
-      <Button
+      {/* <Button
         variant='blue'
         onClick={() =>
           signIn('google', {
@@ -47,7 +47,7 @@ export const LoginForm: React.FC<Props> = ({ setType }) => {
       >
         <Github size={24} />
         GitHub
-      </Button>
+      </Button> */}
 
       <Button
         variant='blue'
