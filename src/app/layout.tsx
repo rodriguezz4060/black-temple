@@ -4,6 +4,7 @@ import { Nunito } from 'next/font/google';
 import Script from 'next/script';
 import './globals.css';
 import { Providers } from '@root/components/shared/provider';
+import NextTopLoader from 'nextjs-toploader';
 
 const nunito = Nunito({
   subsets: ['cyrillic'],
@@ -36,6 +37,7 @@ export default async function RootLayout({
         <main className='min-h-screen'>
           <Providers>
             <Header />
+            <NextTopLoader />
             {children}
           </Providers>
         </main>
