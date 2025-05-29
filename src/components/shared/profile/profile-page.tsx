@@ -23,7 +23,8 @@ export const ProfilePage: React.FC<Props> = ({ data, user }) => {
   const hasContacts = user.battleTag || user.discord || user.telegram;
 
   // Проверка наличия данных для блока "Соцсети"
-  const hasSocials = user.youtube || user.twitch || user.twitter;
+  const hasSocials =
+    user.youtube || user.twitch || user.twitter || user.discordServer;
 
   // Проверка наличия данных для блока "Поддержка"
   const hasSupport = user.patreon || user.boosty;
@@ -75,7 +76,7 @@ export const ProfilePage: React.FC<Props> = ({ data, user }) => {
             <div className='grid auto-rows-min gap-4 md:grid-cols-3'>
               {/* Контакты */}
               {hasContacts && (
-                <div className='bg-muted/50 flex flex-col gap-4 rounded-xl p-6'>
+                <div className='bg-muted/50 flex flex-col gap-4 rounded-xl border-1 p-4'>
                   <h3 className='text-lg font-semibold'>Контакты</h3>
                   <div className='flex flex-col gap-3'>
                     {user.battleTag && (
@@ -127,9 +128,24 @@ export const ProfilePage: React.FC<Props> = ({ data, user }) => {
 
               {/* Соцсети */}
               {hasSocials && (
-                <div className='bg-muted/50 flex flex-col gap-4 rounded-xl p-6'>
+                <div className='bg-muted/50 flex flex-col gap-1 rounded-xl border-1 p-4'>
                   <h3 className='text-lg font-semibold'>Соцсети</h3>
-                  <div className='flex flex-col gap-2'>
+                  <div className='flex flex-col'>
+                    {user.discordServer && (
+                      <Link
+                        href={user.discordServer}
+                        className='hover:bg-muted/30 flex items-center gap-2 rounded p-2 transition-colors'
+                      >
+                        <Image
+                          src='/assets/icons/discord-server.svg'
+                          alt='Discord Server'
+                          className='h-[22px] w-[22px] dark:brightness-0 dark:invert dark:saturate-0'
+                          width={20}
+                          height={20}
+                        />
+                        <span>Мой сервер</span>
+                      </Link>
+                    )}
                     {user.youtube && (
                       <Link
                         href={user.youtube}
@@ -163,7 +179,7 @@ export const ProfilePage: React.FC<Props> = ({ data, user }) => {
 
               {/* Поддержка */}
               {hasSupport && (
-                <div className='bg-muted/50 flex flex-col gap-4 rounded-xl p-6'>
+                <div className='bg-muted/50 flex flex-col gap-4 rounded-xl border-1 p-4'>
                   <h3 className='text-lg font-semibold'>Поддержка</h3>
                   <div className='flex flex-col gap-2'>
                     {user.patreon && (

@@ -3,7 +3,7 @@
 import React from 'react';
 import { DarkModeToggle } from '@root/components/shared';
 import { AuthModal } from '../auth-form/auth-modal';
-import { ProfileButton } from '../profile/profile-button';
+import { ProfileButton } from './profile-button';
 import { useSession } from 'next-auth/react';
 import { Button } from '@root/components/ui/button';
 import { Loader2 } from 'lucide-react';

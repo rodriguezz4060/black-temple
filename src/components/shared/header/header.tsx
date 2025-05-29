@@ -19,8 +19,8 @@ export const Header: React.FC<Props> = ({ className }) => {
             <Image
               src='/logo.png'
               alt='Logo'
-              width={40}
-              height={40}
+              width={42}
+              height={42}
               className='h-auto w-auto'
               priority
             />
