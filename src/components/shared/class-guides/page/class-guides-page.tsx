@@ -11,13 +11,13 @@ import {
   CreateGuideModal,
   GuidesFilters,
 } from '@root/components/shared';
-import { Mode } from '@prisma/client';
+import { Expansion, Mode } from '@prisma/client'; // Импортируем тип Expansion
 import { useClassGuides } from '@root/components/hooks';
 
 interface InitialData {
   classes: InitialClassSelection[];
   modes: Mode[];
-  patch: string;
+  expansions: Expansion[];
 }
 
 interface ClassGuidesPageProps {

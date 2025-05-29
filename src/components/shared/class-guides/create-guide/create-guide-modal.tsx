@@ -12,16 +12,22 @@ import {
   DialogTrigger,
 } from '@root/components/ui/dialog';
 import { Label } from '@root/components/ui/label';
-import { Mode } from '@prisma/client';
-import { Badge } from '@root/components/ui/badge';
+import { Mode, Expansion } from '@prisma/client'; // Добавляем тип Expansion
 import { useCreateGuide } from '@root/components/hooks';
 import { TooltipWrapper } from '@root/components/shared/';
 import { Separator } from '@root/components/ui/separator';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@root/components/ui/select'; // Импортируем компоненты для выпадающего меню
 
 interface InitialData {
   classes: InitialClassSelection[];
   modes: Mode[];
-  patch: string;
+  expansions: Expansion[];
 }
 
 export default function CreateGuideModal({
@@ -29,16 +35,18 @@ export default function CreateGuideModal({
 }: {
   initialData: InitialData;
 }) {
-  const { classes, modes } = initialData;
+  const { classes, modes, expansions } = initialData;
 
   const {
     selectedClass,
     selectedSpec,
     selectedMode,
+    selectedExpansion, // Добавляем selectedExpansion
     isLoading,
     setSelectedClass,
     setSelectedSpec,
     setSelectedMode,
+    setSelectedExpansion, // Добавляем setSelectedExpansion
     handleSubmit,
   } = useCreateGuide();
 
@@ -150,12 +158,35 @@ export default function CreateGuideModal({
                   ))}
                 </div>
               </div>
+              <Separator />
+              <div className='mb-4'>
+                <Label className='text-md mb-2 block font-medium'>
+                  Выберите версию игры:
+                </Label>
+                <Select
+                  onValueChange={value => setSelectedExpansion(Number(value))}
+                  value={
+                    selectedExpansion ? String(selectedExpansion) : undefined
+                  }
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder='Выберите версию игры' />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {expansions.map(expansion => (
+                      <SelectItem
+                        key={expansion.id}
+                        value={String(expansion.id)}
+                      >
+                        {expansion.name} ({expansion.patchVersion})
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
             </DialogHeader>
             <DialogFooter>
               <div className='flex w-full items-center justify-between'>
-                <Badge className='mr-auto'>
-                  Версия игры: {initialData.patch}
-                </Badge>
                 <Button
                   type='submit'
                   loading={isLoading}
@@ -163,7 +194,8 @@ export default function CreateGuideModal({
                     isLoading ||
                     !selectedClass ||
                     !selectedSpec ||
-                    !selectedMode
+                    !selectedMode ||
+                    !selectedExpansion // Добавляем проверку на выбор версии игры
                   }
                   className='font-bold'
                 >

@@ -17,6 +17,7 @@ export default async function GuidePageRoute({
       class: true,
       specialization: true,
       modeRelation: true,
+      expansion: true,
       overviewDifficulty: true,
       overviewGears: {
         include: {

@@ -16,11 +16,7 @@ export type GuidePageProps = Prisma.GuideGetPayload<{
         itemSockets: true;
       };
     };
-    heroTalents: {
-      include: {
-        tabs: true;
-      };
-    };
+    expansion: true;
   };
 }>;
 
@@ -51,6 +47,7 @@ export type ClassFilter = Prisma.ClassSpecializationGetPayload<{
 export type GuideButtonWithRelations = Prisma.GuideGetPayload<{
   select: {
     id: true;
+    slug: true;
     class: {
       select: {
         name: true;
@@ -76,6 +73,13 @@ export type GuideButtonWithRelations = Prisma.GuideGetPayload<{
         name: true;
         activityIcon: true;
         activityBg: true;
+      };
+    };
+    expansion: {
+      select: {
+        name: true;
+        patchName: true;
+        patchVersion: true;
       };
     };
   };

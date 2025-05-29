@@ -85,8 +85,8 @@ model Guide {
     id                 Int                 @id @default(autoincrement())
     title              String?
     slug               String              @unique
-    expansionId        Int? // Связь с Expansion
-    expansion          Expansion?          @relation("ExpansionGuides", fields: [expansionId], references: [id])
+    expansionId        Int
+    expansion          Expansion           @relation("ExpansionGuides", fields: [expansionId], references: [id])
     modeRelation       Mode                @relation(fields: [modeId], references: [id])
     modeId             Int
     class              ClassSelection      @relation(fields: [classId], references: [id])

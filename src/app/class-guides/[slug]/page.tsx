@@ -16,6 +16,7 @@ export default async function GuidePageRoute({
       class: true,
       specialization: true,
       modeRelation: true,
+      expansion: true,
       overviewDifficulty: true,
       overviewGears: {
         include: {
@@ -29,6 +30,6 @@ export default async function GuidePageRoute({
     return notFound();
   }
 
-  // Поскольку мы уже нашли гайд по slug, дополнительная проверка не нужна
+  // Передаем данные в компонент GuidePageContent
   return <GuidePageContent guide={guide} />;
 }

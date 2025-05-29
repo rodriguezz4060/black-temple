@@ -8,12 +8,12 @@ import {
   GuideButtonWithRelations,
   InitialClassSelection,
 } from '@root/@types/prisma';
-import { Mode } from '@prisma/client';
+import { Expansion, Mode } from '@prisma/client';
 
 interface InitialData {
   classes: InitialClassSelection[];
   modes: Mode[];
-  patch: string;
+  expansions: Expansion[];
 }
 
 interface UseClassGuidesProps {

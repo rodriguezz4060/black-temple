@@ -1,24 +1,12 @@
 import { GuideButtonWithRelations } from '@root/@types/prisma';
 import Image from 'next/image';
 import Link from 'next/link';
-import { transliterate } from 'transliteration';
 
 interface GuideButtonProps {
   guides: GuideButtonWithRelations[];
 }
 
 export default function GuideButton({ guides }: GuideButtonProps) {
-  // Функция для генерации slug
-  const generateSlug = (guide: GuideButtonWithRelations) => {
-    const className = transliterate(guide.class.name)
-      .toLowerCase()
-      .replace(/\s+/g, '-');
-    const specName = transliterate(guide.specialization.name)
-      .toLowerCase()
-      .replace(/\s+/g, '-');
-    return `${className}-${specName}-${guide.id}`;
-  };
-
   return (
     <>
       <div className='flex-1 pb-20'>
@@ -30,7 +18,7 @@ export default function GuideButton({ guides }: GuideButtonProps) {
               className='group relative overflow-hidden rounded-lg border-2 hover:border-blue-500'
             >
               <Link
-                href={`/class-guides/${generateSlug(guide)}`}
+                href={`/class-guides/${guide.slug}`}
                 className='block h-full'
               >
                 {/* Background pattern */}
@@ -91,7 +79,8 @@ export default function GuideButton({ guides }: GuideButtonProps) {
 
                     <div className='flex flex-wrap gap-2'>
                       <span className='inline-flex items-center rounded bg-gray-800 px-2 py-1 text-xs text-gray-300'>
-                        {guide.patch}
+                        {guide.expansion.patchName}
+                        {guide.expansion.patchVersion}
                       </span>
                       <span className='inline-flex items-center rounded bg-gray-800 px-2 py-1 text-xs text-gray-300'>
                         <Image

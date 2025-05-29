@@ -5,92 +5,66 @@ import { prisma } from '@prisma/prisma-client';
 import { createGuideSchemas } from '@root/components/shared/class-guides/editor/schemas/create-guide-schemas';
 import { revalidatePath } from 'next/cache';
 import { z } from 'zod';
+import { transliterate } from 'transliteration';
 
 export async function GuideData() {
   const classes = await prisma.classSelection.findMany({
     include: { specializations: true },
   });
   const modes = await prisma.mode.findMany();
-  const patchData = await getPatchNumber();
+  const expansions = await prisma.expansion.findMany();
   return {
     classes,
     modes,
-    patch: patchData.patch_string,
+    expansions,
   };
 }
 
-export const getPatchNumber = async () => {
-  const clientId = process.env.BLIZZARD_CLIENT_ID!;
-  const clientSecret = process.env.BLIZZARD_CLIENT_SECRET!;
-
-  try {
-    // return JSON.parse("123");
-    const tokenRes = await fetch('https://oauth.battle.net/token', {
-      method: 'POST',
-      headers: {
-        Authorization:
-          'Basic ' +
-          Buffer.from(`${clientId}:${clientSecret}`).toString('base64'),
-        'Content-Type': 'application/x-www-form-urlencoded',
-      },
-      body: 'grant_type=client_credentials',
-      cache: 'force-cache',
-      next: { revalidate: 3600 },
-    });
-
-    const tokenData = await tokenRes.json();
-    // console.log(tokenData, tokenData.access_token);
-
-    const patchRes = await fetch(
-      'https://eu.api.blizzard.com/data/wow/region/3?namespace=dynamic-eu&locale=en_US',
-      {
-        headers: {
-          Authorization: `Bearer ${tokenData.access_token}`,
-        },
-        cache: 'force-cache',
-        next: { revalidate: 3600 },
-      }
-    );
-
-    const patchData = await patchRes.json();
-    // console.log(patchData);
-    return patchData;
-    // return NextResponse.json({ patchBuildOrTimestamp: data.last_updated_timestamp });
-  } catch (e) {
-    console.error('Ошибка в API /api/patch:', e);
-    // return NextResponse.json({ error: "Ошибка получения патча" }, { status: 500 });
-  }
-};
-
 export async function createGuideAction(formData: FormData) {
   try {
-    // Извлекаем данные из FormData
     const slotTypes = Object.values(SlotType);
     const classId = formData.get('classId');
     const specializationId = formData.get('specializationId');
     const modeId = formData.get('modeId');
+    const expansionId = formData.get('expansionId');
+    const title = formData.get('title');
 
-    // Получаем актуальный номер патча
-    const patchData = await getPatchNumber();
-    const patch = patchData?.patch_string;
-
-    // Формируем объект для валидации
     const data = {
       classId: Number(classId),
       specializationId: Number(specializationId),
       modeId: Number(modeId),
-      patch,
+      expansionId: Number(expansionId),
+      title: title ? String(title) : null,
+      slug: '',
     };
 
-    // Валидация с помощью Zod
     const validatedData = createGuideSchemas.parse(data);
+
+    const classData = await prisma.classSelection.findUnique({
+      where: { id: validatedData.classId },
+    });
+    const specData = await prisma.classSpecialization.findUnique({
+      where: { id: validatedData.specializationId },
+    });
+    const modeData = await prisma.mode.findUnique({
+      where: { id: validatedData.modeId },
+    });
+
+    if (!classData || !specData || !modeData) {
+      throw new Error(
+        'Не удалось найти данные о классе, специализации или режиме'
+      );
+    }
 
     const guide = await prisma.guide.create({
       data: {
         classId: validatedData.classId,
         specializationId: validatedData.specializationId,
         modeId: validatedData.modeId,
-        patch: validatedData.patch,
+        expansionId: validatedData.expansionId,
+
+        title: validatedData.title, // Используем валидированное значение
+        slug: '',
         overviewGears: {
           create: slotTypes.map(slotType => ({
             itemSlot: slotType,
@@ -105,22 +79,28 @@ export async function createGuideAction(formData: FormData) {
             mobility: null,
           },
         },
-        heroTalents: {
-          create: {
-            textArea: null,
-          },
-        },
       },
       include: {
         class: true,
         specialization: true,
+        modeRelation: true,
         overviewGears: true,
         overviewDifficulty: true,
-        heroTalents: true,
       },
     });
 
-    // Обновляем кэш страницы
+    const slug =
+      `${transliterate(classData.name)}-${transliterate(specData.name)}-${transliterate(modeData.name)}-${guide.id}`
+        .toLowerCase()
+        .replace(/[^a-z0-9-]+/g, '-')
+        .replace(/-+/g, '-')
+        .replace(/^-|-$/g, '');
+
+    await prisma.guide.update({
+      where: { id: guide.id },
+      data: { slug },
+    });
+
     revalidatePath('/class-guides');
 
     return {
@@ -129,6 +109,8 @@ export async function createGuideAction(formData: FormData) {
         id: guide.id,
         className: guide.class.name,
         specializationName: guide.specialization.name,
+        modeName: guide.modeRelation.name,
+        slug,
       },
     };
   } catch (error) {

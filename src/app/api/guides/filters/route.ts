@@ -24,6 +24,13 @@ export async function GET(request: Request) {
           },
         },
         modeRelation: true,
+        expansion: {
+          select: {
+            name: true,
+            patchName: true,
+            patchVersion: true,
+          },
+        },
       },
     });
 

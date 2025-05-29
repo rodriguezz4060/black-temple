@@ -11,35 +11,41 @@ export function useCreateGuide() {
   const [selectedClass, setSelectedClass] = useState<number | null>(null);
   const [selectedSpec, setSelectedSpec] = useState<number | null>(null);
   const [selectedMode, setSelectedMode] = useState<number | null>(null);
+  const [selectedExpansion, setSelectedExpansion] = useState<number | null>(
+    null
+  );
   const [isLoading, setIsLoading] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    if (!selectedClass || !selectedSpec || !selectedMode) {
+    if (
+      !selectedClass ||
+      !selectedSpec ||
+      !selectedMode ||
+      !selectedExpansion
+    ) {
+      toast.error('Выберите класс, специализацию, режим и версию игры');
       return;
     }
 
     setIsLoading(true);
-    const formData = new FormData();
+    const formData = new FormData(e.currentTarget); // Используем данные из формы
     formData.append('classId', `${selectedClass}`);
     formData.append('specializationId', `${selectedSpec}`);
     formData.append('modeId', `${selectedMode}`);
+    formData.append('expansionId', `${selectedExpansion}`);
+
+    // Поле title уже включено в formData, если пользователь его заполнил
+    // Если title пустой, сервер обработает его как null
 
     try {
       const result = await createGuideAction(formData);
       if (result.success && result.guide) {
-        // Формируем слаг
-        const expectedSlug =
-          `${transliterate(result.guide.className)}-${transliterate(
-            result.guide.specializationName
-          )}-${result.guide.id}`
-            .toLowerCase()
-            .replace(/\s+/g, '-');
-
         toast.success('Гайд успешно создан!');
-        router.push(`/class-guides/${expectedSlug}`);
+        console.log('Созданный slug:', result.guide.slug);
+        router.push(`/class-guides/${result.guide.slug}`);
       } else {
-        toast.error('Не удалось создать гайд');
+        toast.error(result.error || 'Не удалось создать гайд');
       }
     } catch (error) {
       toast.error('Произошла ошибка при создании гайда');
@@ -53,16 +59,19 @@ export function useCreateGuide() {
     setSelectedClass(null);
     setSelectedSpec(null);
     setSelectedMode(null);
+    setSelectedExpansion(null);
   };
 
   return {
     selectedClass,
     selectedSpec,
     selectedMode,
+    selectedExpansion,
     isLoading,
     setSelectedClass,
     setSelectedSpec,
     setSelectedMode,
+    setSelectedExpansion,
     handleSubmit,
     resetSelection,
   };
