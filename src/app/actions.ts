@@ -19,11 +19,10 @@ export const updateTabs = async (data: TUpdateTabsSchemas) => {
       }),
     });
 
-    const textResponse = await response.text(); // Сначала читаем как текст
+    const textResponse = await response.text();
 
     if (!response.ok) {
       try {
-        // Пытаемся распарсить JSON ошибки
         const errorData = textResponse ? JSON.parse(textResponse) : {};
         throw new Error(errorData.error || 'Failed to update tabs');
       } catch {

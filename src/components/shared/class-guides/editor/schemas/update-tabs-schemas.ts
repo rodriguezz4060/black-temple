@@ -1,4 +1,4 @@
-import { z } from "zod";
+import { z } from 'zod';
 
 export const updateTabsSchemas = z.object({
   tabs: z.array(
@@ -7,10 +7,10 @@ export const updateTabsSchemas = z.object({
       value: z.string(),
       label: z
         .string()
-        .min(2, "Название слишком короткое")
-        .max(10, "Название слишком длинное"),
+        .min(2, 'Название слишком короткое')
+        .max(25, 'Название слишком длинное'),
       iconUrl: z.string().optional().nullable(),
-      content: z.string().min(1, "Контент не может быть пустым"),
+      content: z.string().min(1, 'Контент не может быть пустым'),
       heroTalentsId: z.number(),
     })
   ),

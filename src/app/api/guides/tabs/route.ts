@@ -9,25 +9,43 @@ export async function PATCH(request: Request) {
     const { tabs, guideId } = validatedData;
 
     const result = await prisma.$transaction(async tx => {
-      // 1. Удаляем табы, которых нет в новых данных
+      // 1. Проверяем, существует ли HeroTalents для guideId
+      let heroTalents = await tx.heroTalents.findUnique({
+        where: { guideId },
+      });
+
+      // 2. Если HeroTalents не существует, создаем новую запись
+      if (!heroTalents) {
+        heroTalents = await tx.heroTalents.create({
+          data: {
+            guideId,
+            textArea: null, // Совместимо с createGuideAction
+          },
+        });
+      }
+
+      // 3. Удаляем табы, которых нет в новых данных
       const deleteResult = await tx.tab.deleteMany({
         where: {
-          heroTalentsId: guideId,
+          heroTalentsId: heroTalents.id,
           NOT: { value: { in: tabs.map(t => t.value) } },
         },
       });
 
-      // 2. Обновляем или создаем табы
+      // 4. Обновляем или создаем табы
       const upsertResults = await Promise.all(
         tabs.map(tab =>
           tx.tab.upsert({
             where: {
               value_heroTalentsId: {
                 value: tab.value,
-                heroTalentsId: tab.heroTalentsId,
+                heroTalentsId: heroTalents.id,
               },
             },
-            create: tab,
+            create: {
+              ...tab,
+              heroTalentsId: heroTalents.id,
+            },
             update: {
               label: tab.label,
               iconUrl: tab.iconUrl,

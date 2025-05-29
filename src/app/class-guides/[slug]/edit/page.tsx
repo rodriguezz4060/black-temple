@@ -1,6 +1,5 @@
 import { notFound } from 'next/navigation';
 import { prisma } from '@prisma/prisma-client';
-import { transliterate } from 'transliteration';
 import { GuideEditor } from '@root/components/shared/class-guides/editor/guide-editor';
 import { Container } from '@root/components/shared';
 
@@ -11,19 +10,10 @@ export default async function GuidePageRoute({
 }) {
   const { slug } = await params;
 
-  // Разделяем slug на части
-  const slugParts = slug.split('-');
-  const id = slugParts.pop(); // Последняя часть — это ID
-
-  // Ищем гайд по ID
-  const guide = await prisma.guide.findFirst({
-    where: { id: Number(id) },
+  // Ищем гайд по slug
+  const guide = await prisma.guide.findUnique({
+    where: { slug },
     include: {
-      heroTalents: {
-        include: {
-          tabs: true,
-        },
-      },
       class: true,
       specialization: true,
       modeRelation: true,
@@ -38,23 +28,6 @@ export default async function GuidePageRoute({
 
   if (!guide) {
     return notFound();
-  }
-
-  // Проверяем, что slug соответствует ожидаемому формату
-  const expectedSlug = `${transliterate(guide.class.name)}-${transliterate(
-    guide.specialization.name
-  )}-${guide.id}`
-    .toLowerCase()
-    .replace(/\s+/g, '-');
-
-  if (slug !== expectedSlug) {
-    // Если slug не совпадает, делаем редирект на правильный
-    return {
-      redirect: {
-        destination: `/class-guides/${expectedSlug}`,
-        permanent: true,
-      },
-    };
   }
 
   return (

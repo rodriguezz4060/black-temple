@@ -8,136 +8,143 @@ datasource db {
     url      = env("POSTGRES_URL")
 }
 
+model Expansion {
+    id           Int      @id @default(autoincrement())
+    name         String
+    patchVersion String   @unique
+    patchName    String
+    guides       Guide[]  @relation("ExpansionGuides")
+    createdAt    DateTime @default(now())
+    updatedAt    DateTime @updatedAt
+}
+
 model User {
-    id Int @id @default(autoincrement())
-
-    fullName String
-    email    String   @unique
-    password String
-    role     UserRole @default(USER)
-
-    provider   String?
-    providerId String?
-
-    createdAt DateTime @default(now())
-    updateAt  DateTime @updatedAt
+    id            Int      @id @default(autoincrement())
+    fullName      String   @unique
+    email         String   @unique
+    password      String
+    avatar        String?
+    bio           String?
+    website       String?
+    discord       String?
+    discordServer String?
+    battleTag     String?
+    twitter       String?
+    youtube       String?
+    twitch        String?
+    patreon       String?
+    boosty        String?
+    telegram      String?
+    guides        Guide[]
+    role          UserRole @default(USER)
+    provider      String?
+    providerId    String?
+    createdAt     DateTime @default(now())
+    updatedAt     DateTime @updatedAt
 }
 
 model ClassSelection {
-    id         Int    @id @default(autoincrement())
-    name       String @unique
-    classIcon  String
-    classColor String
-
+    id              Int                   @id @default(autoincrement())
+    name            String                @unique
+    classIcon       String
+    classColor      String
     specializations ClassSpecialization[]
     guides          Guide[]
 }
 
 model ClassSpecialization {
-    id                  Int    @id @default(autoincrement())
+    id                  Int            @id @default(autoincrement())
     name                String
     specIcon            String
     specBackground      String
     difficultyBarBanner String
     gearBanner          String
-
-    class   ClassSelection @relation(fields: [classId], references: [id])
-    classId Int
-    guides  Guide[]
-
-    specRole   SpecRole @relation(fields: [specRoleId], references: [id])
-    specRoleId Int
+    class               ClassSelection @relation(fields: [classId], references: [id])
+    classId             Int
+    guides              Guide[]
+    specRole            SpecRole       @relation(fields: [specRoleId], references: [id])
+    specRoleId          Int
 }
 
 model SpecRole {
-    id       Int    @id @default(autoincrement())
-    name     String @unique
-    roleIcon String
-
+    id             Int                   @id @default(autoincrement())
+    name           String                @unique
+    roleIcon       String
     specialization ClassSpecialization[]
 }
 
 model Mode {
-    id           Int    @id @default(autoincrement())
-    name         String @unique
+    id           Int     @id @default(autoincrement())
+    name         String  @unique
     activityBg   String
     activityIcon String
-
-    guides Guide[]
+    guides       Guide[]
 }
 
 model Guide {
-    id    Int    @id @default(autoincrement())
-    patch String
-
-    modeRelation Mode @relation(fields: [modeId], references: [id])
-    modeId       Int
-
-    class   ClassSelection @relation(fields: [classId], references: [id])
-    classId Int
-
-    specialization   ClassSpecialization @relation(fields: [specializationId], references: [id])
-    specializationId Int
-
-    overviewGears OverviewGear[]
-
+    id                 Int                 @id @default(autoincrement())
+    title              String?
+    slug               String              @unique
+    expansionId        Int? // Связь с Expansion
+    expansion          Expansion?          @relation("ExpansionGuides", fields: [expansionId], references: [id])
+    modeRelation       Mode                @relation(fields: [modeId], references: [id])
+    modeId             Int
+    class              ClassSelection      @relation(fields: [classId], references: [id])
+    classId            Int
+    specialization     ClassSpecialization @relation(fields: [specializationId], references: [id])
+    specializationId   Int
+    overviewGears      OverviewGear[]
     overviewDifficulty OverviewDifficulty?
-    heroTalents        HeroTalents?
+    sections           Section[]           @relation("GuideSections")
+    User               User?               @relation(fields: [userId], references: [id])
+    userId             Int?
+    isCommunity        Boolean             @default(false) // Флаг для Community Guides
+    status             GuideStatus         @default(DRAFT) // Статус гайда
+    createdAt          DateTime            @default(now())
+    updatedAt          DateTime            @updatedAt
+}
 
-    createdAt DateTime @default(now())
-    updatedAt DateTime @updatedAt
+model Section {
+    id        Int         @id @default(autoincrement())
+    guideId   Int
+    guide     Guide       @relation("GuideSections", fields: [guideId], references: [id])
+    type      SectionType
+    textArea  String?
+    tabs      Tab[]       @relation("SectionTabs")
+    createdAt DateTime    @default(now())
+    updatedAt DateTime    @updatedAt
 }
 
 model OverviewDifficulty {
-    id Int @id @default(autoincrement())
-
+    id            Int      @id @default(autoincrement())
     singleTarget  Int?
     multiTarget   Int?
     utility       Int?
     survivability Int?
     mobility      Int?
-
-    guide   Guide @relation(fields: [guideId], references: [id])
-    guideId Int   @unique
-
-    createdAt DateTime @default(now())
-    updatedAt DateTime @updatedAt
-}
-
-model HeroTalents {
-    id Int @id @default(autoincrement())
-
-    guide   Guide @relation(fields: [guideId], references: [id])
-    guideId Int   @unique
-
-    tabs Tab[] // Один HeroTalents имеет много Tab
-
-    createdAt DateTime @default(now())
-    updatedAt DateTime @updatedAt
+    guide         Guide    @relation(fields: [guideId], references: [id])
+    guideId       Int      @unique
+    createdAt     DateTime @default(now())
+    updatedAt     DateTime @updatedAt
 }
 
 model Tab {
-    id Int @id @default(autoincrement())
-
-    value   String // Уникальный идентификатор таба (например "tab1")
-    label   String // Название таба (отображаемый текст)
-    iconUrl String? // URL иконки (может быть null)
-    content String // Markdown-контент
-
-    // Связь с HeroTalents
-    heroTalents   HeroTalents @relation(fields: [heroTalentsId], references: [id])
-    heroTalentsId Int // Внешний ключ
-
+    id        Int      @id @default(autoincrement())
+    value     String
+    label     String
+    iconUrl   String?
+    content   String
+    section   Section  @relation("SectionTabs", fields: [sectionId], references: [id])
+    sectionId Int
     createdAt DateTime @default(now())
     updatedAt DateTime @updatedAt
 
-    @@unique([value, heroTalentsId], name: "value_heroTalentsId")
+    @@unique([value, sectionId], name: "value_sectionId")
     @@index([value])
 }
 
 model OverviewGear {
-    id Int @id @default(autoincrement())
-
+    id              Int      @id @default(autoincrement())
     itemSlot        String?
     itemName        String?
     itemImg         String?
@@ -145,39 +152,40 @@ model OverviewGear {
     itemEnchantName String?
     itemEnchantImg  String?
     itemEnchantUrl  String?
-
-    itemSockets Socket[]
-
-    guide   Guide @relation(fields: [guideId], references: [id])
-    guideId Int // Связь с Guide
-
-    createdAt DateTime @default(now())
-    updatedAt DateTime @updatedAt
+    itemSockets     Socket[]
+    guide           Guide    @relation(fields: [guideId], references: [id])
+    guideId         Int
+    createdAt       DateTime @default(now())
+    updatedAt       DateTime @updatedAt
 
     @@index([guideId])
 }
 
 model Socket {
-    id Int @id @default(autoincrement())
-
-    socketName String?
-    socketImg  String?
-    socketUrl  String?
-
-    slotType SlotType? // Тип слота для сокета (опционально)
-
+    id             Int          @id @default(autoincrement())
+    socketName     String?
+    socketImg      String?
+    socketUrl      String?
+    slotType       SlotType?
     overviewGear   OverviewGear @relation(fields: [overviewGearId], references: [id])
-    overviewGearId Int // Связь с OverviewGear
-
-    createdAt DateTime @default(now())
-    updatedAt DateTime @updatedAt
+    overviewGearId Int
+    createdAt      DateTime     @default(now())
+    updatedAt      DateTime     @updatedAt
 
     @@index([overviewGearId])
 }
 
 enum UserRole {
     USER
+    WRITER
+    MODERATOR
     ADMIN
+}
+
+enum GuideStatus {
+    DRAFT
+    PUBLISHED
+    ARCHIVED
 }
 
 enum SlotType {
@@ -199,4 +207,71 @@ enum SlotType {
     SECOND_TRINKET
     MAIN_HAND
     OFF_HAND
+}
+
+enum CharacterClass {
+    WARRIOR
+    PALADIN
+    HUNTER
+    ROGUE
+    PRIEST
+    SHAMAN
+    MAGE
+    WARLOCK
+    MONK
+    DRUID
+    DEMON_HUNTER
+    DEATH_KNIGHT
+    EVOKER
+}
+
+enum Specialization {
+    BLOOD
+    FROST_DK
+    UNHOLY
+    HAVOC
+    VENGEANCE
+    BALANCE
+    FERAL
+    GUARDIAN
+    RESTORATION
+    DEVASTATION
+    PRESERVATION
+    BEAST_MASTERY
+    MARKSMANSHIP
+    SURVIVAL
+    ARCANE
+    FIRE
+    FROST_MAGE
+    BREWMASTER
+    WINDWALKER
+    MISTWEAVER
+    HOLY_PRIEST
+    DISCIPLINE
+    SHADOW
+    ASSASSINATION
+    OUTLAW
+    SUBTLETY
+    ELEMENTAL
+    ENHANCEMENT
+    RESTORATION_SHAMAN
+    AFFLICTION
+    DEMONOLOGY
+    DESTRUCTION
+    ARMS
+    FURY
+    PROTECTION_WARRIOR
+    HOLY_PALADIN
+    PROTECTION_PALADIN
+    RETRIBUTION
+}
+
+enum SectionType {
+    HERO_TALENTS
+    TALENTS
+    ROTATION_SINGLE_TARGET
+    ROTATION_AOE_DUNGEON
+    GEAR
+    ENCHANTS
+    CONSUMABLES
 }

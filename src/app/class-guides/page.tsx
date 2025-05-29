@@ -10,7 +10,6 @@ const getCachedGuides = unstable_cache(
     return prisma.guide.findMany({
       select: {
         id: true,
-        patch: true, // Добавляем поле patch
         class: {
           select: { name: true, classColor: true, classIcon: true },
         },

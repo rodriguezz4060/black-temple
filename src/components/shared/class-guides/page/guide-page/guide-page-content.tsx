@@ -8,6 +8,7 @@ import { GuideSpecBanner } from './guide-spec-banner';
 import { GuideDifficultyBar } from './guide-difficulty-bar';
 import { GuideSpecGear } from './guide-spec-gear';
 import { GuidePageProps } from '@root/@types/prisma';
+import { GuideHeroTalents } from './guide-hero-talents';
 
 interface GuideProps {
   guide: GuidePageProps;
