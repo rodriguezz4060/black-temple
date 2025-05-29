@@ -27,6 +27,7 @@ export const FormInput: React.FC<Props> = ({
     formState: { errors },
     watch,
     setValue,
+    clearErrors,
   } = useFormContext();
 
   const value = watch(name);
@@ -34,6 +35,7 @@ export const FormInput: React.FC<Props> = ({
 
   const onClickClear = () => {
     setValue(name, '');
+    clearErrors(name);
   };
 
   return (

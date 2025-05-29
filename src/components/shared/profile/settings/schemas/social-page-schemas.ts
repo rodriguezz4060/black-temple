@@ -5,32 +5,74 @@ export const addSocialLinkSchema = z.object({
   discord: z.string().optional(),
   discordServer: z
     .string()
-    .url({ message: 'Некорректная ссылка на Discord сервер' })
+    .transform(val => (val === '' ? undefined : val))
+    .refine(
+      val => val === undefined || z.string().url().safeParse(val).success,
+      {
+        message: 'Некорректная ссылка на Discord сервер',
+      }
+    )
     .optional(),
   twitch: z
     .string()
-    .url({ message: 'Некорректная ссылка на Twitch' })
+    .transform(val => (val === '' ? undefined : val))
+    .refine(
+      val => val === undefined || z.string().url().safeParse(val).success,
+      {
+        message: 'Некорректная ссылка на Twitch',
+      }
+    )
     .optional(),
   youtube: z
     .string()
-    .url({ message: 'Некорректная ссылка на YouTube' })
+    .transform(val => (val === '' ? undefined : val))
+    .refine(
+      val => val === undefined || z.string().url().safeParse(val).success,
+      {
+        message: 'Некорректная ссылка на YouTube',
+      }
+    )
     .optional(),
   website: z
     .string()
-    .url({ message: 'Некорректная ссылка на сайт' })
+    .transform(val => (val === '' ? undefined : val))
+    .refine(
+      val => val === undefined || z.string().url().safeParse(val).success,
+      {
+        message: 'Некорректная ссылка на сайт',
+      }
+    )
     .optional(),
   telegram: z.string().optional(),
   twitter: z
     .string()
-    .url({ message: 'Некорректная ссылка на Twitter' })
+    .transform(val => (val === '' ? undefined : val))
+    .refine(
+      val => val === undefined || z.string().url().safeParse(val).success,
+      {
+        message: 'Некорректная ссылка на Twitter',
+      }
+    )
     .optional(),
   patreon: z
     .string()
-    .url({ message: 'Некорректная ссылка на Patreon' })
+    .transform(val => (val === '' ? undefined : val))
+    .refine(
+      val => val === undefined || z.string().url().safeParse(val).success,
+      {
+        message: 'Некорректная ссылка на Patreon',
+      }
+    )
     .optional(),
   boosty: z
     .string()
-    .url({ message: 'Некорректная ссылка на Boosty' })
+    .transform(val => (val === '' ? undefined : val))
+    .refine(
+      val => val === undefined || z.string().url().safeParse(val).success,
+      {
+        message: 'Некорректная ссылка на Boosty',
+      }
+    )
     .optional(),
 });
 
