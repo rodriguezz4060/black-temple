@@ -12,28 +12,53 @@ export async function generateMetadata({
 }) {
   const { slug } = await params;
 
-  // Если slug отсутствует (например, для /class-guides), возвращаем общий заголовок
+  // Общие метаданные для страницы списка гайдов (/class-guides)
   if (!slug) {
     return {
       metadataBase,
       title: 'Гайды по классам - World of Warcraft',
       description:
         'Список гайдов по классам и специализациям для World of Warcraft',
+      keywords: ['World of Warcraft', 'гайды', 'классы', 'специализации'],
+      openGraph: {
+        title: 'Гайды по классам - World of Warcraft',
+        description:
+          'Список гайдов по классам и специализациям для World of Warcraft',
+        url: '/class-guides',
+      },
+      twitter: {
+        card: 'summary_large_image',
+        title: 'Гайды по классам - World of Warcraft',
+        description:
+          'Список гайдов по классам и специализациям для World of Warcraft',
+      },
     };
   }
 
-  // Извлекаем ID из slug
+  // Извлекаем ID из slug (предполагается формат, например, warrior-protection-123)
   const slugParts = slug.split('-');
   const id = Number(slugParts.pop());
 
+  // Проверяем, является ли ID числом
   if (isNaN(id)) {
     return {
       metadataBase,
-      title: 'Гайд не найден',
+      title: 'Гайд не найден | World of Warcraft',
+      description: 'Запрошенный гайд не найден',
+      openGraph: {
+        title: 'Гайд не найден',
+        description: 'Запрошенный гайд не найден',
+        url: `/class-guides/${slug}`,
+      },
+      twitter: {
+        card: 'summary_large_image',
+        title: 'Гайд не найден',
+        description: 'Запрошенный гайд не найден',
+      },
     };
   }
 
-  // Запрашиваем данные гайда
+  // Запрашиваем данные гайда из базы
   const guide = await prisma.guide.findFirst({
     where: { id },
     include: {
@@ -42,24 +67,43 @@ export async function generateMetadata({
     },
   });
 
+  // Если гайд не найден
   if (!guide) {
     return {
       metadataBase,
-      title: 'Гайд не найден',
+      title: 'Гайд не найден | World of Warcraft',
       description: 'Запрошенный гайд не найден',
+      openGraph: {
+        title: 'Гайд не найден',
+        description: 'Запрошенный гайд не найден',
+        url: `/class-guides/${slug}`,
+      },
+      twitter: {
+        card: 'summary_large_image',
+        title: 'Гайд не найден',
+        description: 'Запрошенный гайд не найден',
+      },
     };
   }
 
-  // Формируем заголовок
+  // Формируем заголовок и описание
   const title = `${guide.class.name} ${guide.specialization.name} - Гайд`;
+  const description = `Гайд для ${guide.class.name} (${guide.specialization.name}) в World of Warcraft`;
 
   return {
-    metadataBase, // Указываем metadataBase
+    metadataBase,
     title,
-    description: `Гайд для ${guide.class.name} (${guide.specialization.name}) в World of Warcraft`,
+    description,
+    keywords: [
+      guide.class.name,
+      guide.specialization.name,
+      'World of Warcraft',
+      'гайд',
+      'WoW',
+    ],
     openGraph: {
       title,
-      description: `Гайд для ${guide.class.name} (${guide.specialization.name})`,
+      description,
       url: `/class-guides/${slug}`,
       images: [
         {
@@ -73,7 +117,7 @@ export async function generateMetadata({
     twitter: {
       card: 'summary_large_image',
       title,
-      description: `Гайд для ${guide.class.name} (${guide.specialization.name})`,
+      description,
       images: [guide.specialization.specBackground],
     },
   };
