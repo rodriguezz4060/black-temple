@@ -4,7 +4,6 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import toast from 'react-hot-toast';
 import { createGuideAction } from '@root/app/class-guides/_actions/create-guide';
-import { transliterate } from 'transliteration';
 
 export function useCreateGuide() {
   const router = useRouter();
@@ -45,7 +44,7 @@ export function useCreateGuide() {
         console.log('Созданный slug:', result.guide.slug);
         router.push(`/class-guides/${result.guide.slug}`);
       } else {
-        toast.error(result.error || 'Не удалось создать гайд');
+        toast.error('Не удалось создать гайд');
       }
     } catch (error) {
       toast.error('Произошла ошибка при создании гайда');

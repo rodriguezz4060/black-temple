@@ -96,8 +96,8 @@ model Guide {
     overviewGears      OverviewGear[]
     overviewDifficulty OverviewDifficulty?
     sections           Section[]           @relation("GuideSections")
-    User               User?               @relation(fields: [userId], references: [id])
-    userId             Int?
+    User               User                @relation(fields: [userId], references: [id])
+    userId             Int
     isCommunity        Boolean             @default(false) // Флаг для Community Guides
     status             GuideStatus         @default(DRAFT) // Статус гайда
     createdAt          DateTime            @default(now())

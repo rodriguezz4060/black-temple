@@ -17,6 +17,10 @@ export const createGuideSchemas = z.object({
     .number({ invalid_type_error: 'expansionId должен быть числом' })
     .int({ message: 'expansionId должен быть целым числом' })
     .positive({ message: 'expansionId должен быть положительным' }),
+  userId: z
+    .number({ invalid_type_error: 'userId должен быть числом' })
+    .int({ message: 'userId должен быть целым числом' })
+    .positive({ message: 'userId должен быть положительным' }),
   title: z.string().nullable(),
   slug: z.string().optional(),
 });

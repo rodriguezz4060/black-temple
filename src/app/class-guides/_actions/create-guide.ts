@@ -6,6 +6,8 @@ import { createGuideSchemas } from '@root/components/shared/class-guides/editor/
 import { revalidatePath } from 'next/cache';
 import { z } from 'zod';
 import { transliterate } from 'transliteration';
+import { getServerSession } from 'next-auth';
+import { authOptions } from '@root/components/constants/auth-options';
 
 export async function GuideData() {
   const classes = await prisma.classSelection.findMany({
@@ -22,6 +24,12 @@ export async function GuideData() {
 
 export async function createGuideAction(formData: FormData) {
   try {
+    // Get the authenticated user's session (example with NextAuth)
+    const session = await getServerSession(authOptions);
+    if (!session?.user?.id) {
+      throw new Error('Пользователь не аутентифицирован');
+    }
+
     const slotTypes = Object.values(SlotType);
     const classId = formData.get('classId');
     const specializationId = formData.get('specializationId');
@@ -29,6 +37,7 @@ export async function createGuideAction(formData: FormData) {
     const expansionId = formData.get('expansionId');
     const title = formData.get('title');
 
+    // Prepare data for validation
     const data = {
       classId: Number(classId),
       specializationId: Number(specializationId),
@@ -36,10 +45,13 @@ export async function createGuideAction(formData: FormData) {
       expansionId: Number(expansionId),
       title: title ? String(title) : null,
       slug: '',
+      userId: Number(session.user.id), // Add userId from session
     };
 
+    // Validate data
     const validatedData = createGuideSchemas.parse(data);
 
+    // Fetch related data for slug generation and validation
     const classData = await prisma.classSelection.findUnique({
       where: { id: validatedData.classId },
     });
@@ -56,14 +68,15 @@ export async function createGuideAction(formData: FormData) {
       );
     }
 
+    // Create guide with all required fields
     const guide = await prisma.guide.create({
       data: {
         classId: validatedData.classId,
         specializationId: validatedData.specializationId,
         modeId: validatedData.modeId,
         expansionId: validatedData.expansionId,
-
-        title: validatedData.title, // Используем валидированное значение
+        userId: validatedData.userId,
+        title: validatedData.title,
         slug: '',
         overviewGears: {
           create: slotTypes.map(slotType => ({
@@ -89,6 +102,7 @@ export async function createGuideAction(formData: FormData) {
       },
     });
 
+    // Generate and update slug
     const slug =
       `${transliterate(classData.name)}-${transliterate(specData.name)}-${transliterate(modeData.name)}-${guide.id}`
         .toLowerCase()

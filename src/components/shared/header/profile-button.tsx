@@ -47,7 +47,7 @@ export const ProfileButton: React.FC<Props> = ({
         <Popover open={isOpen} onOpenChange={setIsOpen}>
           <PopoverTrigger>
             <ProfileAvatar
-              className='h-11 w-11 cursor-pointer text-[26px] ring-2 ring-transparent transition-all hover:ring-blue-400 hover:ring-offset-2 dark:hover:ring-blue-500'
+              className='h-11 w-11 cursor-pointer text-[26px] ring-2 ring-transparent transition-all hover:ring-blue-400 dark:hover:ring-blue-500'
               fullName={name ?? ''}
               avatar={avatar ?? ''}
             />
