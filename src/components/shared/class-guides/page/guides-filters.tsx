@@ -116,7 +116,7 @@ export default function GuidesFilters(props: GuidesFiltersProps) {
       {/* Filter full screen (hidden on small screens, visible on large screens) */}
       <div className='hidden flex-col gap-3 lg:block'>
         <div className='flex w-full items-center'>
-          <div className='flex w-full flex-col rounded-2xl bg-[#171717] p-4'>
+          <div className='flex w-full flex-col rounded-2xl bg-[#F0F8FF] p-4 dark:bg-[#171717]'>
             <div className='px-1.5'>Выберите класс:</div>
             <div className='flex w-full gap-8'>
               <ul className='flex w-full cursor-pointer flex-wrap items-center gap-1'>

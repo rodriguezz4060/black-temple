@@ -41,12 +41,12 @@ export default function CreateGuideModal({
     selectedClass,
     selectedSpec,
     selectedMode,
-    selectedExpansion, // Добавляем selectedExpansion
+    selectedExpansion,
     isLoading,
     setSelectedClass,
     setSelectedSpec,
     setSelectedMode,
-    setSelectedExpansion, // Добавляем setSelectedExpansion
+    setSelectedExpansion,
     handleSubmit,
   } = useCreateGuide();
 
@@ -76,7 +76,7 @@ export default function CreateGuideModal({
                     size='wowIcon'
                     onClick={() => {
                       setSelectedClass(cls.id);
-                      setSelectedSpec(null); // Сброс специализации при смене класса
+                      setSelectedSpec(null);
                     }}
                     className={`flex flex-col items-center rounded border ${
                       selectedClass === cls.id
@@ -161,24 +161,23 @@ export default function CreateGuideModal({
               <Separator />
               <div className='mb-4'>
                 <Label className='text-md mb-2 block font-medium'>
-                  Выберите версию игры:
+                  Версия игры:
                 </Label>
                 <Select
                   onValueChange={value => setSelectedExpansion(Number(value))}
-                  value={
-                    selectedExpansion ? String(selectedExpansion) : undefined
-                  }
+                  value={selectedExpansion ? String(selectedExpansion) : ''}
                 >
-                  <SelectTrigger>
+                  <SelectTrigger className='cursor-pointer'>
                     <SelectValue placeholder='Выберите версию игры' />
                   </SelectTrigger>
-                  <SelectContent>
+                  <SelectContent className='p-1'>
                     {expansions.map(expansion => (
                       <SelectItem
                         key={expansion.id}
                         value={String(expansion.id)}
+                        className='cursor-pointer transition-colors hover:bg-gray-100 hover:text-blue-600 focus:bg-gray-100 focus:text-blue-600 dark:hover:bg-gray-800 dark:hover:text-blue-400 dark:focus:bg-gray-800 dark:focus:text-blue-400'
                       >
-                        {expansion.name} ({expansion.patchVersion})
+                        {expansion.name} {expansion.patchVersion}
                       </SelectItem>
                     ))}
                   </SelectContent>
@@ -195,7 +194,7 @@ export default function CreateGuideModal({
                     !selectedClass ||
                     !selectedSpec ||
                     !selectedMode ||
-                    !selectedExpansion // Добавляем проверку на выбор версии игры
+                    !selectedExpansion
                   }
                   className='font-bold'
                 >

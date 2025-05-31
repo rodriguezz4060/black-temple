@@ -7,7 +7,6 @@ interface GuideCardProps {
 }
 
 export const GuidesCard = ({ guides }: GuideCardProps) => {
-  console.log(guides);
   return (
     <div className='mt-5 grid grid-cols-2 gap-2 p-3 md:grid-cols-4 md:gap-6 lg:grid-cols-6'>
       {guides.map(guide => (
