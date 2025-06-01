@@ -18,7 +18,7 @@ export const GuidePageContent = ({ guide }: GuideProps) => {
     <div>
       <Container className='secondary max-w-[1250px] px-4 pb-10'>
         <div className='post-page flex h-max flex-col justify-center pt-10 lg:flex-row'>
-          <LeftSideBar />
+          <LeftSideBar guide={guide} />
 
           <div className='flex w-full flex-1 flex-col pt-2 lg:w-[815px] lg:pt-0 xl:mx-auto'>
             <GuideTitle

@@ -22,7 +22,7 @@ export const GuideEditor: React.FC<GuideEditorProps> = ({
     <div
       className={`post-page flex h-max flex-col justify-center pt-10 lg:flex-row ${className}`}
     >
-      <LeftSideBar />
+      <LeftSideBar guide={guide} />
       <div className='flex w-full flex-1 flex-col pt-2 lg:w-[815px] lg:pt-0 xl:mx-auto'>
         <div className='container mt-0 flex w-full flex-1 origin-top flex-col gap-y-4'>
           <div className='flex flex-row justify-between gap-4'>

@@ -7,6 +7,13 @@ import {
 
 export type GuidePageProps = Prisma.GuideGetPayload<{
   include: {
+    user: {
+      select: {
+        id: true;
+        fullName: true;
+        avatar: true;
+      };
+    };
     class: true;
     specialization: true;
     modeRelation: true;

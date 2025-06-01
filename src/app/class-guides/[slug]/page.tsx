@@ -13,6 +13,13 @@ export default async function GuidePageRoute({
   const guide = await prisma.guide.findUnique({
     where: { slug },
     include: {
+      user: {
+        select: {
+          id: true,
+          fullName: true,
+          avatar: true,
+        },
+      },
       class: true,
       specialization: true,
       modeRelation: true,
