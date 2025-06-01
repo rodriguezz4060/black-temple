@@ -7,15 +7,21 @@ import { GuideSpecBanner } from '@root/components/shared/class-guides/page/guide
 import { GuideAnchorWrapper } from '@root/components/shared/wrapper';
 import { Title } from '@root/components/ui/title';
 import { DifficultyBarEditor } from './difficulty-bar-editor';
+import { GuideStatusComponent } from './guide-status/guide-status-component';
 
 interface GuideEditorProps {
   guide: GuidePageProps;
   className?: string;
 }
 
-export const GuideEditor: React.FC<GuideEditorProps> = ({ guide }) => {
+export const GuideEditor: React.FC<GuideEditorProps> = ({
+  guide,
+  className,
+}) => {
   return (
-    <div className='post-page flex h-max flex-col justify-center pt-10 lg:flex-row'>
+    <div
+      className={`post-page flex h-max flex-col justify-center pt-10 lg:flex-row ${className}`}
+    >
       <LeftSideBar />
       <div className='flex w-full flex-1 flex-col pt-2 lg:w-[815px] lg:pt-0 xl:mx-auto'>
         <div className='container mt-0 flex w-full flex-1 origin-top flex-col gap-y-4'>
@@ -30,6 +36,7 @@ export const GuideEditor: React.FC<GuideEditorProps> = ({ guide }) => {
                 <span className='flex h-9 items-center gap-6 rounded-sm bg-[#057AF0] pr-2.5 pl-2.5'>
                   <span>Patch {guide.expansion.patchVersion}</span>
                 </span>
+                <GuideStatusComponent guide={guide} />
               </div>
             </div>
             <div className='hidden lg:block'>

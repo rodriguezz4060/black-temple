@@ -160,3 +160,19 @@ body .w-md-editor-text-input {
 .w-md-editor-text-input {
   -webkit-text-fill-color: unset !important;
 }
+
+.custom-select-trigger::after {
+  content: '';
+  display: inline-block;
+  margin-left: 0.5rem;
+  width: 0;
+  height: 0;
+  border-left: 5px solid transparent;
+  border-right: 5px solid transparent;
+  border-top: 5px solid white; /* Здесь меняем цвет стрелки на белый */
+  transition: transform 0.2s;
+}
+
+.custom-select-trigger[data-state='open']::after {
+  transform: rotate(180deg);
+}

@@ -48,6 +48,7 @@ export const BisGearEditor = ({
                       width={340}
                       height={500}
                       className=''
+                      priority
                     />
                   </div>
                   {/* Левая колонка */}

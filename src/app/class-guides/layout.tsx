@@ -58,5 +58,5 @@ export default function ClassGuideLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  return <main className='container mx-auto px-4 py-8'>{children}</main>;
+  return <main>{children}</main>;
 }

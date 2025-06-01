@@ -8,6 +8,7 @@ import { cn } from '@root/lib/utils';
 const getCachedGuides = unstable_cache(
   async () => {
     return prisma.guide.findMany({
+      where: { status: 'PUBLISHED' },
       select: {
         id: true,
         slug: true,

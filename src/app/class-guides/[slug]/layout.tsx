@@ -6,11 +6,10 @@ const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000';
 export async function generateMetadata({
   params,
 }: {
-  params: { slug?: string };
+  params: Promise<{ slug?: string }>;
 }) {
-  const { slug } = params;
+  const { slug } = await params;
 
-  // Общие метаданные для страницы списка гайдов
   if (!slug) {
     return {
       metadataBase: new URL(baseUrl),
@@ -44,9 +43,9 @@ export async function generateMetadata({
 
   // Извлекаем ID из slug
   const slugParts = slug.split('-');
-  const id = Number(slugParts.pop());
+  const id = slugParts.pop();
 
-  if (isNaN(id)) {
+  if (!id || isNaN(Number(id))) {
     return {
       metadataBase: new URL(baseUrl),
       title: 'Гайд не найден | World of Warcraft',
@@ -66,34 +65,36 @@ export async function generateMetadata({
 
   // Запрашиваем данные гайда
   const guide = await prisma.guide.findUnique({
-    where: { id },
+    where: { id: Number(id) },
     include: {
       class: true,
       specialization: true,
+      modeRelation: true,
+      expansion: true,
     },
   });
 
-  if (!guide) {
+  if (!guide || guide.status !== 'PUBLISHED') {
     return {
       metadataBase: new URL(baseUrl),
       title: 'Гайд не найден | World of Warcraft',
-      description: 'Запрошенный гайд не найден',
+      description: 'Запрошенный гайд не найден или не опубликован',
       openGraph: {
         title: 'Гайд не найден',
-        description: 'Запрошенный гайд не найден',
+        description: 'Запрошенный гайд не найден или не опубликован',
         url: `${baseUrl}/class-guides/${slug}`,
       },
       twitter: {
         card: 'summary',
         title: 'Гайд не найден',
-        description: 'Запрошенный гайд не найден',
+        description: 'Запрошенный гайд не найден или не опубликован',
       },
     };
   }
 
   // Формируем метаданные для конкретного гайда
   const title = `${guide.class.name} ${guide.specialization.name} - Гайд | Black Temple`;
-  const description = `Подробный гайд для ${guide.class.name} (${guide.specialization.name}) в World of Warcraft`;
+  const description = `Подробный гайд для ${guide.class.name} (${guide.specialization.name}) в World of Warcraft для ${guide.modeRelation.name} (Patch ${guide.expansion.patchVersion})`;
   const imageUrl = guide.specialization.specBackground.startsWith('http')
     ? guide.specialization.specBackground
     : `${baseUrl}${guide.specialization.specBackground}`;
@@ -105,10 +106,12 @@ export async function generateMetadata({
     keywords: [
       guide.class.name,
       guide.specialization.name,
+      guide.modeRelation.name,
       'World of Warcraft',
       'гайд',
       'WoW',
       'Black Temple',
+      guide.expansion.patchVersion,
     ],
     openGraph: {
       title,
@@ -139,6 +142,7 @@ export default async function ClassGuidesLayout({
   children,
 }: {
   children: React.ReactNode;
+  params: Promise<{ slug?: string }>;
 }) {
   return <div className='container mx-auto px-4'>{children}</div>;
 }
