@@ -1,21 +1,19 @@
 import { prisma } from '@prisma/prisma-client';
 
-// Задаем metadataBase в зависимости от окружения
-const metadataBase = process.env.NEXT_PUBLIC_BASE_URL
-  ? new URL(process.env.NEXT_PUBLIC_BASE_URL)
-  : new URL('http://localhost:3000');
+// Определяем базовый URL
+const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000';
 
 export async function generateMetadata({
   params,
 }: {
-  params: Promise<{ slug?: string }>;
+  params: { slug?: string };
 }) {
-  const { slug } = await params;
+  const { slug } = params;
 
-  // Общие метаданные для страницы списка гайдов (/class-guides)
+  // Общие метаданные для страницы списка гайдов
   if (!slug) {
     return {
-      metadataBase,
+      metadataBase: new URL(baseUrl),
       title: 'Гайды по классам - World of Warcraft',
       description:
         'Список гайдов по классам и специализациям для World of Warcraft',
@@ -24,42 +22,50 @@ export async function generateMetadata({
         title: 'Гайды по классам - World of Warcraft',
         description:
           'Список гайдов по классам и специализациям для World of Warcraft',
-        url: '/class-guides',
+        url: `${baseUrl}/class-guides`,
+        images: [
+          {
+            url: `${baseUrl}/assets/meta/class-guides.png`,
+            width: 1200,
+            height: 630,
+            alt: 'Гайды по классам WoW',
+          },
+        ],
       },
       twitter: {
         card: 'summary_large_image',
         title: 'Гайды по классам - World of Warcraft',
         description:
           'Список гайдов по классам и специализациям для World of Warcraft',
+        images: [`${baseUrl}/assets/meta/class-guides.png`],
       },
     };
   }
 
-  // Извлекаем ID из slug (предполагается формат, например, warrior-protection-123)
+  // Извлекаем ID из slug
   const slugParts = slug.split('-');
   const id = Number(slugParts.pop());
 
-  // Проверяем, является ли ID числом
   if (isNaN(id)) {
     return {
-      metadataBase,
+      metadataBase: new URL(baseUrl),
       title: 'Гайд не найден | World of Warcraft',
       description: 'Запрошенный гайд не найден',
       openGraph: {
         title: 'Гайд не найден',
         description: 'Запрошенный гайд не найден',
-        url: `/class-guides/${slug}`,
+        url: `${baseUrl}/class-guides/${slug}`,
       },
       twitter: {
-        card: 'summary_large_image',
+        card: 'summary',
         title: 'Гайд не найден',
         description: 'Запрошенный гайд не найден',
       },
     };
   }
 
-  // Запрашиваем данные гайда из базы
-  const guide = await prisma.guide.findFirst({
+  // Запрашиваем данные гайда
+  const guide = await prisma.guide.findUnique({
     where: { id },
     include: {
       class: true,
@@ -67,31 +73,33 @@ export async function generateMetadata({
     },
   });
 
-  // Если гайд не найден
   if (!guide) {
     return {
-      metadataBase,
+      metadataBase: new URL(baseUrl),
       title: 'Гайд не найден | World of Warcraft',
       description: 'Запрошенный гайд не найден',
       openGraph: {
         title: 'Гайд не найден',
         description: 'Запрошенный гайд не найден',
-        url: `/class-guides/${slug}`,
+        url: `${baseUrl}/class-guides/${slug}`,
       },
       twitter: {
-        card: 'summary_large_image',
+        card: 'summary',
         title: 'Гайд не найден',
         description: 'Запрошенный гайд не найден',
       },
     };
   }
 
-  // Формируем заголовок и описание
-  const title = `${guide.class.name} ${guide.specialization.name} - Гайд`;
-  const description = `Гайд для ${guide.class.name} (${guide.specialization.name}) в World of Warcraft`;
+  // Формируем метаданные для конкретного гайда
+  const title = `${guide.class.name} ${guide.specialization.name} - Гайд | Black Temple`;
+  const description = `Подробный гайд для ${guide.class.name} (${guide.specialization.name}) в World of Warcraft`;
+  const imageUrl = guide.specialization.specBackground.startsWith('http')
+    ? guide.specialization.specBackground
+    : `${baseUrl}${guide.specialization.specBackground}`;
 
   return {
-    metadataBase,
+    metadataBase: new URL(baseUrl),
     title,
     description,
     keywords: [
@@ -100,14 +108,15 @@ export async function generateMetadata({
       'World of Warcraft',
       'гайд',
       'WoW',
+      'Black Temple',
     ],
     openGraph: {
       title,
       description,
-      url: `/class-guides/${slug}`,
+      url: `${baseUrl}/class-guides/${slug}`,
       images: [
         {
-          url: guide.specialization.specBackground,
+          url: imageUrl,
           width: 1200,
           height: 630,
           alt: `${guide.class.name} ${guide.specialization.name}`,
@@ -118,17 +127,18 @@ export async function generateMetadata({
       card: 'summary_large_image',
       title,
       description,
-      images: [guide.specialization.specBackground],
+      images: [imageUrl],
+    },
+    alternates: {
+      canonical: `${baseUrl}/class-guides/${slug}`,
     },
   };
 }
 
-// Layout
 export default async function ClassGuidesLayout({
   children,
 }: {
   children: React.ReactNode;
-  params: Promise<{ slug?: string }>;
 }) {
-  return <div>{children}</div>;
+  return <div className='container mx-auto px-4'>{children}</div>;
 }

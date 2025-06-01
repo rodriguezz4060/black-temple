@@ -11,6 +11,11 @@ const getCachedGuides = unstable_cache(
       select: {
         id: true,
         slug: true,
+        User: {
+          select: {
+            fullName: true,
+          },
+        },
         class: {
           select: { name: true, classColor: true, classIcon: true },
         },
@@ -67,7 +72,7 @@ const getCachedSpecFilter = unstable_cache(
         id: true,
         name: true,
         specIcon: true,
-        specBackground: true, // Добавляем для консистентности
+        specBackground: true,
         class: { select: { name: true, classColor: true, classIcon: true } },
         specRole: { select: { name: true, roleIcon: true } },
       },

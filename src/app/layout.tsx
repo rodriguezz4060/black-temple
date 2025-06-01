@@ -6,21 +6,17 @@ import './globals.css';
 import { Providers } from '@root/components/shared/provider';
 import NextTopLoader from 'nextjs-toploader';
 
-// Задаем metadataBase в зависимости от окружения
-const metadataBase = process.env.NEXT_PUBLIC_BASE_URL
-  ? new URL(process.env.NEXT_PUBLIC_BASE_URL)
-  : new URL('http://localhost:3000');
+const baseUrl =
+  process.env.NEXT_PUBLIC_SITE_URL || 'https://black-temple.vercel.app';
 
-// Шрифт Nunito для кириллицы
 const nunito = Nunito({
   subsets: ['cyrillic'],
   variable: '--font-nunito',
   weight: ['400', '500', '600', '700', '800', '900'],
 });
 
-// Метаданные для главной страницы
 export const metadata: Metadata = {
-  metadataBase,
+  metadataBase: new URL(baseUrl),
   title: 'Black Temple - Гайды по World of Warcraft',
   description:
     'Гайды по World of Warcraft: рейды, мифик+, классы и специализации. Узнайте, как выживать и побеждать в WoW!',
@@ -37,11 +33,11 @@ export const metadata: Metadata = {
     title: 'Black Temple - Гайды по World of Warcraft',
     description:
       'Гайды по World of Warcraft: рейды, мифик+, классы и специализации. Узнайте, как выживать и побеждать в WoW!',
-    url: '/',
+    url: baseUrl,
     siteName: 'Black Temple',
     images: [
       {
-        url: '/assets/meta/main-page.png',
+        url: `${baseUrl}/assets/meta/main-page.png`,
         width: 1200,
         height: 630,
         alt: 'Black Temple - Гайды по World of Warcraft',
@@ -55,7 +51,7 @@ export const metadata: Metadata = {
     title: 'Black Temple - Гайды по World of Warcraft',
     description:
       'Гайды по World of Warcraft: рейды, мифик+, классы и специализации. Узнайте, как выживать и побеждать в WoW!',
-    images: ['/assets/meta/main-page.png'],
+    images: [`${baseUrl}/assets/meta/main-page.png`],
   },
   robots: {
     index: true,
@@ -74,6 +70,23 @@ export default async function RootLayout({
   return (
     <html lang='ru'>
       <head>
+        <meta charSet='utf-8' />
+        <meta name='viewport' content='width=device-width, initial-scale=1' />
+        <meta
+          property='og:title'
+          content='Black Temple - Гайды по World of Warcraft'
+        />
+        <meta
+          property='og:description'
+          content='Гайды по World of Warcraft: рейды, мифик+, классы и специализации.'
+        />
+        <meta
+          property='og:image'
+          content={`${baseUrl}/assets/meta/main-page.png`}
+        />
+        <meta property='og:url' content={baseUrl} />
+        <meta property='og:type' content='website' />
+        <meta property='og:site_name' content='Black Temple' />
         <Script id='wowhead-tooltips-config'>
           {`const whTooltips = {colorLinks: true, iconizeLinks: true, renameLinks: true};`}
         </Script>
