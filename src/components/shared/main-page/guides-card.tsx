@@ -45,9 +45,9 @@ export const GuidesCard = ({ guides }: GuideCardProps) => {
               </span>
 
               {/* Имя автора - справа */}
-              {guide.User && (
+              {guide.user && (
                 <span className='text-xs text-gray-300 transition-colors hover:text-white'>
-                  @{guide.User.fullName}
+                  @{guide.user.fullName}
                 </span>
               )}
             </div>

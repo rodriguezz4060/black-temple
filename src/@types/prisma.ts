@@ -48,7 +48,7 @@ export type GuideButtonWithRelations = Prisma.GuideGetPayload<{
   select: {
     id: true;
     slug: true;
-    User: {
+    user: {
       select: {
         fullName: true;
       };

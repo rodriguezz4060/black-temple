@@ -13,7 +13,7 @@ export default async function Home() {
     select: {
       id: true,
       slug: true,
-      User: {
+      user: {
         select: {
           fullName: true,
         },

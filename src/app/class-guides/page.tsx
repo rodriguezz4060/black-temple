@@ -11,7 +11,7 @@ const getCachedGuides = unstable_cache(
       select: {
         id: true,
         slug: true,
-        User: {
+        user: {
           select: {
             fullName: true,
           },
