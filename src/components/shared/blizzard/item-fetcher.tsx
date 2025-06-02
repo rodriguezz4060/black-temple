@@ -34,7 +34,7 @@ export default function ItemFetcher({ onItemFetched }: ItemFetcherProps) {
       const newItemData = {
         name: result.name,
         icon: result.icon,
-        url, // Сохраняем введенную ссылку
+        url,
       };
 
       onItemFetched(newItemData);
