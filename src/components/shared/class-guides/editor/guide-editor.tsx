@@ -1,13 +1,19 @@
 'use client';
 
 import { GuidePageProps } from '@root/@types/prisma';
-import { BisGearEditor } from './bis-gear-editor';
 import { LeftSideBar } from '@root/components/shared/class-guides';
 import { GuideSpecBanner } from '@root/components/shared/class-guides/page/guide-page';
 import { GuideAnchorWrapper } from '@root/components/shared/wrapper';
 import { Title } from '@root/components/ui/title';
+import { GuideStatusComponent } from './components/guide-status/guide-status-component';
 import { DifficultyBarEditor } from './difficulty-bar-editor';
-import { GuideStatusComponent } from './guide-status/guide-status-component';
+import { BisGearEditor } from './components/bis-gear/bis-gear-editor';
+import { TextFieldEditor } from './components/text-field/text-field-editor';
+import { TabsEditor } from './components/tabs/tabs-editor';
+import { ContentTypeSelector } from './components/section/content-type-selector';
+import { SectionSelectorDrawer } from './components/section/section-selector';
+import { sectionTypeTranslations } from '@root/utils/section-translations';
+import { Separator } from '@root/components/ui/separator';
 
 interface GuideEditorProps {
   guide: GuidePageProps;
@@ -18,6 +24,10 @@ export const GuideEditor: React.FC<GuideEditorProps> = ({
   guide,
   className,
 }) => {
+  const handleSectionAdded = () => {
+    // Callback для обновления состояния, если нужно
+  };
+
   return (
     <div
       className={`post-page flex h-max flex-col justify-center pt-10 lg:flex-row ${className}`}
@@ -107,12 +117,50 @@ export const GuideEditor: React.FC<GuideEditorProps> = ({
             gearData={guide.overviewGears}
           />
         </div>
-        <GuideAnchorWrapper
-          anchorId='hero-talents-header'
-          title='Героические таланты'
-          characterClass={guide.class.name}
-          spec={guide.specialization.name}
-          patch={guide.expansion.patchVersion}
+
+        {/* Рендерим существующие секции */}
+        {guide.sections.map(section => (
+          <div key={section.id} className='mt-6'>
+            <GuideAnchorWrapper
+              anchorId={`${section.type.toLowerCase()}-header`}
+              title={sectionTypeTranslations[section.type]}
+              characterClass={guide.class.name}
+              spec={guide.specialization.name}
+              patch={guide.expansion.patchVersion}
+            />
+            {/* Рендерим текстовые блоки */}
+            {section.textFields.map(textField => (
+              <TextFieldEditor
+                key={textField.id}
+                textField={textField}
+                sectionId={section.id}
+                guideId={guide.id}
+              />
+            ))}
+            {/* Рендерим табы, если они есть */}
+            {section.tabs.length > 0 && (
+              <TabsEditor
+                key={section.id}
+                initialTabs={section.tabs}
+                defaultTab={section.tabs[0]?.value || ''}
+                sectionId={section.id}
+              />
+            )}
+            {/* Селектор типа контента для добавления нового контента в секцию */}
+            <Separator className='my-4' />
+            <ContentTypeSelector
+              sectionId={section.id}
+              guideId={guide.id}
+              textFieldCount={section.textFields.length}
+            />
+          </div>
+        ))}
+
+        {/* Drawer для добавления новой секции */}
+        <SectionSelectorDrawer
+          guideId={guide.id}
+          guide={guide}
+          onSectionAdded={handleSectionAdded}
         />
       </div>
     </div>

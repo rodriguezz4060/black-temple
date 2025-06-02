@@ -71,7 +71,7 @@ export const MDTabContentEditor: React.FC<MDTabContentEditorProps> = ({
       <MDEditor
         value={content}
         onChange={value => onContentChange(value || '')}
-        height={300}
+        height={200}
         preview='live'
       />
     </div>

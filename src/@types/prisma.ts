@@ -17,13 +17,19 @@ export type GuidePageProps = Prisma.GuideGetPayload<{
     class: true;
     specialization: true;
     modeRelation: true;
+    expansion: true;
     overviewDifficulty: true;
     overviewGears: {
       include: {
         itemSockets: true;
       };
     };
-    expansion: true;
+    sections: {
+      include: {
+        tabs: true;
+        textFields: true;
+      };
+    };
   };
 }>;
 
@@ -31,13 +37,14 @@ export type InitialClassSelection = ClassSelection & {
   specializations: ClassSpecialization[];
 };
 
-export type TabData = {
+export interface TabData {
+  id?: number;
   value: string;
   label: string;
-  iconUrl: string;
+  iconUrl: string | null;
   content: string;
-  heroTalentsId: number;
-};
+  sectionId: number;
+}
 
 export type ClassFilter = Prisma.ClassSpecializationGetPayload<{
   select: {

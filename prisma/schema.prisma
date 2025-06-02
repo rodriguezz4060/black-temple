@@ -105,14 +105,18 @@ model Guide {
 }
 
 model Section {
-    id        Int         @id @default(autoincrement())
-    guideId   Int
-    guide     Guide       @relation("GuideSections", fields: [guideId], references: [id])
-    type      SectionType
-    textArea  String?
-    tabs      Tab[]       @relation("SectionTabs")
-    createdAt DateTime    @default(now())
-    updatedAt DateTime    @updatedAt
+    id          Int         @id @default(autoincrement())
+    guideId     Int
+    guide       Guide       @relation("GuideSections", fields: [guideId], references: [id])
+    order       Int
+    type        SectionType
+    contentType String
+    tabs        Tab[]       @relation("SectionTabs")
+    textFields  TextField[] @relation("SectionTextFields")
+    createdAt   DateTime    @default(now())
+    updatedAt   DateTime    @updatedAt
+
+    @@index([guideId, order])
 }
 
 model OverviewDifficulty {
@@ -141,6 +145,17 @@ model Tab {
 
     @@unique([value, sectionId], name: "value_sectionId")
     @@index([value])
+}
+
+model TextField {
+    id        Int      @id @default(autoincrement())
+    content   String
+    section   Section  @relation("SectionTextFields", fields: [sectionId], references: [id])
+    sectionId Int
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+
+    @@index([sectionId])
 }
 
 model OverviewGear {
