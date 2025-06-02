@@ -44,6 +44,7 @@ export interface TabData {
   iconUrl: string | null;
   content: string;
   sectionId: number;
+  isNew?: boolean;
 }
 
 export type ClassFilter = Prisma.ClassSpecializationGetPayload<{

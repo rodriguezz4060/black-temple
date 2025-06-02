@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useEffect } from 'react';
 import { Card, CardContent } from '@root/components/ui/card';
 import {
   Tabs,
@@ -15,7 +15,6 @@ import toast from 'react-hot-toast';
 import { EditorDialog } from './editor-dialog';
 import { MDTabContentEditor } from '@root/components/shared/class-guides/editor/components/text-field/md-tab-content-editor';
 import { TabData } from '@root/@types/prisma';
-
 import { useTabsScroll } from '@root/components/hooks';
 import { cn } from '@root/lib/utils';
 import {
@@ -46,8 +45,13 @@ export const TabsEditor: React.FC<TabsEditorProps> = React.memo(
       iconUrl: '',
     });
     const [isSaving, setIsSaving] = useState(false);
+    const { scrollAreaRef, getMap } = useTabsScroll(activeTab);
 
-    // Мемоизация обработчиков
+    // Логирование initialTabs для отладки
+    useEffect(() => {
+      console.log('initialTabs:', initialTabs);
+    }, [initialTabs]);
+
     const addNewTab = useCallback(() => {
       const newTabNumber = tabs.length + 1;
       const newTab: TabData = {
@@ -56,6 +60,7 @@ export const TabsEditor: React.FC<TabsEditorProps> = React.memo(
         iconUrl: '',
         content: '**Редактируйте содержимое** с помощью Markdown',
         sectionId,
+        isNew: true, // Помечаем как несохранённый
       };
       setTabs(prev => [...prev, newTab]);
       setActiveTab(newTab.value);
@@ -73,6 +78,7 @@ export const TabsEditor: React.FC<TabsEditorProps> = React.memo(
     );
 
     const openEditDialog = useCallback((tab: TabData) => {
+      console.log('Opening edit dialog for tab:', tab);
       setEditingTab(tab);
       setEditForm({ label: tab.label, iconUrl: tab.iconUrl || '' });
     }, []);
@@ -90,28 +96,49 @@ export const TabsEditor: React.FC<TabsEditorProps> = React.memo(
     }, [editingTab, editForm]);
 
     const handleDeleteTab = useCallback(async () => {
-      if (!editingTab || !editingTab.id) return;
-      try {
-        await deleteTab(editingTab.id, sectionId);
-        const deletedIndex = tabs.findIndex(
-          tab => tab.value === editingTab.value
-        );
-        setTabs(prev => prev.filter(tab => tab.value !== editingTab.value));
-
-        if (activeTab === editingTab.value) {
-          let newActiveTab = '';
-          if (deletedIndex > 0) {
-            newActiveTab = tabs[deletedIndex - 1].value;
-          } else if (deletedIndex < tabs.length - 1) {
-            newActiveTab = tabs[deletedIndex + 1].value;
-          }
-          setActiveTab(newActiveTab);
-        }
-        setEditingTab(null);
-        toast.success('Таб успешно удален');
-      } catch {
-        toast.error('Ошибка при удалении таба');
+      if (!editingTab) {
+        console.error('editingTab is null');
+        toast.error('Не выбран таб для удаления');
+        return;
       }
+
+      const deletedIndex = tabs.findIndex(
+        tab => tab.value === editingTab.value
+      );
+      setTabs(prev => {
+        const newTabs = prev.filter(tab => tab.value !== editingTab.value);
+        console.log('Updated tabs:', newTabs);
+        return newTabs;
+      });
+
+      if (activeTab === editingTab.value) {
+        let newActiveTab = '';
+        if (deletedIndex > 0) {
+          newActiveTab = tabs[deletedIndex - 1].value;
+        } else if (deletedIndex < tabs.length - 1) {
+          newActiveTab = tabs[deletedIndex + 1].value;
+        }
+        setActiveTab(newActiveTab);
+      }
+
+      if (editingTab.id && !editingTab.isNew) {
+        try {
+          await deleteTab(editingTab.id, sectionId);
+          toast.success('Таб успешно удален из базы данных');
+        } catch (error) {
+          console.error('Client-side delete error:', error);
+          const errorMessage =
+            error instanceof Error ? error.message : 'Неизвестная ошибка';
+          toast.error(`Ошибка при удалении таба: ${errorMessage}`);
+          // Восстанавливаем таб, если серверная ошибка
+          setTabs(prev => [...prev, editingTab]);
+          return;
+        }
+      } else {
+        toast.success('Несохранённый таб удалён');
+      }
+
+      setEditingTab(null);
     }, [editingTab, tabs, activeTab, sectionId]);
 
     const handleSaveTabs = useCallback(
@@ -119,18 +146,20 @@ export const TabsEditor: React.FC<TabsEditorProps> = React.memo(
         e.preventDefault();
         setIsSaving(true);
         try {
-          await saveTabs(tabs, sectionId);
+          const updatedTabs = await saveTabs(tabs, sectionId);
+          setTabs(updatedTabs); // Обновляем табы с ID от сервера
           toast.success('Табы успешно сохранены');
-        } catch {
-          toast.error('Ошибка при сохранении табов');
+        } catch (error) {
+          console.error('Client-side save error:', error);
+          const errorMessage =
+            error instanceof Error ? error.message : 'Неизвестная ошибка';
+          toast.error(`Ошибка при сохранении табов: ${errorMessage}`);
         } finally {
           setIsSaving(false);
         }
       },
       [tabs, sectionId]
     );
-
-    const { scrollAreaRef, getMap } = useTabsScroll(activeTab);
 
     return (
       <div className='space-y-4'>
@@ -147,14 +176,14 @@ export const TabsEditor: React.FC<TabsEditorProps> = React.memo(
                     <TabsTrigger
                       key={tab.value}
                       value={tab.value}
-                      className='group relative pr-8'
+                      className={cn(
+                        'group relative pr-8',
+                        tab.isNew && 'bg-yellow-100 dark:bg-yellow-900'
+                      )}
                       ref={node => {
                         const map = getMap();
-                        if (node) {
-                          map.set(tab.value, node);
-                        } else {
-                          map.delete(tab.value);
-                        }
+                        if (node) map.set(tab.value, node);
+                        else map.delete(tab.value);
                       }}
                     >
                       <span className='flex items-center text-[16px]'>
@@ -165,6 +194,11 @@ export const TabsEditor: React.FC<TabsEditorProps> = React.memo(
                           />
                         )}
                         <span>{tab.label}</span>
+                        {tab.isNew && (
+                          <span className='ml-1 text-xs text-yellow-600'>
+                            (новый)
+                          </span>
+                        )}
                       </span>
                       <div
                         role='button'
