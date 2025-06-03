@@ -51,6 +51,12 @@ export interface TabData {
   isNew?: boolean;
 }
 
+export type TabGroupProps = Prisma.TabGroupGetPayload<{
+  include: {
+    tabs: true;
+  };
+}>;
+
 export type ClassFilter = Prisma.ClassSpecializationGetPayload<{
   select: {
     id: true;

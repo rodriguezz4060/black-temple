@@ -1,10 +1,6 @@
 'use client';
 
-import {
-  GuidePageProps,
-  TextFieldData,
-  TabGroupData,
-} from '@root/@types/prisma';
+import { GuidePageProps, TabGroupProps } from '@root/@types/prisma';
 import { LeftSideBar } from '@root/components/shared/class-guides';
 import { GuideSpecBanner } from '@root/components/shared/class-guides/page/guide-page';
 import { GuideAnchorWrapper } from '@root/components/shared/wrapper';
@@ -26,6 +22,7 @@ import {
 } from '@root/app/class-guides/_actions/section-action';
 import toast from 'react-hot-toast';
 import { useRouter } from 'next/navigation';
+import { TextField } from '@prisma/client';
 
 interface GuideEditorProps {
   guide: GuidePageProps;
@@ -156,8 +153,8 @@ export const GuideEditor: React.FC<GuideEditorProps> = ({
         {guide.sections.map(section => {
           // Объединяем и сортируем элементы по order
           const sectionItems: Array<
-            | { type: 'TEXT'; data: TextFieldData; order: number }
-            | { type: 'TABS'; data: TabGroupData; order: number }
+            | { type: 'TEXT'; data: TextField; order: number }
+            | { type: 'TABS'; data: TabGroupProps; order: number }
           > = [
             ...section.textFields.map(tf => ({
               type: 'TEXT' as const,
