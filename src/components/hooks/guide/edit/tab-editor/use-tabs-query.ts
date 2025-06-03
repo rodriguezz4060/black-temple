@@ -9,7 +9,7 @@ export const useTabsQuery = (tabGroupId: number, initialTabs: TabData[]) => {
     queryKey: ['tabs', tabGroupId],
     queryFn: () => fetchTabs(tabGroupId),
     initialData: initialTabs,
-    staleTime: 5 * 60 * 1000,
+    staleTime: 5 * 60 * 1000, // 5 минут
     retry: 2,
   });
 };
