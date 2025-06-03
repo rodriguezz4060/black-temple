@@ -59,10 +59,10 @@ export async function createTab(sectionId: number, guideId: number) {
       where: { sectionId },
     });
 
-    if (tabGroupCount >= 3) {
+    if (tabGroupCount >= 15) {
       return {
         success: false,
-        error: 'Достигнут лимит в 3 группы вкладок на секцию',
+        error: 'Достигнут лимит в 15 группы вкладок на секцию',
       };
     }
 
@@ -96,7 +96,7 @@ export async function createTabInGroup(tabGroupId: number, sectionId: number) {
       where: { tabGroupId },
     });
 
-    if (tabCount >= 3) {
+    if (tabCount >= 15) {
       return {
         success: false,
         error: 'Достигнут лимит в 3 вкладки на группу',
@@ -201,5 +201,41 @@ export async function deleteTabGroup(tabGroupId: number) {
   } catch (error) {
     console.error('Error deleting tab group:', error);
     return { success: false, error: 'Не удалось удалить группу вкладок' };
+  }
+}
+
+export async function updateSectionItemOrder(
+  sectionId: number,
+  items: { id: number; type: 'TEXT' | 'TABS'; order: number }[]
+) {
+  try {
+    // Обновляем порядок для TextField
+    await Promise.all(
+      items
+        .filter(item => item.type === 'TEXT')
+        .map(item =>
+          prisma.textField.update({
+            where: { id: item.id },
+            data: { order: item.order },
+          })
+        )
+    );
+
+    // Обновляем порядок для TabGroup
+    await Promise.all(
+      items
+        .filter(item => item.type === 'TABS')
+        .map(item =>
+          prisma.tabGroup.update({
+            where: { id: item.id },
+            data: { order: item.order },
+          })
+        )
+    );
+
+    return { success: true };
+  } catch (error) {
+    console.error('Error updating section item order:', error);
+    return { success: false, error: 'Не удалось обновить порядок элементов' };
   }
 }

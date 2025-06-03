@@ -28,8 +28,8 @@ export const useTabsEditor = ({
   const { saveTabsMutation, deleteTabMutation } = useTabsMutations(tabGroupId);
 
   const addNewTab = async () => {
-    if (tabs.length >= 3) {
-      toast.error('Достигнут лимит в 3 вкладки на группу');
+    if (tabs.length >= 15) {
+      toast.error('Достигнут лимит в 15 вкладки на группу');
       return;
     }
 

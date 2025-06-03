@@ -1,6 +1,6 @@
 'use client';
 
-import { GuidePageProps, TabGroupProps } from '@root/@types/prisma';
+import { GuidePageProps } from '@root/@types/prisma';
 import { LeftSideBar } from '@root/components/shared/class-guides';
 import { GuideSpecBanner } from '@root/components/shared/class-guides/page/guide-page';
 import { GuideAnchorWrapper } from '@root/components/shared/wrapper';
@@ -8,21 +8,10 @@ import { Title } from '@root/components/ui/title';
 import { GuideStatusComponent } from './components/guide-status/guide-status-component';
 import { DifficultyBarEditor } from './difficulty-bar-editor';
 import { BisGearEditor } from './components/bis-gear/bis-gear-editor';
-import { TextFieldEditor } from './components/text-field/text-field-editor';
-import { TabsEditor } from './components/tabs/tabs-editor';
-import { ContentTypeSelector } from './components/section/content-type-selector';
 import { SectionSelectorDrawer } from './components/section/section-selector';
-import { sectionTypeTranslations } from '@root/utils/section-translations';
-import { Separator } from '@root/components/ui/separator';
-import { Button } from '@root/components/ui/button';
-import { Trash2 } from 'lucide-react';
-import {
-  deleteTextField,
-  deleteTabGroup,
-} from '@root/app/class-guides/_actions/section-action';
-import toast from 'react-hot-toast';
+
 import { useRouter } from 'next/navigation';
-import { TextField } from '@prisma/client';
+import { SectionEditor } from './components/section/section-editor';
 
 interface GuideEditorProps {
   guide: GuidePageProps;
@@ -37,26 +26,6 @@ export const GuideEditor: React.FC<GuideEditorProps> = ({
 
   const handleSectionAdded = () => {
     router.refresh();
-  };
-
-  const handleDeleteTextField = async (textFieldId: number) => {
-    const result = await deleteTextField(textFieldId);
-    if (result.success) {
-      toast.success('Текстовое поле удалено');
-      router.refresh();
-    } else {
-      toast.error(result.error || 'Не удалось удалить текстовое поле');
-    }
-  };
-
-  const handleDeleteTabGroup = async (tabGroupId: number) => {
-    const result = await deleteTabGroup(tabGroupId);
-    if (result.success) {
-      toast.success('Группа вкладок удалена');
-      router.refresh();
-    } else {
-      toast.error(result.error || 'Не удалось удалить группу вкладок');
-    }
   };
 
   return (
@@ -149,92 +118,11 @@ export const GuideEditor: React.FC<GuideEditorProps> = ({
           />
         </div>
 
-        {/* Рендерим существующие секции */}
-        {guide.sections.map(section => {
-          // Объединяем и сортируем элементы по order
-          const sectionItems: Array<
-            | { type: 'TEXT'; data: TextField; order: number }
-            | { type: 'TABS'; data: TabGroupProps; order: number }
-          > = [
-            ...section.textFields.map(tf => ({
-              type: 'TEXT' as const,
-              data: tf,
-              order: tf.order,
-            })),
-            ...section.tabGroups.map(tg => ({
-              type: 'TABS' as const,
-              data: tg,
-              order: tg.order,
-            })),
-          ].sort((a, b) => a.order - b.order);
+        {/* Рендерим секции с помощью SectionEditor */}
+        {guide.sections.map(section => (
+          <SectionEditor key={section.id} section={section} guide={guide} />
+        ))}
 
-          return (
-            <div key={section.id} className='mt-6'>
-              <GuideAnchorWrapper
-                anchorId={`${section.type.toLowerCase()}-header`}
-                title={sectionTypeTranslations[section.type]}
-                characterClass={guide.class.name}
-                spec={guide.specialization.name}
-                patch={guide.expansion.patchVersion}
-              />
-              {/* Рендерим элементы в порядке order */}
-              {sectionItems.map(item => (
-                <div
-                  key={`${item.type}-${item.data.id}`}
-                  className='relative my-4'
-                >
-                  {item.type === 'TEXT' ? (
-                    <>
-                      <TextFieldEditor
-                        textField={{
-                          id: item.data.id,
-                          content: item.data.content,
-                        }}
-                        sectionId={section.id}
-                        guideId={guide.id}
-                      />
-                      <Button
-                        variant='destructive'
-                        size='sm'
-                        className='absolute top-2 right-2'
-                        onClick={() => handleDeleteTextField(item.data.id)}
-                      >
-                        <Trash2 className='h-4 w-4' />
-                      </Button>
-                    </>
-                  ) : (
-                    <>
-                      <TabsEditor
-                        initialTabs={item.data.tabs}
-                        defaultTab={item.data.tabs[0]?.value || ''}
-                        sectionId={section.id}
-                        tabGroupId={item.data.id}
-                      />
-                      <Button
-                        variant='destructive'
-                        size='sm'
-                        className='absolute top-2 right-2'
-                        onClick={() => handleDeleteTabGroup(item.data.id)}
-                      >
-                        <Trash2 className='h-4 w-4' />
-                      </Button>
-                    </>
-                  )}
-                </div>
-              ))}
-              {/* Селектор типа контента для добавления нового контента в секцию */}
-              <Separator className='my-4' />
-              <ContentTypeSelector
-                sectionId={section.id}
-                guideId={guide.id}
-                textFieldCount={section.textFields.length}
-                tabGroupCount={section.tabGroups.length}
-              />
-            </div>
-          );
-        })}
-
-        {/* Drawer для добавления новой секции */}
         <SectionSelectorDrawer
           guideId={guide.id}
           guide={guide}

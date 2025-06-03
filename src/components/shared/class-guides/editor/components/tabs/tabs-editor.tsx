@@ -83,7 +83,7 @@ export const TabsEditor: React.FC<TabsEditorProps> = React.memo(
                     onClick={addNewTab}
                     className='my-1.5 ml-1 h-11'
                     aria-label='Add new tab'
-                    disabled={tabs.length >= 3}
+                    disabled={tabs.length >= 15}
                   >
                     <Plus className='h-4 w-4' />
                   </Button>
