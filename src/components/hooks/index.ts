@@ -1,3 +1,3 @@
-export { useTabsScroll } from './guide/edit/use-scroll';
+export { useTabsScroll } from './guide/edit/tab-editor/use-scroll';
 
 export * from './guide';
