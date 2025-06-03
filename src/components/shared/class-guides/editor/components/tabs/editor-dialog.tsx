@@ -62,7 +62,7 @@ export const EditorDialog: React.FC<EditorDialogProps> = React.memo(
       if (!validateForm()) return;
       onSave();
       setIsOpen(false);
-      setTimeout(() => onClose(), 300); // Ждём завершения анимации
+      setTimeout(() => onClose(), 300);
     };
 
     const handleDelete = async () => {
@@ -71,7 +71,6 @@ export const EditorDialog: React.FC<EditorDialogProps> = React.memo(
         await onDelete();
         setIsDeleting(false);
         setIsOpen(false);
-        toast.success('Таб успешно удалён');
         setTimeout(() => onClose(), 300);
       } catch {
         setIsDeleting(false);

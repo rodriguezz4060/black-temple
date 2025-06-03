@@ -1,8 +1,10 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useCallback } from 'react';
 import { TabData } from '@root/@types/prisma';
 import { createTabInGroup } from '@root/app/class-guides/_actions/section-action';
+import { useTabsMutations } from '@root/components/hooks/guide/edit/tab-editor/use-tabs-mutations';
+import toast from 'react-hot-toast';
 
 interface UseTabsEditorProps {
   initialTabs: TabData[];
@@ -23,9 +25,11 @@ export const useTabsEditor = ({
   const [editForm, setEditForm] = useState({ label: '', iconUrl: '' });
   const [isSaving, setIsSaving] = useState(false);
 
+  const { saveTabsMutation, deleteTabMutation } = useTabsMutations(tabGroupId);
+
   const addNewTab = async () => {
     if (tabs.length >= 3) {
-      alert('Достигнут лимит в 3 вкладки на группу');
+      toast.error('Достигнут лимит в 3 вкладки на группу');
       return;
     }
 
@@ -33,12 +37,13 @@ export const useTabsEditor = ({
     if (result.success && result.tab) {
       setTabs([...tabs, { ...result.tab, isNew: true }]);
       setActiveTab(result.tab.value);
+      toast.success('Вкладка создана');
     } else {
-      alert(result.error || 'Не удалось создать вкладку');
+      toast.error(result.error || 'Не удалось создать вкладку');
     }
   };
 
-  const updateTabContent = (value: string, content: string) => {
+  const updateTabContent = useCallback((value: string, content: string) => {
     setTabs(tabs =>
       tabs.map(tab =>
         tab.value === value
@@ -46,34 +51,97 @@ export const useTabsEditor = ({
           : tab
       )
     );
-  };
+  }, []);
 
-  const openEditDialog = (tab: TabData) => {
+  const openEditDialog = useCallback((tab: TabData) => {
     setEditingTab(tab);
     setEditForm({ label: tab.label, iconUrl: tab.iconUrl || '' });
-  };
+  }, []);
 
-  const saveTabChanges = async () => {
+  const saveTabChanges = useCallback(async () => {
     if (!editingTab) return;
-    setIsSaving(true);
-    // Здесь должна быть логика сохранения изменений таба через API
-    setIsSaving(false);
-    setEditingTab(null);
-  };
+    if (!editForm.label.trim()) {
+      toast.error('Название таба не может быть пустым');
+      return;
+    }
 
-  const handleDeleteTab = async () => {
-    if (!editingTab) return;
-    // Здесь должна быть логика удаления таба через API
-    setTabs(tabs => tabs.filter(tab => tab.value !== editingTab.value));
-    setEditingTab(null);
-  };
-
-  const handleSaveTabs = async (e: React.FormEvent) => {
-    e.preventDefault();
     setIsSaving(true);
-    // Здесь должна быть логика сохранения всех табов через API
-    setIsSaving(false);
-  };
+    try {
+      const updatedTab = {
+        ...editingTab,
+        label: editForm.label,
+        iconUrl: editForm.iconUrl || null,
+      };
+      setTabs(tabs =>
+        tabs.map(tab => (tab.value === editingTab.value ? updatedTab : tab))
+      );
+      saveTabsMutation.mutate([updatedTab], {
+        onSuccess: () => {
+          toast.success('Изменения сохранены');
+          setEditingTab(null);
+        },
+        onError: error => {
+          toast.error(`Ошибка: ${error.message}`);
+        },
+      });
+    } catch (error) {
+      toast.error('Не удалось сохранить изменения');
+    } finally {
+      setIsSaving(false);
+    }
+  }, [editingTab, editForm, saveTabsMutation]);
+
+  const handleDeleteTab = useCallback(async () => {
+    if (!editingTab || !editingTab.id) return;
+
+    setIsSaving(true);
+    try {
+      deleteTabMutation.mutate(
+        { tabId: editingTab.id },
+        {
+          onSuccess: () => {
+            setTabs(tabs => tabs.filter(tab => tab.value !== editingTab.value));
+            setEditingTab(null);
+            if (activeTab === editingTab.value && tabs.length > 1) {
+              setActiveTab(
+                tabs.find(tab => tab.value !== editingTab.value)?.value || ''
+              );
+            }
+          },
+          onError: error => {
+            toast.error(`Ошибка: ${error.message}`);
+          },
+        }
+      );
+    } catch (error) {
+      toast.error('Не удалось удалить вкладку');
+    } finally {
+      setIsSaving(false);
+    }
+  }, [tabs, editingTab, activeTab, deleteTabMutation]);
+
+  const handleSaveTabs = useCallback(
+    async (e: React.FormEvent) => {
+      e.preventDefault();
+      setIsSaving(true);
+      try {
+        saveTabsMutation.mutate(tabs, {
+          onSuccess: () => {
+            toast.success('Все вкладки сохранены');
+            setTabs(tabs => tabs.map(tab => ({ ...tab, isNew: false })));
+          },
+          onError: error => {
+            toast.error(`Ошибка: ${error.message}`);
+          },
+        });
+      } catch (error) {
+        toast.error('Не удалось сохранить вкладки');
+      } finally {
+        setIsSaving(false);
+      }
+    },
+    [tabs, saveTabsMutation]
+  );
 
   return {
     tabs,
@@ -88,5 +156,7 @@ export const useTabsEditor = ({
     saveTabChanges,
     handleDeleteTab,
     handleSaveTabs,
+    setEditForm,
+    setEditingTab,
   };
 };

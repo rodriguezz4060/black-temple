@@ -5,18 +5,14 @@ import { SectionType } from '@prisma/client';
 
 export async function createSection(guideId: number, sectionType: SectionType) {
   try {
-    const maxOrder = await prisma.section.findFirst({
+    const sectionCount = await prisma.section.count({
       where: { guideId },
-      orderBy: { order: 'desc' },
-      select: { order: true },
     });
-
-    const newOrder = (maxOrder?.order ?? 0) + 1;
 
     const section = await prisma.section.create({
       data: {
         guideId,
-        order: newOrder,
+        order: sectionCount + 1,
         type: sectionType,
         contentType: 'MIXED',
       },
@@ -46,6 +42,7 @@ export async function createTextField(sectionId: number, guideId: number) {
       data: {
         sectionId,
         content: '',
+        order: textFieldCount + 1,
       },
     });
 
@@ -53,6 +50,43 @@ export async function createTextField(sectionId: number, guideId: number) {
   } catch (error) {
     console.error('Error creating text field:', error);
     return { success: false, error: 'Не удалось создать текстовое поле' };
+  }
+}
+
+export async function createTab(sectionId: number, guideId: number) {
+  try {
+    const tabGroupCount = await prisma.tabGroup.count({
+      where: { sectionId },
+    });
+
+    if (tabGroupCount >= 3) {
+      return {
+        success: false,
+        error: 'Достигнут лимит в 3 группы вкладок на секцию',
+      };
+    }
+
+    const tabGroup = await prisma.tabGroup.create({
+      data: {
+        sectionId,
+        order: tabGroupCount + 1,
+      },
+    });
+
+    const newTabValue = `tab-1-${tabGroup.id}`;
+    const tab = await prisma.tab.create({
+      data: {
+        tabGroupId: tabGroup.id,
+        value: newTabValue,
+        label: `Вкладка 1`,
+        content: '',
+      },
+    });
+
+    return { success: true, tabGroup, tab };
+  } catch (error) {
+    console.error('Error creating tab group:', error);
+    return { success: false, error: 'Не удалось создать группу вкладок' };
   }
 }
 
@@ -76,50 +110,96 @@ export async function createTabInGroup(tabGroupId: number, sectionId: number) {
         value: newTabValue,
         label: `Вкладка ${tabCount + 1}`,
         content: '',
+        iconUrl: null,
       },
     });
 
-    return { success: true, tab };
+    return {
+      success: true,
+      tab: {
+        id: tab.id,
+        value: tab.value,
+        label: tab.label,
+        iconUrl: tab.iconUrl,
+        content: tab.content,
+        tabGroupId: tab.tabGroupId,
+        createdAt: tab.createdAt,
+        updatedAt: tab.updatedAt,
+      },
+    };
   } catch (error) {
     console.error('Error creating tab in group:', error);
     return { success: false, error: 'Не удалось создать вкладку' };
   }
 }
 
-export async function createTab(sectionId: number, guideId: number) {
+export async function updateTab(
+  tabId: number,
+  data: { label?: string; iconUrl?: string | null; content?: string }
+) {
   try {
-    const tabGroupCount = await prisma.tabGroup.count({
-      where: { sectionId },
-    });
-
-    if (tabGroupCount >= 3) {
-      return {
-        success: false,
-        error: 'Достигнут лимит в 3 группы вкладок на секцию',
-      };
-    }
-
-    // Создаем новую группу табов
-    const tabGroup = await prisma.tabGroup.create({
+    const tab = await prisma.tab.update({
+      where: { id: tabId },
       data: {
-        sectionId,
+        label: data.label,
+        iconUrl: data.iconUrl,
+        content: data.content,
       },
     });
-
-    // Создаем первый таб в новой группе
-    const newTabValue = `tab-1-${tabGroup.id}`;
-    const tab = await prisma.tab.create({
-      data: {
-        tabGroupId: tabGroup.id,
-        value: newTabValue,
-        label: `Вкладка 1`,
-        content: '',
+    return {
+      success: true,
+      tab: {
+        id: tab.id,
+        value: tab.value,
+        label: tab.label,
+        iconUrl: tab.iconUrl,
+        content: tab.content,
+        tabGroupId: tab.tabGroupId,
+        createdAt: tab.createdAt,
+        updatedAt: tab.updatedAt,
       },
-    });
-
-    return { success: true, tabGroup, tab };
+    };
   } catch (error) {
-    console.error('Error creating tab group:', error);
-    return { success: false, error: 'Не удалось создать группу вкладок' };
+    console.error('Error updating tab:', error);
+    return { success: false, error: 'Не удалось обновить вкладку' };
+  }
+}
+
+export async function deleteTab(tabId: number) {
+  try {
+    await prisma.tab.delete({
+      where: { id: tabId },
+    });
+    return { success: true };
+  } catch (error) {
+    console.error('Error deleting tab:', error);
+    return { success: false, error: 'Не удалось удалить вкладку' };
+  }
+}
+
+export async function deleteTextField(textFieldId: number) {
+  try {
+    await prisma.textField.delete({
+      where: { id: textFieldId },
+    });
+    return { success: true };
+  } catch (error) {
+    console.error('Error deleting text field:', error);
+    return { success: false, error: 'Не удалось удалить текстовое поле' };
+  }
+}
+
+export async function deleteTabGroup(tabGroupId: number) {
+  try {
+    await prisma.tab.deleteMany({
+      where: { tabGroupId },
+    });
+    await prisma.tabGroup.delete({
+      where: { id: tabGroupId },
+    });
+    return { success: true };
+  } catch (error) {
+    console.error('Error deleting tab group:', error);
+    return { success: false, error: 'Не удалось удалить группу вкладок' };
   }
 }

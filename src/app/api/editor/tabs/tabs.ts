@@ -1,56 +1,53 @@
-'use server';
-
 import { TabData } from '@root/@types/prisma';
-import {
-  saveTabs,
-  deleteTab,
-} from '@root/app/class-guides/_actions/tabs-actions';
-import { prisma } from '@prisma/prisma-client';
 
-export const fetchTabs = async (sectionId: number): Promise<TabData[]> => {
+export async function fetchTabs(tabGroupId: number): Promise<TabData[]> {
   try {
-    const tabs = await prisma.tab.findMany({
-      where: { sectionId },
-      select: {
-        id: true,
-        value: true,
-        label: true,
-        iconUrl: true,
-        content: true,
-        sectionId: true,
-      },
-    });
-    return tabs.map(tab => ({ ...tab, isNew: false }));
+    const response = await fetch(`/api/editor/tabs?tabGroupId=${tabGroupId}`);
+    if (!response.ok) {
+      throw new Error('Failed to fetch tabs');
+    }
+    const tabs: TabData[] = await response.json();
+    return tabs;
   } catch (error) {
     console.error('Error fetching tabs:', error);
-    const errorMessage =
-      error instanceof Error ? error.message : 'Неизвестная ошибка';
-    throw new Error(`Не удалось загрузить табы: ${errorMessage}`);
+    throw new Error('Не удалось загрузить вкладки');
   }
-};
+}
 
-export const saveTabsApi = async (
+export async function saveTabsApi(
   tabs: TabData[],
-  sectionId: number
-): Promise<TabData[]> => {
+  tabGroupId: number
+): Promise<TabData[]> {
   try {
-    // Проверяем уникальность value перед сохранением
-    const existingValues = new Set(tabs.map(tab => tab.value));
-    if (existingValues.size !== tabs.length) {
-      throw new Error('Обнаружены дублирующиеся значения value в табах');
+    const response = await fetch('/api/editor/tabs', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(tabs),
+    });
+    if (!response.ok) {
+      throw new Error('Failed to save tabs');
     }
-    return await saveTabs(tabs, sectionId);
+    const updatedTabs: TabData[] = await response.json();
+    return updatedTabs;
   } catch (error) {
     console.error('Error saving tabs:', error);
-    const errorMessage =
-      error instanceof Error ? error.message : 'Неизвестная ошибка';
-    throw new Error(`Не удалось сохранить табы: ${errorMessage}`);
+    throw new Error('Не удалось сохранить вкладки');
   }
-};
+}
 
-export const deleteTabApi = async (
+export async function deleteTabApi(
   tabId: number,
-  sectionId: number
-): Promise<{ success: boolean }> => {
-  return deleteTab(tabId, sectionId);
-};
+  tabGroupId: number
+): Promise<void> {
+  try {
+    const response = await fetch(`/api/editor/tabs?tabId=${tabId}`, {
+      method: 'DELETE',
+    });
+    if (!response.ok) {
+      throw new Error('Failed to delete tab');
+    }
+  } catch (error) {
+    console.error('Error deleting tab:', error);
+    throw new Error('Не удалось удалить вкладку');
+  }
+}

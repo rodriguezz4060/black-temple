@@ -28,7 +28,7 @@ export const TabsEditor: React.FC<TabsEditorProps> = React.memo(
       data: tabsFromQuery,
       isLoading,
       error,
-    } = useTabsQuery(tabGroupId, initialTabs); // Изменено на tabGroupId
+    } = useTabsQuery(tabGroupId, initialTabs);
     const {
       tabs,
       activeTab,
@@ -42,6 +42,8 @@ export const TabsEditor: React.FC<TabsEditorProps> = React.memo(
       saveTabChanges,
       handleDeleteTab,
       handleSaveTabs,
+      setEditForm,
+      setEditingTab,
     } = useTabsEditor({
       initialTabs: tabsFromQuery || initialTabs,
       defaultTab,
@@ -49,8 +51,6 @@ export const TabsEditor: React.FC<TabsEditorProps> = React.memo(
       tabGroupId,
     });
     const { scrollAreaRef, getMap } = useTabsScroll(activeTab);
-
-    console.log('Rendering tabs:', tabs); // Для отладки
 
     if (isLoading) return <div className='p-4'>Загрузка табов...</div>;
     if (error)
@@ -83,7 +83,7 @@ export const TabsEditor: React.FC<TabsEditorProps> = React.memo(
                     onClick={addNewTab}
                     className='my-1.5 ml-1 h-11'
                     aria-label='Add new tab'
-                    disabled={tabs.length >= 3} // Ограничиваем до 3 табов в группе
+                    disabled={tabs.length >= 3}
                   >
                     <Plus className='h-4 w-4' />
                   </Button>
@@ -104,7 +104,7 @@ export const TabsEditor: React.FC<TabsEditorProps> = React.memo(
           </Tabs>
 
           <div className='mt-2 flex justify-end'>
-            <Button type='submit' disabled={isSaving} loading={isSaving}>
+            <Button type='submit' disabled={isSaving}>
               <Save className='mr-2 h-4 w-4' />
               Сохранить
             </Button>
@@ -115,9 +115,9 @@ export const TabsEditor: React.FC<TabsEditorProps> = React.memo(
           editingTab={editingTab}
           editForm={editForm}
           onEditFormChange={(field, value) =>
-            openEditDialog({ ...editingTab!, [field]: value })
+            setEditForm({ ...editForm, [field]: value })
           }
-          onClose={() => saveTabChanges()}
+          onClose={() => setEditingTab(null)}
           onSave={saveTabChanges}
           onDelete={handleDeleteTab}
         />

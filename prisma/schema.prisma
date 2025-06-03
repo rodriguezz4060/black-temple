@@ -136,6 +136,7 @@ model TabGroup {
     id        Int      @id @default(autoincrement())
     section   Section  @relation("SectionTabGroups", fields: [sectionId], references: [id], onDelete: Cascade)
     sectionId Int
+    order     Int
     tabs      Tab[]    @relation("TabGroupTabs")
     createdAt DateTime @default(now())
     updatedAt DateTime @updatedAt
@@ -163,6 +164,7 @@ model TextField {
     content   String
     section   Section  @relation("SectionTextFields", fields: [sectionId], references: [id], onDelete: Cascade)
     sectionId Int
+    order     Int
     createdAt DateTime @default(now())
     updatedAt DateTime @updatedAt
 
