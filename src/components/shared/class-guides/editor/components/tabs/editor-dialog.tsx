@@ -69,10 +69,13 @@ export const EditorDialog: React.FC<EditorDialogProps> = React.memo(
       setIsDeleting(true);
       try {
         await onDelete();
+        setIsDeleting(false);
         setIsOpen(false);
+        toast.success('Таб успешно удалён');
         setTimeout(() => onClose(), 300);
       } catch {
         setIsDeleting(false);
+        toast.error('Ошибка при удалении таба');
       }
     };
 
