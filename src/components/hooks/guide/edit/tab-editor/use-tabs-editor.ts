@@ -84,7 +84,7 @@ export const useTabsEditor = ({
           toast.error(`Ошибка: ${error.message}`);
         },
       });
-    } catch (error) {
+    } catch {
       toast.error('Не удалось сохранить изменения');
     } finally {
       setIsSaving(false);
@@ -113,7 +113,7 @@ export const useTabsEditor = ({
           },
         }
       );
-    } catch (error) {
+    } catch {
       toast.error('Не удалось удалить вкладку');
     } finally {
       setIsSaving(false);
@@ -134,7 +134,7 @@ export const useTabsEditor = ({
             toast.error(`Ошибка: ${error.message}`);
           },
         });
-      } catch (error) {
+      } catch {
         toast.error('Не удалось сохранить вкладки');
       } finally {
         setIsSaving(false);

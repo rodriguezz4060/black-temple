@@ -14,10 +14,7 @@ export async function fetchTabs(tabGroupId: number): Promise<TabData[]> {
   }
 }
 
-export async function saveTabsApi(
-  tabs: TabData[],
-  tabGroupId: number
-): Promise<TabData[]> {
+export async function saveTabsApi(tabs: TabData[]): Promise<TabData[]> {
   try {
     const response = await fetch('/api/editor/tabs', {
       method: 'POST',
@@ -35,10 +32,7 @@ export async function saveTabsApi(
   }
 }
 
-export async function deleteTabApi(
-  tabId: number,
-  tabGroupId: number
-): Promise<void> {
+export async function deleteTabApi(tabId: number): Promise<void> {
   try {
     const response = await fetch(`/api/editor/tabs?tabId=${tabId}`, {
       method: 'DELETE',

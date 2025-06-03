@@ -9,7 +9,7 @@ export const useTabsMutations = (tabGroupId: number) => {
   const queryClient = useQueryClient();
 
   const saveTabsMutation = useMutation({
-    mutationFn: (tabs: TabData[]) => saveTabsApi(tabs, tabGroupId),
+    mutationFn: (tabs: TabData[]) => saveTabsApi(tabs),
     onMutate: async tabs => {
       await queryClient.cancelQueries({ queryKey: ['tabs', tabGroupId] });
       const previousTabs = queryClient.getQueryData<TabData[]>([
@@ -29,8 +29,7 @@ export const useTabsMutations = (tabGroupId: number) => {
   });
 
   const deleteTabMutation = useMutation({
-    mutationFn: ({ tabId }: { tabId: number }) =>
-      deleteTabApi(tabId, tabGroupId),
+    mutationFn: ({ tabId }: { tabId: number }) => deleteTabApi(tabId),
     onMutate: async ({ tabId }) => {
       await queryClient.cancelQueries({ queryKey: ['tabs', tabGroupId] });
       const previousTabs = queryClient.getQueryData<TabData[]>([

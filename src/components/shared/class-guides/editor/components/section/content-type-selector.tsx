@@ -1,14 +1,10 @@
 'use client';
 
-import { useState } from 'react';
-import { Button } from '@root/components/ui/button';
-import { FileText, FolderOpen } from 'lucide-react';
-import { useRouter } from 'next/navigation';
 import {
-  createTab,
-  createTextField,
-} from '@root/app/class-guides/_actions/section-action';
-import toast from 'react-hot-toast';
+  getButtonLabels,
+  useContentCreation,
+} from '@root/components/hooks/guide/edit/sections/use-content-type-selector';
+import { Button } from '@root/components/ui/button';
 
 interface ContentTypeSelectorProps {
   sectionId: number;
@@ -23,28 +19,10 @@ export const ContentTypeSelector: React.FC<ContentTypeSelectorProps> = ({
   textFieldCount,
   tabGroupCount,
 }) => {
-  const [isLoading, setIsLoading] = useState(false);
-  const router = useRouter();
-
-  const handleCreateContent = async (contentType: 'TABS' | 'TEXT') => {
-    setIsLoading(true);
-    let result;
-    if (contentType === 'TEXT') {
-      result = await createTextField(sectionId, guideId);
-    } else {
-      result = await createTab(sectionId, guideId);
-    }
-    setIsLoading(false);
-
-    if (result.success) {
-      router.refresh();
-      toast.success(
-        `${contentType === 'TEXT' ? 'Текстовый блок' : 'Группа вкладок'} добавлена`
-      );
-    } else {
-      toast.error(result.error || 'Не удалось добавить контент');
-    }
-  };
+  const { isLoading, handleCreateContent } = useContentCreation(
+    sectionId,
+    guideId
+  );
 
   return (
     <div className='mt-2 flex w-full justify-center'>
@@ -55,10 +33,7 @@ export const ContentTypeSelector: React.FC<ContentTypeSelectorProps> = ({
           disabled={isLoading || tabGroupCount >= 3}
           className='flex flex-1 items-center gap-1 transition-colors'
         >
-          <FolderOpen className='h-4 w-4' />
-          {isLoading
-            ? 'Создание...'
-            : `Вкладки ${tabGroupCount >= 3 ? '(лимит)' : ''}`}
+          {getButtonLabels(isLoading, tabGroupCount, 'TABS')}
         </Button>
         <Button
           size='sm'
@@ -66,10 +41,7 @@ export const ContentTypeSelector: React.FC<ContentTypeSelectorProps> = ({
           disabled={isLoading || textFieldCount >= 3}
           className='flex flex-1 items-center gap-1 transition-colors'
         >
-          <FileText className='h-4 w-4' />
-          {isLoading
-            ? 'Создание...'
-            : `Текст ${textFieldCount >= 3 ? '(лимит)' : ''}`}
+          {getButtonLabels(isLoading, textFieldCount, 'TEXT')}
         </Button>
       </div>
     </div>

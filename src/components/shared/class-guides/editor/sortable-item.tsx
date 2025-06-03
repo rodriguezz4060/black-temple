@@ -34,11 +34,11 @@ export const SortableItem: React.FC<SortableItemProps> = ({
   };
 
   return (
-    <div ref={setNodeRef} style={style} className='sortable-item relative flex'>
-      <div className='flex-1 pr-13'>{children}</div>
-      <div className='absolute top-2 right-2 flex flex-col items-center gap-5'>
+    <div ref={setNodeRef} style={style} className='flex gap-0.5'>
+      <div className='flex-1'>{children}</div>
+      <div className='mt-5 flex w-10 flex-col items-center gap-5'>
         <div
-          className='drag-handle cursor-grab rounded p-1 hover:text-green-500'
+          className='drag-handle cursor-grab rounded hover:text-green-400'
           {...listeners}
           {...attributes}
         >
