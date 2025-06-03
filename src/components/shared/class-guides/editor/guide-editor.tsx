@@ -137,21 +137,23 @@ export const GuideEditor: React.FC<GuideEditorProps> = ({
                 guideId={guide.id}
               />
             ))}
-            {/* Рендерим табы, если они есть */}
-            {section.tabs.length > 0 && (
+            {/* Рендерим группы вкладок */}
+            {section.tabGroups.map(tabGroup => (
               <TabsEditor
-                key={section.id}
-                initialTabs={section.tabs}
-                defaultTab={section.tabs[0]?.value || ''}
+                key={tabGroup.id}
+                initialTabs={tabGroup.tabs}
+                defaultTab={tabGroup.tabs[0]?.value || ''}
                 sectionId={section.id}
+                tabGroupId={tabGroup.id}
               />
-            )}
+            ))}
             {/* Селектор типа контента для добавления нового контента в секцию */}
             <Separator className='my-4' />
             <ContentTypeSelector
               sectionId={section.id}
               guideId={guide.id}
               textFieldCount={section.textFields.length}
+              tabGroupCount={section.tabGroups.length}
             />
           </div>
         ))}

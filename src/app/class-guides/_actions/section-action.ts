@@ -18,14 +18,14 @@ export async function createSection(guideId: number, sectionType: SectionType) {
         guideId,
         order: newOrder,
         type: sectionType,
-        contentType: 'MIXED', // Устанавливаем MIXED, так как секция может содержать и табы, и текст
+        contentType: 'MIXED',
       },
     });
 
     return { success: true, section };
   } catch (error) {
     console.error('Error creating section:', error);
-    return { success: false, error: 'Failed to create section' };
+    return { success: false, error: 'Не удалось создать секцию' };
   }
 }
 
@@ -38,7 +38,7 @@ export async function createTextField(sectionId: number, guideId: number) {
     if (textFieldCount >= 3) {
       return {
         success: false,
-        error: 'Maximum of 3 text fields per section reached',
+        error: 'Достигнут лимит в 3 текстовых поля на секцию',
       };
     }
 
@@ -52,29 +52,74 @@ export async function createTextField(sectionId: number, guideId: number) {
     return { success: true, textField };
   } catch (error) {
     console.error('Error creating text field:', error);
-    return { success: false, error: 'Failed to create text field' };
+    return { success: false, error: 'Не удалось создать текстовое поле' };
   }
 }
 
-export async function createTab(sectionId: number, guideId: number) {
+export async function createTabInGroup(tabGroupId: number, sectionId: number) {
   try {
     const tabCount = await prisma.tab.count({
-      where: { sectionId },
+      where: { tabGroupId },
     });
 
-    const newTabValue = `tab-${tabCount + 1}-${sectionId}`;
+    if (tabCount >= 3) {
+      return {
+        success: false,
+        error: 'Достигнут лимит в 3 вкладки на группу',
+      };
+    }
+
+    const newTabValue = `tab-${tabCount + 1}-${tabGroupId}`;
     const tab = await prisma.tab.create({
       data: {
-        sectionId,
+        tabGroupId,
         value: newTabValue,
-        label: `Tab ${tabCount + 1}`,
+        label: `Вкладка ${tabCount + 1}`,
         content: '',
       },
     });
 
     return { success: true, tab };
   } catch (error) {
-    console.error('Error creating tab:', error);
-    return { success: false, error: 'Failed to create tab' };
+    console.error('Error creating tab in group:', error);
+    return { success: false, error: 'Не удалось создать вкладку' };
+  }
+}
+
+export async function createTab(sectionId: number, guideId: number) {
+  try {
+    const tabGroupCount = await prisma.tabGroup.count({
+      where: { sectionId },
+    });
+
+    if (tabGroupCount >= 3) {
+      return {
+        success: false,
+        error: 'Достигнут лимит в 3 группы вкладок на секцию',
+      };
+    }
+
+    // Создаем новую группу табов
+    const tabGroup = await prisma.tabGroup.create({
+      data: {
+        sectionId,
+      },
+    });
+
+    // Создаем первый таб в новой группе
+    const newTabValue = `tab-1-${tabGroup.id}`;
+    const tab = await prisma.tab.create({
+      data: {
+        tabGroupId: tabGroup.id,
+        value: newTabValue,
+        label: `Вкладка 1`,
+        content: '',
+      },
+    });
+
+    return { success: true, tabGroup, tab };
+  } catch (error) {
+    console.error('Error creating tab group:', error);
+    return { success: false, error: 'Не удалось создать группу вкладок' };
   }
 }

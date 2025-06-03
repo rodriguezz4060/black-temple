@@ -19,15 +19,16 @@ interface TabsEditorProps {
   initialTabs: TabData[];
   defaultTab: string;
   sectionId: number;
+  tabGroupId: number;
 }
 
 export const TabsEditor: React.FC<TabsEditorProps> = React.memo(
-  ({ initialTabs, defaultTab, sectionId }) => {
+  ({ initialTabs, defaultTab, sectionId, tabGroupId }) => {
     const {
       data: tabsFromQuery,
       isLoading,
       error,
-    } = useTabsQuery(sectionId, initialTabs);
+    } = useTabsQuery(tabGroupId, initialTabs); // Изменено на tabGroupId
     const {
       tabs,
       activeTab,
@@ -45,6 +46,7 @@ export const TabsEditor: React.FC<TabsEditorProps> = React.memo(
       initialTabs: tabsFromQuery || initialTabs,
       defaultTab,
       sectionId,
+      tabGroupId,
     });
     const { scrollAreaRef, getMap } = useTabsScroll(activeTab);
 
@@ -81,6 +83,7 @@ export const TabsEditor: React.FC<TabsEditorProps> = React.memo(
                     onClick={addNewTab}
                     className='my-1.5 ml-1 h-11'
                     aria-label='Add new tab'
+                    disabled={tabs.length >= 3} // Ограничиваем до 3 табов в группе
                   >
                     <Plus className='h-4 w-4' />
                   </Button>

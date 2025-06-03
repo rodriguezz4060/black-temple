@@ -14,12 +14,14 @@ interface ContentTypeSelectorProps {
   sectionId: number;
   guideId: number;
   textFieldCount: number;
+  tabGroupCount: number;
 }
 
 export const ContentTypeSelector: React.FC<ContentTypeSelectorProps> = ({
   sectionId,
   guideId,
   textFieldCount,
+  tabGroupCount,
 }) => {
   const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
@@ -37,7 +39,7 @@ export const ContentTypeSelector: React.FC<ContentTypeSelectorProps> = ({
     if (result.success) {
       router.refresh();
       toast.success(
-        `${contentType === 'TEXT' ? 'Текстовый блок' : 'Вкладка'} добавлена`
+        `${contentType === 'TEXT' ? 'Текстовый блок' : 'Группа вкладок'} добавлена`
       );
     } else {
       toast.error(result.error || 'Не удалось добавить контент');
@@ -50,17 +52,19 @@ export const ContentTypeSelector: React.FC<ContentTypeSelectorProps> = ({
         <Button
           size='sm'
           onClick={() => handleCreateContent('TABS')}
-          disabled={isLoading}
+          disabled={isLoading || tabGroupCount >= 3}
           className='flex flex-1 items-center gap-1 transition-colors'
         >
           <FolderOpen className='h-4 w-4' />
-          {isLoading ? 'Создание...' : 'Вкладки'}
+          {isLoading
+            ? 'Создание...'
+            : `Вкладки ${tabGroupCount >= 3 ? '(лимит)' : ''}`}
         </Button>
         <Button
           size='sm'
           onClick={() => handleCreateContent('TEXT')}
           disabled={isLoading || textFieldCount >= 3}
-          className={`flex flex-1 items-center gap-1 transition-colors`}
+          className='flex flex-1 items-center gap-1 transition-colors'
         >
           <FileText className='h-4 w-4' />
           {isLoading

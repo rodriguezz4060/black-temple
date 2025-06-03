@@ -33,7 +33,11 @@ export default async function GuidePageRoute({
       },
       sections: {
         include: {
-          tabs: true,
+          tabGroups: {
+            include: {
+              tabs: true,
+            },
+          },
           textFields: true,
         },
         orderBy: { order: 'asc' }, // Сортировка по order

@@ -26,7 +26,11 @@ export type GuidePageProps = Prisma.GuideGetPayload<{
     };
     sections: {
       include: {
-        tabs: true;
+        tabGroups: {
+          include: {
+            tabs: true;
+          };
+        };
         textFields: true;
       };
     };
@@ -43,7 +47,7 @@ export interface TabData {
   label: string;
   iconUrl: string | null;
   content: string;
-  sectionId: number;
+  tabGroupId: number;
   isNew?: boolean;
 }
 
@@ -120,11 +124,5 @@ export interface GuideSpecGearProps {
   spec: string;
   gearData: GearItem[];
 }
-
-export type HeroTalentsProps = Prisma.SectionGetPayload<{
-  include: {
-    tabs: true;
-  };
-}>;
 
 export type ExpansionProps = Expansion & {};
