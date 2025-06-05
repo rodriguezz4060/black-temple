@@ -15,14 +15,10 @@ interface ContentTypeSelectorProps {
 
 export const ContentTypeSelector: React.FC<ContentTypeSelectorProps> = ({
   sectionId,
-  guideId,
   textFieldCount,
   tabGroupCount,
 }) => {
-  const { isLoading, handleCreateContent } = useContentCreation(
-    sectionId,
-    guideId
-  );
+  const { isLoading, handleCreateContent } = useContentCreation(sectionId);
 
   return (
     <div className='mt-2 flex w-full justify-center'>

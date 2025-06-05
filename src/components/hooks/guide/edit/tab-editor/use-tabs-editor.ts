@@ -16,7 +16,6 @@ interface UseTabsEditorProps {
 export const useTabsEditor = ({
   initialTabs,
   defaultTab,
-  sectionId,
   tabGroupId,
 }: UseTabsEditorProps) => {
   const [tabs, setTabs] = useState<TabData[]>(initialTabs);
@@ -33,7 +32,7 @@ export const useTabsEditor = ({
       return;
     }
 
-    const result = await createTabInGroup(tabGroupId, sectionId);
+    const result = await createTabInGroup(tabGroupId);
     if (result.success && result.tab) {
       setTabs([...tabs, { ...result.tab, isNew: true }]);
       setActiveTab(result.tab.value);

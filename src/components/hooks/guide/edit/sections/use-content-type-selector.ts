@@ -6,7 +6,7 @@ import {
   createTextField,
 } from '@root/app/class-guides/_actions/section-action';
 
-export const useContentCreation = (sectionId: number, guideId: number) => {
+export const useContentCreation = (sectionId: number) => {
   const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
 
@@ -16,9 +16,9 @@ export const useContentCreation = (sectionId: number, guideId: number) => {
 
     try {
       if (contentType === 'TEXT') {
-        result = await createTextField(sectionId, guideId);
+        result = await createTextField(sectionId);
       } else {
-        result = await createTab(sectionId, guideId);
+        result = await createTab(sectionId);
       }
 
       if (result.success) {

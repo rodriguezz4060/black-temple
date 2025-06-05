@@ -41,7 +41,7 @@ export function useCreateGuide() {
       if (result.success && result.guide) {
         toast.success('Гайд успешно создан!');
         console.log('Созданный slug:', result.guide.slug);
-        router.push(`/class-guides/${result.guide.slug}`);
+        router.push(`/class-guides/${result.guide.slug}/edit`);
       } else {
         toast.error('Не удалось создать гайд');
       }

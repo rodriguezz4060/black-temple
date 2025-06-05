@@ -25,7 +25,7 @@ export async function createSection(guideId: number, sectionType: SectionType) {
   }
 }
 
-export async function createTextField(sectionId: number, guideId: number) {
+export async function createTextField(sectionId: number) {
   try {
     const textFieldCount = await prisma.textField.count({
       where: { sectionId },
@@ -53,7 +53,7 @@ export async function createTextField(sectionId: number, guideId: number) {
   }
 }
 
-export async function createTab(sectionId: number, guideId: number) {
+export async function createTab(sectionId: number) {
   try {
     const tabGroupCount = await prisma.tabGroup.count({
       where: { sectionId },
@@ -90,7 +90,7 @@ export async function createTab(sectionId: number, guideId: number) {
   }
 }
 
-export async function createTabInGroup(tabGroupId: number, sectionId: number) {
+export async function createTabInGroup(tabGroupId: number) {
   try {
     const tabCount = await prisma.tab.count({
       where: { tabGroupId },
