@@ -2,7 +2,7 @@ import { authOptions } from '@root/components/constants/auth-options';
 import { getServerSession } from 'next-auth';
 import { prisma } from '@prisma/prisma-client';
 
-interface UserSession {
+export interface UserSession {
   user: {
     id: string;
     role: string;

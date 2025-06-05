@@ -2,6 +2,7 @@
 
 import React from 'react';
 import { useSearchParams } from 'next/navigation';
+import { useSession } from 'next-auth/react';
 import {
   ClassFilter,
   GuideButtonWithRelations,
@@ -15,6 +16,7 @@ import {
 } from '@root/components/shared';
 import { useClassGuides } from '@root/components/hooks';
 import { cn } from '@root/lib/utils';
+import { UserSession } from '@root/lib/get-user-session';
 
 interface InitialData {
   classes: InitialClassSelection[];
@@ -28,6 +30,7 @@ interface ClassGuidesPageProps {
   modeFilter: Mode[];
   initialData: InitialData;
   className?: string;
+  session: UserSession | null;
 }
 
 export default function ClassGuidesPage({
@@ -36,8 +39,10 @@ export default function ClassGuidesPage({
   modeFilter,
   initialData,
   className,
+  session: initialSession,
 }: ClassGuidesPageProps) {
   const searchParams = useSearchParams();
+  const { data: clientSession } = useSession();
 
   // Получаем начальные параметры из URL
   const initialClass = searchParams.get('class') || null;
@@ -68,6 +73,9 @@ export default function ClassGuidesPage({
     initialFilters: { initialClass, initialSpec, initialMode, initialRole },
   });
 
+  // Используем клиентскую сессию, если она доступна, иначе падаем на серверную сессию
+  const isAuthenticated = clientSession?.user || initialSession;
+
   return (
     <div className={cn('mt-4 flex flex-col gap-6', className)}>
       <div className='flex flex-col'>
@@ -78,7 +86,10 @@ export default function ClassGuidesPage({
               <h2 className='text-[20px]'>Гайды по классам</h2>
             </div>
             <div className='flex items-center justify-end px-3 sm:pr-5'>
-              <CreateGuideModal initialData={data} />
+              {/* Отображаем кнопку, если пользователь авторизован */}
+              {isAuthenticated && <CreateGuideModal initialData={data} />}
+              {/* Если нужна проверка роли (по аналогии с protectRoute): */}
+              {/* {isAuthenticated && (clientSession?.user?.role === 'ADMIN' || initialSession?.user.role === 'ADMIN') && <CreateGuideModal initialData={data} />} */}
             </div>
           </div>
         </div>

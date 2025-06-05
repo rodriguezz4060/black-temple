@@ -22,7 +22,7 @@ import {
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@root/components/ui/select'; // Импортируем компоненты для выпадающего меню
+} from '@root/components/ui/select';
 
 interface InitialData {
   classes: InitialClassSelection[];

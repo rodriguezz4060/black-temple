@@ -3,6 +3,7 @@ import { prisma } from '@prisma/prisma-client';
 import { GuideData } from './_actions/create-guide';
 import { unstable_cache } from 'next/cache';
 import { cn } from '@root/lib/utils';
+import { getUserSession } from '@root/lib/get-user-session';
 
 // Кэшируем запрос гайдов
 const getCachedGuides = unstable_cache(
@@ -29,7 +30,7 @@ const getCachedGuides = unstable_cache(
           select: { name: true, patchName: true, patchVersion: true },
         },
       },
-      take: 100, // Ограничиваем до 100 гайдов для начальной загрузки
+      take: 100,
     });
   },
   ['guides'],
@@ -65,22 +66,17 @@ const getCachedSpecFilter = unstable_cache(
   { revalidate: 3600 }
 );
 
-// Метаданные для SEO
-export const metadata = {
-  title: 'Гайды по классам | Название сайта',
-  description:
-    'Ознакомьтесь с лучшими гайдами по классам и специализациям для вашей игры.',
-};
-
 // Основная страница
 export default async function Page() {
   try {
-    const [guides, modeFilter, specFilter, initialData] = await Promise.all([
-      getCachedGuides(),
-      getCachedModeFilter(),
-      getCachedSpecFilter(),
-      GuideData(),
-    ]);
+    const [guides, modeFilter, specFilter, initialData, session] =
+      await Promise.all([
+        getCachedGuides(),
+        getCachedModeFilter(),
+        getCachedSpecFilter(),
+        GuideData(),
+        getUserSession(),
+      ]);
 
     return (
       <Container className={cn('px-5 md:pr-6 md:pl-[120px]')}>
@@ -89,6 +85,7 @@ export default async function Page() {
           specFilter={specFilter}
           modeFilter={modeFilter}
           initialData={initialData}
+          session={session}
         />
       </Container>
     );
