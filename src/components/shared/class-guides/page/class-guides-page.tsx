@@ -86,10 +86,7 @@ export default function ClassGuidesPage({
               <h2 className='text-[20px]'>Гайды по классам</h2>
             </div>
             <div className='flex items-center justify-end px-3 sm:pr-5'>
-              {/* Отображаем кнопку, если пользователь авторизован */}
               {isAuthenticated && <CreateGuideModal initialData={data} />}
-              {/* Если нужна проверка роли (по аналогии с protectRoute): */}
-              {/* {isAuthenticated && (clientSession?.user?.role === 'ADMIN' || initialSession?.user.role === 'ADMIN') && <CreateGuideModal initialData={data} />} */}
             </div>
           </div>
         </div>
