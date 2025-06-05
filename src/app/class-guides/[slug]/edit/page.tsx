@@ -1,13 +1,22 @@
-import { notFound } from 'next/navigation';
+import { notFound, redirect } from 'next/navigation';
 import { prisma } from '@prisma/prisma-client';
 import { GuideEditor } from '@root/components/shared/class-guides/editor/guide-editor';
 import { Container } from '@root/components/shared';
+import { getUserSession, UserSession } from '@root/lib/get-user-session';
 
 export default async function GuidePageRoute({
   params,
 }: {
   params: Promise<{ slug: string }>;
 }) {
+  // Получаем сессию текущего пользователя
+  const session: UserSession | null = await getUserSession();
+
+  // Если пользователь не авторизован, перенаправляем на страницу входа
+  if (!session?.user?.id) {
+    redirect('/login');
+  }
+
   const { slug } = await params;
 
   // Ищем гайд по slug
@@ -40,13 +49,19 @@ export default async function GuidePageRoute({
           },
           textFields: true,
         },
-        orderBy: { order: 'asc' }, // Сортировка по order
+        orderBy: { order: 'asc' },
       },
     },
   });
 
+  // Если гайд не найден, возвращаем 404
   if (!guide) {
     return notFound();
+  }
+
+  // Проверяем, является ли текущий пользователь автором гайда
+  if (Number(guide.user.id) !== Number(session.user.id)) {
+    return redirect('/not-auth');
   }
 
   return (

@@ -52,7 +52,7 @@ export const InfoBlock: React.FC<Props> = ({
         </div>
       </div>
 
-      <Image src={imageUrl} alt={title} width={300} height={300} />
+      <Image src={imageUrl} alt={title} width={300} height={300} priority />
     </div>
   );
 };
