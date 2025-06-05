@@ -1,18 +1,20 @@
 'use client';
 
 import React from 'react';
+import { useSearchParams } from 'next/navigation';
 import {
   ClassFilter,
   GuideButtonWithRelations,
   InitialClassSelection,
 } from '@root/@types/prisma';
+import { Expansion, Mode } from '@prisma/client';
 import {
   GuideButton,
   CreateGuideModal,
   GuidesFilters,
 } from '@root/components/shared';
-import { Expansion, Mode } from '@prisma/client'; // Импортируем тип Expansion
 import { useClassGuides } from '@root/components/hooks';
+import { cn } from '@root/lib/utils';
 
 interface InitialData {
   classes: InitialClassSelection[];
@@ -35,6 +37,14 @@ export default function ClassGuidesPage({
   initialData,
   className,
 }: ClassGuidesPageProps) {
+  const searchParams = useSearchParams();
+
+  // Получаем начальные параметры из URL
+  const initialClass = searchParams.get('class') || null;
+  const initialSpec = searchParams.get('spec') || null;
+  const initialMode = searchParams.get('mode') || null;
+  const initialRole = searchParams.get('role') || null;
+
   const {
     filteredGuides,
     isLoading,
@@ -55,19 +65,17 @@ export default function ClassGuidesPage({
     specFilter,
     modeFilter,
     initialData,
+    initialFilters: { initialClass, initialSpec, initialMode, initialRole },
   });
 
   return (
-    <div className={`mt-4 flex flex-col gap-6 ${className || ''}`}>
-      {/* Title */}
+    <div className={cn('mt-4 flex flex-col gap-6', className)}>
       <div className='flex flex-col'>
         <div className='flex flex-col border-b border-[#2B2B2B] contain-inline-size'>
           <div className='flex flex-col pb-2 md:flex-row md:items-center md:justify-between'>
-            <div className='flex flex-wrap items-center gap-y-0'>
-              <div className='flex max-w-80 items-center gap-1 p-3'>
-                <span className='h-3 w-3 rounded-[2px] bg-blue-500'></span>
-                <h2 className='text-[20px]'>Гайды по классам</h2>
-              </div>
+            <div className='flex max-w-80 items-center gap-1 p-3'>
+              <span className='h-3 w-3 rounded-[2px] bg-blue-500'></span>
+              <h2 className='text-[20px]'>Гайды по классам</h2>
             </div>
             <div className='flex items-center justify-end px-3 sm:pr-5'>
               <CreateGuideModal initialData={data} />
@@ -75,6 +83,7 @@ export default function ClassGuidesPage({
           </div>
         </div>
       </div>
+
       <GuidesFilters
         specFilter={filters}
         modeFilter={modes}
@@ -99,7 +108,7 @@ export default function ClassGuidesPage({
           </p>
         ) : filteredGuides.length === 0 ? (
           <p className='py-4 text-center text-gray-400'>
-            {selectedClass || selectedSpec || selectedMode
+            {selectedClass || selectedSpec || selectedMode || selectedRole
               ? 'Гайды по выбранным фильтрам не найдены'
               : 'Гайды пока не созданы'}
           </p>

@@ -1,8 +1,7 @@
 'use client';
 
 import { useState, useMemo, useEffect } from 'react';
-import useSWR from 'swr';
-import debounce from 'lodash.debounce';
+import { useRouter } from 'next/navigation';
 import {
   ClassFilter,
   GuideButtonWithRelations,
@@ -16,81 +15,75 @@ interface InitialData {
   expansions: Expansion[];
 }
 
+interface InitialFilters {
+  initialClass: string | null;
+  initialSpec: string | null;
+  initialMode: string | null;
+  initialRole: string | null;
+}
+
 interface UseClassGuidesProps {
   guides: GuideButtonWithRelations[];
   specFilter: ClassFilter[];
   modeFilter: Mode[];
   initialData: InitialData;
+  initialFilters: InitialFilters;
 }
-
-const fetcher = (url: string) =>
-  fetch(url).then(res => {
-    if (!res.ok) throw new Error('Failed to fetch guides');
-    return res.json();
-  });
 
 export function useClassGuides({
   guides: initialGuides,
   specFilter,
   modeFilter,
   initialData,
+  initialFilters,
 }: UseClassGuidesProps) {
-  // Состояние для фильтров
-  const [selectedClass, setSelectedClass] = useState<string | null>(null);
-  const [selectedSpec, setSelectedSpec] = useState<string | null>(null);
-  const [selectedMode, setSelectedMode] = useState<string | null>(null);
-  const [selectedRole, setSelectedRole] = useState<string | null>(null);
-  // Состояние для параметров фильтров
-  const [filterParams, setFilterParams] = useState<string>('');
+  const router = useRouter();
 
-  // Формируем параметры фильтров
+  // Инициализация состояний с учетом начальных параметров из URL
+  const [selectedClass, setSelectedClass] = useState<string | null>(
+    initialFilters.initialClass
+  );
+  const [selectedSpec, setSelectedSpec] = useState<string | null>(
+    initialFilters.initialSpec
+  );
+  const [selectedMode, setSelectedMode] = useState<string | null>(
+    initialFilters.initialMode
+  );
+  const [selectedRole, setSelectedRole] = useState<string | null>(
+    initialFilters.initialRole
+  );
+
+  // Формируем параметры URL
   const params = useMemo(() => {
     const urlParams = new URLSearchParams();
-    if (selectedClass) urlParams.append('class', selectedClass);
-    if (selectedSpec) urlParams.append('spec', selectedSpec);
-    if (selectedMode) urlParams.append('mode', selectedMode);
-    if (selectedRole) urlParams.append('role', selectedRole);
+    if (selectedClass) urlParams.set('class', selectedClass);
+    if (selectedSpec) urlParams.set('spec', selectedSpec);
+    if (selectedMode) urlParams.set('mode', selectedMode);
+    if (selectedRole) urlParams.set('role', selectedRole);
     return urlParams.toString();
   }, [selectedClass, selectedSpec, selectedMode, selectedRole]);
 
-  // Дебаунсинг для обновления параметров
-  const debouncedSetFilterParams = useMemo(
-    () =>
-      debounce((newParams: string) => {
-        setFilterParams(newParams);
-      }, 300),
-    []
-  );
-
-  // Обновляем параметры с дебаунсингом
   useEffect(() => {
-    debouncedSetFilterParams(params);
-    return () => {
-      debouncedSetFilterParams.cancel();
-    };
-  }, [params, debouncedSetFilterParams]);
+    const newUrl = params ? `?${params}` : '';
+    router.replace(`${window.location.pathname}${newUrl}`, { scroll: false });
+  }, [params, router]);
 
-  // Используем useSWR для получения данных
-  const {
-    data: filteredGuides,
-    isLoading,
-    error,
-  } = useSWR(
-    `/api/guides/filters?${filterParams}`, // Всегда отправляем запрос
-    fetcher,
-    {
-      fallbackData: initialGuides, // Начальные данные для первого рендера
-      revalidateOnFocus: false, // Отключить ревалидацию при фокусе
-      revalidateOnReconnect: false, // Отключить ревалидацию при переподключении
-      revalidateOnMount: false, // Отключить ревалидацию при монтировании
-      dedupingInterval: 2000, // Дедупликация запросов в течение 2 секунд
-    }
-  );
+  // Клиентская фильтрация гайдов
+  const filteredGuides = useMemo(() => {
+    return initialGuides.filter(guide => {
+      return (
+        (!selectedClass || guide.class.name === selectedClass) &&
+        (!selectedSpec || guide.specialization.name === selectedSpec) &&
+        (!selectedMode || guide.modeRelation.name === selectedMode) &&
+        (!selectedRole || guide.specialization.specRole.name === selectedRole)
+      );
+    });
+  }, [initialGuides, selectedClass, selectedSpec, selectedMode, selectedRole]);
 
   return {
     filteredGuides,
-    isLoading,
-    error,
+    isLoading: false,
+    error: null,
     specFilter,
     modeFilter,
     initialData,
