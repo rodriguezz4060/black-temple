@@ -3,9 +3,13 @@ import { SectionType } from '@prisma/client';
 export const sectionTypeTranslations: Record<SectionType, string> = {
   HERO_TALENTS: 'Героические таланты',
   TALENTS: 'Таланты',
-  ROTATION_SINGLE_TARGET: 'Ротация для одной цели',
-  ROTATION_AOE_DUNGEON: 'Ротация для АоЕ в подземельях',
+  ROTATION: 'Ротация',
+  DEEP_DIVE: 'Подробный разбор',
   GEAR: 'Экипировка',
-  ENCHANTS: 'Чары',
+  STAT_PRIORITY: 'Приоритеты характеристик',
+  MACROS: 'Макросы',
+  WEAK_AURAS: 'WeakAuras',
+  ADDONS: 'Аддоны',
   CONSUMABLES: 'Расходуемые предметы',
+  DUNGEONS: 'Подземелья',
 };
