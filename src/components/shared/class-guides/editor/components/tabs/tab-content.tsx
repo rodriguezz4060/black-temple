@@ -14,10 +14,10 @@ interface TabContentProps {
 export const TabContent: React.FC<TabContentProps> = React.memo(
   ({ tab, onContentChange }) => (
     <TabsContent value={tab.value} className='mt-0'>
-      <Card className='rounded-none border-none dark:bg-[#171717]'>
+      <Card className='w-full max-w-full rounded-none border-none dark:bg-[#171717]'>
         <CardContent className='space-y-2 p-0'>
           <MDTabContentEditor
-            className='px-2'
+            className='w-full px-2'
             content={tab.content}
             onContentChange={onContentChange}
           />

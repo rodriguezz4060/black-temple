@@ -59,50 +59,55 @@ export const TabsEditor: React.FC<TabsEditorProps> = React.memo(
     return (
       <div className='space-y-4'>
         <form onSubmit={handleSaveTabs}>
-          <Tabs value={activeTab} onValueChange={setActiveTab}>
-            <ScrollArea
-              type='auto'
-              ref={scrollAreaRef}
-              className='max-w-full whitespace-nowrap'
-            >
-              <div className='flex'>
-                <TabsList>
-                  {tabs.map(tab => (
-                    <TabTrigger
-                      key={tab.value}
-                      tab={tab}
-                      isNew={tab.isNew || false}
-                      onEdit={openEditDialog}
-                      getMap={getMap}
+          <div className=''>
+            <Tabs value={activeTab} onValueChange={setActiveTab}>
+              <div className='relative w-full'>
+                <ScrollArea
+                  type='auto'
+                  className='overflow-x-auto whitespace-nowrap'
+                  ref={scrollAreaRef}
+                >
+                  <div className=''>
+                    <TabsList className='grid grid-flow-col justify-start'>
+                      {tabs.map(tab => (
+                        <TabTrigger
+                          key={tab.value}
+                          tab={tab}
+                          isNew={tab.isNew || false}
+                          onEdit={openEditDialog}
+                          getMap={getMap}
+                        />
+                      ))}
+                      <Button
+                        type='button'
+                        variant='outline'
+                        size='sm'
+                        onClick={addNewTab}
+                        className='my-1.5 ml-1 h-11'
+                        aria-label='Add new tab'
+                        disabled={tabs.length >= 15}
+                      >
+                        <Plus className='h-4 w-4' />
+                      </Button>
+                    </TabsList>
+                  </div>
+                  <div className='h-[15px] w-full items-center dark:bg-[#171717]'>
+                    <ScrollBar
+                      orientation='horizontal'
+                      className={cn('p-[0px]')}
                     />
-                  ))}
-                  <Button
-                    type='button'
-                    variant='outline'
-                    size='sm'
-                    onClick={addNewTab}
-                    className='my-1.5 ml-1 h-11'
-                    aria-label='Add new tab'
-                    disabled={tabs.length >= 15}
-                  >
-                    <Plus className='h-4 w-4' />
-                  </Button>
-                </TabsList>
+                  </div>
+                </ScrollArea>
               </div>
-              <div className='h-[15px] w-full items-center dark:bg-[#171717]'>
-                <ScrollBar orientation='horizontal' className={cn('p-[0px]')} />
-              </div>
-            </ScrollArea>
-
-            {tabs.map(tab => (
-              <TabContent
-                key={tab.value}
-                tab={tab}
-                onContentChange={value => updateTabContent(tab.value, value)}
-              />
-            ))}
-          </Tabs>
-
+              {tabs.map(tab => (
+                <TabContent
+                  key={tab.value}
+                  tab={tab}
+                  onContentChange={value => updateTabContent(tab.value, value)}
+                />
+              ))}
+            </Tabs>
+          </div>
           <div className='mt-2 flex justify-end'>
             <Button type='submit' disabled={isSaving}>
               <Save className='mr-2 h-4 w-4' />

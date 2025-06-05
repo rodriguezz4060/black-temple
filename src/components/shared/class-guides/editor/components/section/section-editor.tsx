@@ -121,14 +121,12 @@ export const SectionEditor: React.FC<SectionEditorProps> = ({
                   />
                 </div>
               ) : (
-                <div className='tabs-editor'>
-                  <TabsEditor
-                    initialTabs={item.data.tabs || []}
-                    defaultTab={item.data.tabs?.[0]?.value || ''}
-                    sectionId={section.id}
-                    tabGroupId={item.data.id}
-                  />
-                </div>
+                <TabsEditor
+                  initialTabs={item.data.tabs || []}
+                  defaultTab={item.data.tabs?.[0]?.value || ''}
+                  sectionId={section.id}
+                  tabGroupId={item.data.id}
+                />
               )}
             </SortableItem>
           ))}
