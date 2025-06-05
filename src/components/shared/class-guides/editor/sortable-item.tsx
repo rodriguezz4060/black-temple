@@ -29,7 +29,7 @@ export const SortableItem: React.FC<SortableItemProps> = ({
     opacity: isDragging ? 0.8 : 1,
     zIndex: isDragging ? 1000 : 'auto',
     background: 'transparent',
-    position: 'relative', // Контейнер для абсолютного позиционирования
+    position: 'relative',
   };
 
   return (

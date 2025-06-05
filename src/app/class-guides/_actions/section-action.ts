@@ -239,3 +239,16 @@ export async function updateSectionItemOrder(
     return { success: false, error: 'Не удалось обновить порядок элементов' };
   }
 }
+
+export async function deleteSection(sectionId: number) {
+  try {
+    // Удаляем все связанные TextField и TabGroup (с их Tab) через каскадное удаление
+    await prisma.section.delete({
+      where: { id: sectionId },
+    });
+    return { success: true };
+  } catch (error) {
+    console.error('Error deleting section:', error);
+    return { success: false, error: 'Не удалось удалить секцию' };
+  }
+}

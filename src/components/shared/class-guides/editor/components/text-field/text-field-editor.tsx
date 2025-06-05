@@ -48,7 +48,7 @@ export const TextFieldEditor: React.FC<TextFieldEditorProps> = ({
           content={content}
           onContentChange={setContent}
         />
-        <div className='mt-4 mr-2 flex justify-end'>
+        <div className='mt-4 flex justify-end'>
           <Button
             onClick={handleSave}
             loading={isSaving}
