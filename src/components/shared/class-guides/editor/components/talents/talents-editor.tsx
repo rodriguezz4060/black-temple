@@ -13,7 +13,7 @@ export const TalentsEditor = () => {
           className='relative z-20 flex h-full items-center justify-center'
         >
           <iframe
-            src='https://www.raidbots.com/simbot/render/talents/CUkAAAAAAAAAAAAAAAAAAAAAAAAGjZmZMmZkZmxYYMbzMYsNjZegZMzwMjZGbjZYGMAAAAALziZMMbaagZmZYbD?locale=ru_RU&width=900&level=80&theme=light&bgcolor=transparent'
+            src='https://www.raidbots.com/simbot/render/talents/CUkAAAAAAAAAAAAAAAAAAAAAAAAGjZmZMmZkZmxYYMbzMYsNjZegZMzwMjZGbjZYGMAAAAALziZMMbaagZmZYbD?locale=ru_RU&width=900&level=80&bgcolor=transparent'
             width='900'
             height='540'
             title='Talents Editor'
