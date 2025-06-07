@@ -12,6 +12,9 @@ import { SectionSelectorDrawer } from './components/section/section-selector';
 
 import { useRouter } from 'next/navigation';
 import { SectionEditor } from './components/section/section-editor';
+import { Button } from '@root/components/ui/button';
+import Link from 'next/link';
+import { ChevronLeft } from 'lucide-react';
 
 interface GuideEditorProps {
   guide: GuidePageProps;
@@ -47,6 +50,13 @@ export const GuideEditor: React.FC<GuideEditorProps> = ({
                   <span>Patch {guide.expansion.patchVersion}</span>
                 </span>
                 <GuideStatusComponent guide={guide} />
+
+                <Link href={`/class-guides/${guide.slug}`}>
+                  <Button size='sm'>
+                    <ChevronLeft className='h-5 w-5' />
+                    <span className='mr-1'>К гайду</span>
+                  </Button>
+                </Link>
               </div>
             </div>
             <div className='hidden lg:block'>
