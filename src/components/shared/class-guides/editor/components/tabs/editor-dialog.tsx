@@ -50,7 +50,10 @@ export const EditorDialog: React.FC<EditorDialogProps> = React.memo(
 
     return (
       <Dialog open={isOpen} onOpenChange={handleOpenChange}>
-        <DialogContent className={cn('sm:max-w-[425px]', className)}>
+        <DialogContent
+          className={cn('sm:max-w-[425px]', className)}
+          aria-describedby={undefined}
+        >
           <DialogHeader>
             <DialogTitle>Редактирование таба</DialogTitle>
           </DialogHeader>
