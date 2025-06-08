@@ -59,6 +59,7 @@ model ClassSpecialization {
     specBackground      String
     difficultyBarBanner String
     gearBanner          String
+    talentsBG           String
     class               ClassSelection @relation(fields: [classId], references: [id])
     classId             Int
     guides              Guide[]

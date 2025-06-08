@@ -24,6 +24,7 @@ import {
 import { useRouter } from 'next/navigation';
 import { deleteSection } from '@root/app/class-guides/_actions/section-action';
 import { ConfirmationDialog } from '../confirmation-dialog';
+import { TalentsTab } from '../talents/talents-tab';
 
 interface SectionEditorProps {
   section: GuidePageProps['sections'][number];
@@ -117,6 +118,14 @@ export const SectionEditor: React.FC<SectionEditorProps> = ({
                     guideId={guide.id}
                   />
                 </div>
+              ) : section.type === 'TALENTS' ? (
+                <TalentsTab
+                  initialTabs={item.data.tabs || []}
+                  defaultTab={item.data.tabs?.[0]?.value || ''}
+                  sectionId={section.id}
+                  tabGroupId={item.data.id}
+                  specialization={guide.specialization}
+                />
               ) : (
                 <TabsEditor
                   initialTabs={item.data.tabs || []}

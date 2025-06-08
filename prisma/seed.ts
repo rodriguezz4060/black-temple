@@ -163,6 +163,8 @@ async function up() {
         difficultyBarBanner:
           '/assets/class/warrior/warrior-protection-difficulty-bar-banner.webp',
         gearBanner: '/assets/class/warrior/warrior-protection.webp',
+        talentsBG:
+          '/assets/class/warrior/talents-background-warrior-protection.webp',
         classId: warriorClass!.id,
         specRoleId: tankRole!.id,
       },
@@ -174,6 +176,7 @@ async function up() {
         difficultyBarBanner:
           '/assets/class/warrior/warrior-arms-difficulty-bar-banner.webp',
         gearBanner: '/assets/class/warrior/warrior-arms.webp',
+        talentsBG: '/assets/class/warrior/talents-background-warrior-arms.webp',
         classId: warriorClass!.id,
         specRoleId: dpsRole!.id,
       },
@@ -185,6 +188,7 @@ async function up() {
         difficultyBarBanner:
           '/assets/class/warrior/warrior-fury-difficulty-bar-banner.webp',
         gearBanner: '/assets/class/warrior/warrior-fury.webp',
+        talentsBG: '/assets/class/warrior/talents-background-warrior-fury.webp',
         classId: warriorClass!.id,
         specRoleId: dpsRole!.id,
       },
@@ -196,6 +200,7 @@ async function up() {
         difficultyBarBanner:
           '/assets/class/druid/druid-balance-difficulty-bar-banner.webp',
         gearBanner: '/assets/class/druid/druid-balance.webp',
+        talentsBG: '/assets/class/druid/talents-background-druid-balance.webp',
         classId: druidClass!.id,
         specRoleId: dpsRole!.id,
       },
@@ -206,6 +211,7 @@ async function up() {
         difficultyBarBanner:
           '/assets/class/druid/druid-feral-difficulty-bar-banner.webp',
         gearBanner: '/assets/class/druid/druid-feral.webp',
+        talentsBG: '/assets/class/druid/talents-background-druid-feral.webp',
         classId: druidClass!.id,
         specRoleId: dpsRole!.id,
       },
@@ -217,6 +223,7 @@ async function up() {
         difficultyBarBanner:
           '/assets/class/druid/druid-guardian-difficulty-bar-banner.webp',
         gearBanner: '/assets/class/druid/druid-guardian.webp',
+        talentsBG: '/assets/class/druid/talents-background-druid-guardian.webp',
         classId: druidClass!.id,
         specRoleId: tankRole!.id,
       },
@@ -228,6 +235,8 @@ async function up() {
         difficultyBarBanner:
           '/assets/class/druid/druid-restoration-difficulty-bar-banner.webp',
         gearBanner: '/assets/class/druid/druid-restoration.webp',
+        talentsBG:
+          '/assets/class/druid/talents-background-druid-restoration.webp',
         classId: druidClass!.id,
         specRoleId: healerRole!.id,
       },
@@ -240,6 +249,8 @@ async function up() {
         difficultyBarBanner:
           '/assets/class/priest/priest-discipline-difficulty-bar-banner.webp',
         gearBanner: '/assets/class/priest/priest-discipline.webp',
+        talentsBG:
+          '/assets/class/priest/talents-background-priest-discipline.webp',
         classId: priestClass!.id,
         specRoleId: healerRole!.id,
       },
@@ -250,6 +261,7 @@ async function up() {
         difficultyBarBanner:
           '/assets/class/priest/priest-holy-difficulty-bar-banner.webp',
         gearBanner: '/assets/class/priest/priest-holy.webp',
+        talentsBG: '/assets/class/priest/talents-background-priest-holy.webp',
         classId: priestClass!.id,
         specRoleId: healerRole!.id,
       },
@@ -261,6 +273,7 @@ async function up() {
         difficultyBarBanner:
           '/assets/class/priest/priest-shadow-difficulty-bar-banner.webp',
         gearBanner: '/assets/class/priest/priest-shadow.webp',
+        talentsBG: '/assets/class/priest/talents-background-priest-shadow.webp',
         classId: priestClass!.id,
         specRoleId: dpsRole!.id,
       },
@@ -272,6 +285,7 @@ async function up() {
         difficultyBarBanner:
           '/assets/class/mage/mage-arcane-difficulty-bar-banner.webp',
         gearBanner: '/assets/class/mage/mage-arcane.webp',
+        talentsBG: '/assets/class/mage/talents-background-mage-arcane.webp',
         classId: mageClass!.id,
         specRoleId: dpsRole!.id,
       },
@@ -282,6 +296,7 @@ async function up() {
         difficultyBarBanner:
           '/assets/class/mage/mage-fire-difficulty-bar-banner.webp',
         gearBanner: '/assets/class/mage/mage-fire.webp',
+        talentsBG: '/assets/class/mage/talents-background-mage-fire.webp',
         classId: mageClass!.id,
         specRoleId: dpsRole!.id,
       },
@@ -292,6 +307,7 @@ async function up() {
         difficultyBarBanner:
           '/assets/class/mage/mage-frost-difficulty-bar-banner.webp',
         gearBanner: '/assets/class/mage/mage-frost.webp',
+        talentsBG: '/assets/class/mage/talents-background-mage-frost.webp',
         classId: mageClass!.id,
         specRoleId: dpsRole!.id,
       },
@@ -304,6 +320,7 @@ async function up() {
         difficultyBarBanner:
           '/assets/class/monk/monk-brewmaster-difficulty-bar-banner.webp',
         gearBanner: '/assets/class/monk/monk-brewmaster.webp',
+        talentsBG: '/assets/class/monk/talents-background-monk-brewmaster.webp',
         classId: monkClass!.id,
         specRoleId: tankRole!.id,
       },
@@ -315,6 +332,7 @@ async function up() {
         difficultyBarBanner:
           '/assets/class/monk/monk-windwalker-difficulty-bar-banner.webp',
         gearBanner: '/assets/class/monk/monk-windwalker.webp',
+        talentsBG: '/assets/class/monk/talents-background-monk-windwalker.webp',
         classId: monkClass!.id,
         specRoleId: dpsRole!.id,
       },
@@ -326,6 +344,7 @@ async function up() {
         difficultyBarBanner:
           '/assets/class/monk/monk-mistweaver-difficulty-bar-banner.webp',
         gearBanner: '/assets/class/monk/monk-mistweaver.webp',
+        talentsBG: '/assets/class/monk/talents-background-monk-mistweaver.webp',
         classId: monkClass!.id,
         specRoleId: healerRole!.id,
       },
@@ -338,6 +357,8 @@ async function up() {
         difficultyBarBanner:
           '/assets/class/hunter/hunter-beastmastery-difficulty-bar-banner.webp',
         gearBanner: '/assets/class/hunter/hunter-beastmastery.webp',
+        talentsBG:
+          '/assets/class/hunter/talents-background-hunter-beastmastery.webp',
         classId: hunterClass!.id,
         specRoleId: dpsRole!.id,
       },
@@ -349,6 +370,8 @@ async function up() {
         difficultyBarBanner:
           '/assets/class/hunter/hunter-marksmanship-spec-background.webp',
         gearBanner: '/assets/class/hunter/hunter-marksmanship.webp',
+        talentsBG:
+          '/assets/class/hunter/talents-background-hunter-marksmanship.webp',
         classId: hunterClass!.id,
         specRoleId: dpsRole!.id,
       },
@@ -360,6 +383,8 @@ async function up() {
         difficultyBarBanner:
           '/assets/class/hunter/hunter-survival-difficulty-bar-banner.webp',
         gearBanner: '/assets/class/hunter/hunter-survival.webp',
+        talentsBG:
+          '/assets/class/hunter/talents-background-hunter-survival.webp',
         classId: hunterClass!.id,
         specRoleId: dpsRole!.id,
       },
@@ -371,6 +396,7 @@ async function up() {
         difficultyBarBanner:
           '/assets/class/dh/dh-havoc-difficulty-bar-banner.png',
         gearBanner: '/assets/class/dh/demonhunter-havoc.webp',
+        talentsBG: '/assets/class/dh/talents-background-demonhunter-havoc.webp',
         classId: dhClass!.id,
         specRoleId: dpsRole!.id,
       },
@@ -381,6 +407,8 @@ async function up() {
         difficultyBarBanner:
           '/assets/class/dh/dh-vengeance-difficulty-bar-banner.png',
         gearBanner: '/assets/class/dh/demonhunter-vengeance.webp',
+        talentsBG:
+          '/assets/class/dh/talents-background-demonhunter-vengeance.webp',
         classId: dhClass!.id,
         specRoleId: tankRole!.id,
       },
@@ -393,6 +421,7 @@ async function up() {
         difficultyBarBanner:
           '/assets/class/paladin/paladin-holy-difficulty-bar-banner.webp',
         gearBanner: '/assets/class/paladin/paladin-holy.webp',
+        talentsBG: '/assets/class/paladin/talents-background-paladin-holy.webp',
         classId: paladinClass!.id,
         specRoleId: healerRole!.id,
       },
@@ -405,6 +434,8 @@ async function up() {
         difficultyBarBanner:
           '/assets/class/paladin/paladin-protection-difficulty-bar-banner.webp',
         gearBanner: '/assets/class/paladin/paladin-protection.webp',
+        talentsBG:
+          '/assets/class/paladin/talents-background-paladin-protection.webp',
         classId: paladinClass!.id,
         specRoleId: tankRole!.id,
       },
@@ -416,6 +447,8 @@ async function up() {
         difficultyBarBanner:
           '/assets/class/paladin/paladin-retribution-difficulty-bar-banner.webp',
         gearBanner: '/assets/class/paladin/paladin-retribution.webp',
+        talentsBG:
+          '/assets/class/paladin/talents-background-paladin-retribution.webp',
         classId: paladinClass!.id,
         specRoleId: dpsRole!.id,
       },
@@ -428,6 +461,8 @@ async function up() {
         difficultyBarBanner:
           '/assets/class/evoker/evoker-augmentation-difficulty-bar-banner.webp',
         gearBanner: '/assets/class/evoker/evoker-augmentation.webp',
+        talentsBG:
+          '/assets/class/evoker/talents-background-evoker-augmentation.webp',
         classId: evokerClass!.id,
         specRoleId: dpsRole!.id,
       },
@@ -439,6 +474,8 @@ async function up() {
         difficultyBarBanner:
           '/assets/class/evoker/evoker-devastation-difficulty-bar-banner.webp',
         gearBanner: '/assets/class/evoker/evoker-devastation.webp',
+        talentsBG:
+          '/assets/class/evoker/talents-background-evoker-devastation.webp',
         classId: evokerClass!.id,
         specRoleId: dpsRole!.id,
       },
@@ -450,6 +487,8 @@ async function up() {
         difficultyBarBanner:
           '/assets/class/evoker/evoker-preservation-difficulty-bar-banner.webp',
         gearBanner: '/assets/class/evoker/evoker-preservation.webp',
+        talentsBG:
+          '/assets/class/evoker/talents-background-evoker-preservation.webp',
         classId: evokerClass!.id,
         specRoleId: healerRole!.id,
       },
@@ -462,6 +501,8 @@ async function up() {
         difficultyBarBanner:
           '/assets/class/rogue/rogue-assassination-difficulty-bar-banner.webp',
         gearBanner: '/assets/class/rogue/rogue-assassination.webp',
+        talentsBG:
+          '/assets/class/rogue/talents-background-rogue-assassination.webp',
         classId: rogueClass!.id,
         specRoleId: dpsRole!.id,
       },
@@ -472,6 +513,7 @@ async function up() {
         difficultyBarBanner:
           '/assets/class/rogue/rogue-outlaw-difficulty-bar-banner.webp',
         gearBanner: '/assets/class/rogue/rogue-outlaw.webp',
+        talentsBG: '/assets/class/rogue/talents-background-rogue-outlaw.webp',
         classId: rogueClass!.id,
         specRoleId: dpsRole!.id,
       },
@@ -483,6 +525,7 @@ async function up() {
         difficultyBarBanner:
           '/assets/class/rogue/rogue-subtlety-difficulty-bar-banner.webp',
         gearBanner: '/assets/class/rogue/rogue-subtlety.webp',
+        talentsBG: '/assets/class/rogue/talents-background-rogue-subtlety.webp',
         classId: rogueClass!.id,
         specRoleId: dpsRole!.id,
       },
@@ -494,6 +537,7 @@ async function up() {
         difficultyBarBanner:
           '/assets/class/dk/dk-blood-difficulty-bar-banner.webp',
         gearBanner: '/assets/class/dk/deathknight-blood.webp',
+        talentsBG: '/assets/class/dk/talents-background-deathknight-blood.webp',
         classId: dkClass!.id,
         specRoleId: tankRole!.id,
       },
@@ -504,6 +548,7 @@ async function up() {
         difficultyBarBanner:
           '/assets/class/dk/dk-frost-difficulty-bar-banner.webp',
         gearBanner: '/assets/class/dk/deathknight-frost.webp',
+        talentsBG: '/assets/class/dk/talents-background-deathknight-frost.webp',
         classId: dkClass!.id,
         specRoleId: dpsRole!.id,
       },
@@ -514,6 +559,8 @@ async function up() {
         difficultyBarBanner:
           '/assets/class/dk/dk-unholy-difficulty-bar-banner.webp',
         gearBanner: '/assets/class/dk/deathknight-unholy.webp',
+        talentsBG:
+          '/assets/class/dk/talents-background-deathknight-unholy.webp',
         classId: dkClass!.id,
         specRoleId: dpsRole!.id,
       },
@@ -526,6 +573,8 @@ async function up() {
         difficultyBarBanner:
           '/assets/class/warlock/warlock-affliction-difficulty-bar-banner.webp',
         gearBanner: '/assets/class/warlock/warlock-affliction.webp',
+        talentsBG:
+          '/assets/class/warlock/talents-background-warlock-affliction.webp',
         classId: warlockClass!.id,
         specRoleId: dpsRole!.id,
       },
@@ -537,6 +586,8 @@ async function up() {
         difficultyBarBanner:
           '/assets/class/warlock/warlock-destruction-difficulty-bar-banner.webp',
         gearBanner: '/assets/class/warlock/warlock-destruction.webp',
+        talentsBG:
+          '/assets/class/warlock/talents-background-warlock-destruction.webp',
         classId: warlockClass!.id,
         specRoleId: dpsRole!.id,
       },
@@ -548,6 +599,8 @@ async function up() {
         difficultyBarBanner:
           '/assets/class/warlock/warlock-demonology-difficulty-bar-banner.webp',
         gearBanner: '/assets/class/warlock/warlock-demonology.webp',
+        talentsBG:
+          '/assets/class/warlock/talents-background-warlock-demonology.webp',
         classId: warlockClass!.id,
         specRoleId: dpsRole!.id,
       },
@@ -560,6 +613,8 @@ async function up() {
         difficultyBarBanner:
           '/assets/class/shaman/shaman-elemental-difficulty-bar-banner.webp',
         gearBanner: '/assets/class/shaman/shaman-elemental.webp',
+        talentsBG:
+          '/assets/class/shaman/talents-background-shaman-elemental.webp',
         classId: shamanClass!.id,
         specRoleId: dpsRole!.id,
       },
@@ -571,6 +626,8 @@ async function up() {
         difficultyBarBanner:
           '/assets/class/shaman/shaman-enhancement-difficulty-bar-banner.webp',
         gearBanner: '/assets/class/shaman/shaman-enhancement.webp',
+        talentsBG:
+          '/assets/class/shaman/talents-background-shaman-enhancement.webp',
         classId: shamanClass!.id,
         specRoleId: dpsRole!.id,
       },
@@ -582,6 +639,8 @@ async function up() {
         difficultyBarBanner:
           '/assets/class/shaman/shaman-restoration-difficulty-bar-banner.webp',
         gearBanner: '/assets/class/shaman/shaman-restoration.webp',
+        talentsBG:
+          '/assets/class/shaman/talents-background-shaman-restoration.webp',
         classId: shamanClass!.id,
         specRoleId: healerRole!.id,
       },
@@ -593,7 +652,7 @@ async function up() {
   await prisma.mode.createMany({
     data: [
       {
-        name: 'Мифический+',
+        name: 'Мифик+',
         activityBg: '/assets/activity/mythic-plus-activity-bg-wow.webp',
         activityIcon: '/assets/activity/mythic-plus-activity-icon.webp',
       },

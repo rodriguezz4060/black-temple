@@ -12,7 +12,7 @@ export const AuthorBar = ({ guide }: AuthorBarProps) => {
         <div className='flex gap-[10px]'>
           <div className='border-dark-1 z-[1] flex h-[52px] w-[52px] shrink-0 grow-0 items-center justify-center overflow-hidden rounded-full border-1'>
             <ProfileAvatar
-              className='h-[49px] w-[49px]'
+              className='h-[50px] w-[50px]'
               fullName={guide.user.fullName}
               avatar={guide.user.avatar}
             />
