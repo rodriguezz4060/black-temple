@@ -84,12 +84,12 @@ export const EditorDialog: React.FC<EditorDialogProps> = React.memo(
               variant='destructive'
               onClick={handleDelete}
               className='mr-auto text-amber-50'
-              disabled={isDeleting}
+              loading={isDeleting}
             >
               <Trash2 className='mr-2 h-4 w-4' />
               Удалить
             </Button>
-            <Button type='button' onClick={handleSave}>
+            <Button type='button' loading={isDeleting} onClick={handleSave}>
               Сохранить
             </Button>
           </DialogFooter>

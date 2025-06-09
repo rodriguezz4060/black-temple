@@ -136,21 +136,19 @@ export const useTabsEditor = ({
     async (e: React.FormEvent) => {
       e.preventDefault();
       setIsSaving(true);
-      try {
-        saveTabsMutation.mutate(tabs, {
-          onSuccess: () => {
-            toast.success('Все вкладки сохранены');
-            setTabs(tabs => tabs.map(tab => ({ ...tab, isNew: false })));
-          },
-          onError: error => {
-            toast.error(`Ошибка: ${error.message}`);
-          },
-        });
-      } catch {
-        toast.error('Не удалось сохранить вкладки');
-      } finally {
-        setIsSaving(false);
-      }
+
+      saveTabsMutation.mutate(tabs, {
+        onSettled: () => {
+          setIsSaving(false);
+        },
+        onSuccess: () => {
+          toast.success('Все вкладки сохранены');
+          setTabs(tabs => tabs.map(tab => ({ ...tab, isNew: false })));
+        },
+        onError: error => {
+          toast.error(`Ошибка: ${error.message}`);
+        },
+      });
     },
     [tabs, saveTabsMutation]
   );

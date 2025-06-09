@@ -26,7 +26,8 @@ export const ContentTypeSelector: React.FC<ContentTypeSelectorProps> = ({
         <Button
           size='sm'
           onClick={() => handleCreateContent('TABS')}
-          disabled={isLoading || tabGroupCount >= 3}
+          disabled={tabGroupCount >= 3}
+          loading={isLoading}
           className='flex flex-1 items-center gap-1 transition-colors'
         >
           {getButtonLabels(isLoading, tabGroupCount, 'TABS')}
@@ -34,7 +35,8 @@ export const ContentTypeSelector: React.FC<ContentTypeSelectorProps> = ({
         <Button
           size='sm'
           onClick={() => handleCreateContent('TEXT')}
-          disabled={isLoading || textFieldCount >= 3}
+          disabled={textFieldCount >= 3}
+          loading={isLoading}
           className='flex flex-1 items-center gap-1 transition-colors'
         >
           {getButtonLabels(isLoading, textFieldCount, 'TEXT')}
