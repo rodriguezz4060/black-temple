@@ -4,11 +4,15 @@ import { prisma } from '@prisma/prisma-client';
 
 export async function createTab(sectionId: number) {
   try {
-    const tabGroupCount = await prisma.tabGroup.count({
-      where: { sectionId },
-    });
+    // Подсчитываем общее количество элементов в секции
+    const sectionItemsCount = await prisma.$transaction([
+      prisma.textField.count({ where: { sectionId } }),
+      prisma.tabGroup.count({ where: { sectionId } }),
+    ]);
 
-    if (tabGroupCount >= 15) {
+    const totalCount = sectionItemsCount[0] + sectionItemsCount[1];
+
+    if (sectionItemsCount[1] >= 15) {
       return {
         success: false,
         error: 'Достигнут лимит в 15 группы вкладок на секцию',
@@ -18,7 +22,7 @@ export async function createTab(sectionId: number) {
     const tabGroup = await prisma.tabGroup.create({
       data: {
         sectionId,
-        order: tabGroupCount + 1,
+        order: totalCount + 1, // Новый элемент добавляется в конец
       },
     });
 

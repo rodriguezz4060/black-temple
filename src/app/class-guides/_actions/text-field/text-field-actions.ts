@@ -4,28 +4,35 @@ import { prisma } from '@prisma/prisma-client';
 import { handlePrismaError } from '@root/utils/error-handler';
 
 export async function createTextField(sectionId: number) {
-  const textFieldCount = await prisma.textField.count({
-    where: { sectionId },
-  });
+  try {
+    // Подсчитываем общее количество элементов в секции (текстовые поля + группы вкладок)
+    const sectionItemsCount = await prisma.$transaction([
+      prisma.textField.count({ where: { sectionId } }),
+      prisma.tabGroup.count({ where: { sectionId } }),
+    ]);
 
-  if (textFieldCount >= 3) {
-    return {
-      success: false,
-      error: 'Достигнут лимит в 3 текстовых поля на секцию',
-    };
-  }
+    const totalCount = sectionItemsCount[0] + sectionItemsCount[1];
 
-  return handlePrismaError('создать текстовое поле')(async () => {
+    if (sectionItemsCount[0] >= 3) {
+      return {
+        success: false,
+        error: 'Достигнут лимит в 3 текстовых поля на секцию',
+      };
+    }
+
     const textField = await prisma.textField.create({
       data: {
         sectionId,
         content: '',
-        order: textFieldCount + 1,
+        order: totalCount + 1,
       },
     });
 
-    return { textField };
-  });
+    return { success: true, textField };
+  } catch (error) {
+    console.error('Error creating text field:', error);
+    return { success: false, error: 'Не удалось создать текстовое поле' };
+  }
 }
 
 export async function deleteTextField(textFieldId: number) {
