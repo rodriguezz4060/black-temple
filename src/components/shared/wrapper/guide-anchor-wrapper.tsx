@@ -1,3 +1,5 @@
+'use client';
+
 import React from 'react';
 
 interface GuideTitleProps {
@@ -6,6 +8,7 @@ interface GuideTitleProps {
   patch: string;
   characterClass: string;
   spec: string;
+  actionButton?: React.ReactNode;
 }
 
 export const GuideAnchorWrapper = ({
@@ -14,6 +17,7 @@ export const GuideAnchorWrapper = ({
   patch,
   characterClass,
   spec,
+  actionButton,
 }: GuideTitleProps) => {
   return (
     <>
@@ -28,7 +32,11 @@ export const GuideAnchorWrapper = ({
               {title}
             </h2>
           </div>
-          <span className='text-[#95989B]'>Patch {patch}</span>
+          <div className='flex items-center gap-3'>
+            <span className='text-[#95989B]'>Patch {patch}</span>
+            {actionButton && <div className='ml-3'>{actionButton}</div>}{' '}
+            {/* Место для кнопки */}
+          </div>
         </div>
         <div className='flex items-center gap-3'>
           <span className='text-xs leading-[1.25] text-[#95989B]'>

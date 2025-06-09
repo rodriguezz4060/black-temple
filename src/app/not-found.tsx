@@ -17,6 +17,7 @@ export default function UnauthorizedPage() {
           width={300}
           height={400}
           className='order-1 w-full max-w-[250px] md:order-2 md:max-w-[300px]'
+          priority
         />
 
         {/* Текст и кнопки - теперь снизу на мобильных */}

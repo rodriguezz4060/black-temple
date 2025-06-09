@@ -11,7 +11,7 @@ import { Loader2 } from 'lucide-react';
 export const HeaderRight: React.FC = () => {
   const [openAuthModal, setOpenAuthModal] = React.useState(false);
   const { data: session, status } = useSession();
-  console.log(session);
+
   if (status === 'loading') {
     return (
       <div className='flex items-center gap-3'>

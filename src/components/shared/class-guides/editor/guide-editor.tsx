@@ -1,13 +1,20 @@
 'use client';
 
 import { GuidePageProps } from '@root/@types/prisma';
-import { BisGearEditor } from './bis-gear-editor';
 import { LeftSideBar } from '@root/components/shared/class-guides';
 import { GuideSpecBanner } from '@root/components/shared/class-guides/page/guide-page';
 import { GuideAnchorWrapper } from '@root/components/shared/wrapper';
 import { Title } from '@root/components/ui/title';
+import { GuideStatusComponent } from './components/guide-status/guide-status-component';
 import { DifficultyBarEditor } from './difficulty-bar-editor';
-import { GuideStatusComponent } from './guide-status/guide-status-component';
+import { BisGearEditor } from './components/bis-gear/bis-gear-editor';
+import { SectionSelectorDrawer } from './components/section/section-selector';
+
+import { useRouter } from 'next/navigation';
+import { SectionEditor } from './components/section/section-editor';
+import { Button } from '@root/components/ui/button';
+import Link from 'next/link';
+import { ChevronLeft } from 'lucide-react';
 
 interface GuideEditorProps {
   guide: GuidePageProps;
@@ -18,6 +25,12 @@ export const GuideEditor: React.FC<GuideEditorProps> = ({
   guide,
   className,
 }) => {
+  const router = useRouter();
+
+  const handleSectionAdded = () => {
+    router.refresh();
+  };
+
   return (
     <div
       className={`post-page flex h-max flex-col justify-center pt-10 lg:flex-row ${className}`}
@@ -37,6 +50,13 @@ export const GuideEditor: React.FC<GuideEditorProps> = ({
                   <span>Patch {guide.expansion.patchVersion}</span>
                 </span>
                 <GuideStatusComponent guide={guide} />
+
+                <Link href={`/class-guides/${guide.slug}`}>
+                  <Button size='sm'>
+                    <ChevronLeft className='h-5 w-5' />
+                    <span className='mr-1'>К гайду</span>
+                  </Button>
+                </Link>
               </div>
             </div>
             <div className='hidden lg:block'>
@@ -107,12 +127,16 @@ export const GuideEditor: React.FC<GuideEditorProps> = ({
             gearData={guide.overviewGears}
           />
         </div>
-        <GuideAnchorWrapper
-          anchorId='hero-talents-header'
-          title='Героические таланты'
-          characterClass={guide.class.name}
-          spec={guide.specialization.name}
-          patch={guide.expansion.patchVersion}
+
+        {/* Рендерим секции с помощью SectionEditor */}
+        {guide.sections.map(section => (
+          <SectionEditor key={section.id} section={section} guide={guide} />
+        ))}
+
+        <SectionSelectorDrawer
+          guideId={guide.id}
+          guide={guide}
+          onSectionAdded={handleSectionAdded}
         />
       </div>
     </div>

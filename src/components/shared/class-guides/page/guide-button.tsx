@@ -59,6 +59,7 @@ export default function GuideButton({ guides }: GuideButtonProps) {
                         height={40}
                         alt={`${guide.class.name} ${guide.specialization.name}`}
                         className='border-dark-500 rounded-lg border'
+                        priority
                       />
 
                       <div>
@@ -89,6 +90,7 @@ export default function GuideButton({ guides }: GuideButtonProps) {
                           height={16}
                           alt={guide.modeRelation.name}
                           className='mr-1'
+                          priority
                         />
                         {guide.modeRelation.name}
                       </span>
@@ -99,6 +101,7 @@ export default function GuideButton({ guides }: GuideButtonProps) {
                           height={16}
                           alt={guide.specialization.specRole.name}
                           className='mr-1'
+                          priority
                         />
                         {guide.specialization!.specRole.name}
                       </span>

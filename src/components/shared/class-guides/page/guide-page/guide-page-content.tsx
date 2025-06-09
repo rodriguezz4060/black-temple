@@ -27,6 +27,8 @@ export const GuidePageContent = ({ guide }: GuideProps) => {
               spec={guide.specialization.name}
               patch={guide.expansion.patchVersion}
               mode={guide.modeRelation.name}
+              slug={guide.slug}
+              authorId={guide.user.id}
               updateDate={guide.updatedAt.toISOString()}
             />
             <GuideAnchorWrapper

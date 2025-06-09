@@ -3,6 +3,7 @@ import { prisma } from '@prisma/prisma-client';
 import { GuideData } from './_actions/create-guide';
 import { unstable_cache } from 'next/cache';
 import { cn } from '@root/lib/utils';
+import { getUserSession } from '@root/lib/get-user-session';
 
 // Кэшируем запрос гайдов
 const getCachedGuides = unstable_cache(
@@ -12,14 +13,8 @@ const getCachedGuides = unstable_cache(
       select: {
         id: true,
         slug: true,
-        user: {
-          select: {
-            fullName: true,
-          },
-        },
-        class: {
-          select: { name: true, classColor: true, classIcon: true },
-        },
+        user: { select: { fullName: true } },
+        class: { select: { name: true, classColor: true, classIcon: true } },
         specialization: {
           select: {
             name: true,
@@ -29,36 +24,24 @@ const getCachedGuides = unstable_cache(
           },
         },
         modeRelation: {
-          select: {
-            name: true,
-            activityIcon: true,
-            activityBg: true,
-          },
+          select: { name: true, activityIcon: true, activityBg: true },
         },
         expansion: {
-          select: {
-            name: true,
-            patchName: true,
-            patchVersion: true,
-          },
+          select: { name: true, patchName: true, patchVersion: true },
         },
       },
+      take: 100,
     });
   },
   ['guides'],
-  { revalidate: 3600 } // Кэш на 1 час
+  { revalidate: 3600 }
 );
 
 // Кэшируем modeFilter
 const getCachedModeFilter = unstable_cache(
   async () => {
     return prisma.mode.findMany({
-      select: {
-        id: true,
-        name: true,
-        activityIcon: true,
-        activityBg: true, // Добавляем для консистентности, если нужно
-      },
+      select: { id: true, name: true, activityIcon: true, activityBg: true },
     });
   },
   ['modeFilter'],
@@ -83,23 +66,37 @@ const getCachedSpecFilter = unstable_cache(
   { revalidate: 3600 }
 );
 
+// Основная страница
 export default async function Page() {
-  const [guides, modeFilter, specFilter] = await Promise.all([
-    getCachedGuides(),
-    getCachedModeFilter(),
-    getCachedSpecFilter(),
-  ]);
+  try {
+    const [guides, modeFilter, specFilter, initialData, session] =
+      await Promise.all([
+        getCachedGuides(),
+        getCachedModeFilter(),
+        getCachedSpecFilter(),
+        GuideData(),
+        getUserSession(),
+      ]);
 
-  const initialData = await GuideData();
-
-  return (
-    <Container className={cn('px-5 md:pr-6 md:pl-[120px]')}>
-      <ClassGuidesPage
-        guides={guides}
-        specFilter={specFilter}
-        modeFilter={modeFilter}
-        initialData={initialData}
-      />
-    </Container>
-  );
+    return (
+      <Container className={cn('px-5 md:pr-6 md:pl-[120px]')}>
+        <ClassGuidesPage
+          guides={guides}
+          specFilter={specFilter}
+          modeFilter={modeFilter}
+          initialData={initialData}
+          session={session}
+        />
+      </Container>
+    );
+  } catch (error) {
+    console.error('Ошибка при загрузке данных страницы:', error);
+    return (
+      <Container className={cn('px-5 md:pr-6 md:pl-[120px]')}>
+        <div className='py-4 text-center text-red-400'>
+          Ошибка при загрузке данных. Попробуйте перезагрузить страницу.
+        </div>
+      </Container>
+    );
+  }
 }

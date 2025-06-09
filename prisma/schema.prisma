@@ -59,6 +59,7 @@ model ClassSpecialization {
     specBackground      String
     difficultyBarBanner String
     gearBanner          String
+    talentsBG           String
     class               ClassSelection @relation(fields: [classId], references: [id])
     classId             Int
     guides              Guide[]
@@ -105,14 +106,18 @@ model Guide {
 }
 
 model Section {
-    id        Int         @id @default(autoincrement())
-    guideId   Int
-    guide     Guide       @relation("GuideSections", fields: [guideId], references: [id])
-    type      SectionType
-    textArea  String?
-    tabs      Tab[]       @relation("SectionTabs")
-    createdAt DateTime    @default(now())
-    updatedAt DateTime    @updatedAt
+    id          Int         @id @default(autoincrement())
+    guideId     Int
+    guide       Guide       @relation("GuideSections", fields: [guideId], references: [id])
+    order       Int
+    type        SectionType
+    contentType String
+    tabGroups   TabGroup[]  @relation("SectionTabGroups")
+    textFields  TextField[] @relation("SectionTextFields")
+    createdAt   DateTime    @default(now())
+    updatedAt   DateTime    @updatedAt
+
+    @@index([guideId, order])
 }
 
 model OverviewDifficulty {
@@ -128,19 +133,44 @@ model OverviewDifficulty {
     updatedAt     DateTime @updatedAt
 }
 
-model Tab {
+model TabGroup {
     id        Int      @id @default(autoincrement())
-    value     String
-    label     String
-    iconUrl   String?
-    content   String
-    section   Section  @relation("SectionTabs", fields: [sectionId], references: [id])
+    section   Section  @relation("SectionTabGroups", fields: [sectionId], references: [id], onDelete: Cascade)
     sectionId Int
+    order     Int
+    tabs      Tab[]    @relation("TabGroupTabs")
     createdAt DateTime @default(now())
     updatedAt DateTime @updatedAt
 
-    @@unique([value, sectionId], name: "value_sectionId")
+    @@index([sectionId])
+}
+
+model Tab {
+    id           Int      @id @default(autoincrement())
+    value        String
+    label        String
+    iconUrl      String?
+    content      String
+    importString String
+    tabGroup     TabGroup @relation("TabGroupTabs", fields: [tabGroupId], references: [id], onDelete: Cascade)
+    tabGroupId   Int
+    createdAt    DateTime @default(now())
+    updatedAt    DateTime @updatedAt
+
+    @@unique([value, tabGroupId], name: "value_tabGroupId")
     @@index([value])
+}
+
+model TextField {
+    id        Int      @id @default(autoincrement())
+    content   String
+    section   Section  @relation("SectionTextFields", fields: [sectionId], references: [id], onDelete: Cascade)
+    sectionId Int
+    order     Int
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+
+    @@index([sectionId])
 }
 
 model OverviewGear {
@@ -269,9 +299,13 @@ enum Specialization {
 enum SectionType {
     HERO_TALENTS
     TALENTS
-    ROTATION_SINGLE_TARGET
-    ROTATION_AOE_DUNGEON
+    ROTATION
+    DEEP_DIVE
     GEAR
-    ENCHANTS
+    STAT_PRIORITY
     CONSUMABLES
+    MACROS
+    WEAK_AURAS
+    ADDONS
+    DUNGEONS
 }

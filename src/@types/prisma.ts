@@ -17,13 +17,23 @@ export type GuidePageProps = Prisma.GuideGetPayload<{
     class: true;
     specialization: true;
     modeRelation: true;
+    expansion: true;
     overviewDifficulty: true;
     overviewGears: {
       include: {
         itemSockets: true;
       };
     };
-    expansion: true;
+    sections: {
+      include: {
+        tabGroups: {
+          include: {
+            tabs: true;
+          };
+        };
+        textFields: true;
+      };
+    };
   };
 }>;
 
@@ -31,13 +41,22 @@ export type InitialClassSelection = ClassSelection & {
   specializations: ClassSpecialization[];
 };
 
-export type TabData = {
+export interface TabData {
+  id?: number;
   value: string;
   label: string;
-  iconUrl: string;
+  iconUrl: string | null;
   content: string;
-  heroTalentsId: number;
-};
+  importString: string;
+  tabGroupId: number;
+  isNew?: boolean;
+}
+
+export type TabGroupProps = Prisma.TabGroupGetPayload<{
+  include: {
+    tabs: true;
+  };
+}>;
 
 export type ClassFilter = Prisma.ClassSpecializationGetPayload<{
   select: {
@@ -112,11 +131,5 @@ export interface GuideSpecGearProps {
   spec: string;
   gearData: GearItem[];
 }
-
-export type HeroTalentsProps = Prisma.SectionGetPayload<{
-  include: {
-    tabs: true;
-  };
-}>;
 
 export type ExpansionProps = Expansion & {};
