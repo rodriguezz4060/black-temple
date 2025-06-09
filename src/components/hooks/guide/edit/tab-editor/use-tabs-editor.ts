@@ -2,9 +2,9 @@
 
 import { useState, useCallback } from 'react';
 import { TabData } from '@root/@types/prisma';
-import { createTabInGroup } from '@root/app/class-guides/_actions/section-action';
 import { useTabsMutations } from '@root/components/hooks/guide/edit/tab-editor/use-tabs-mutations';
 import toast from 'react-hot-toast';
+import { createTabInGroup } from '@root/app/class-guides/_actions/tab/tab-action';
 
 interface UseTabsEditorProps {
   initialTabs: TabData[];
@@ -51,6 +51,19 @@ export const useTabsEditor = ({
       )
     );
   }, []);
+
+  const updateTabImportString = useCallback(
+    (value: string, importString: string) => {
+      setTabs(tabs =>
+        tabs.map(tab =>
+          tab.value === value
+            ? { ...tab, importString, isNew: tab.isNew || false }
+            : tab
+        )
+      );
+    },
+    []
+  );
 
   const openEditDialog = useCallback((tab: TabData) => {
     setEditingTab(tab);
@@ -151,6 +164,7 @@ export const useTabsEditor = ({
     setActiveTab,
     addNewTab,
     updateTabContent,
+    updateTabImportString,
     openEditDialog,
     saveTabChanges,
     handleDeleteTab,

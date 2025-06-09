@@ -1,10 +1,8 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import toast from 'react-hot-toast';
-import {
-  createTab,
-  createTextField,
-} from '@root/app/class-guides/_actions/section-action';
+import { createTextField } from '@root/app/class-guides/_actions/text-field/text-field-actions';
+import { createTab } from '@root/app/class-guides/_actions/tab/tab-action';
 
 export const useContentCreation = (sectionId: number) => {
   const [isLoading, setIsLoading] = useState(false);

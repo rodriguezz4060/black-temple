@@ -8,7 +8,6 @@ import { ScrollArea, ScrollBar } from '@root/components/ui/scroll-area';
 import { TabData } from '@root/@types/prisma';
 import { useTabsScroll } from '@root/components/hooks';
 import { cn } from '@root/lib/utils';
-
 import { TabTrigger } from './tab-trigger';
 import { TabContent } from './tab-content';
 import { EditorDialog } from './editor-dialog';

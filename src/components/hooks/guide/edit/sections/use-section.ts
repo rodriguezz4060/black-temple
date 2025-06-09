@@ -3,13 +3,11 @@ import { DragEndEvent } from '@dnd-kit/core';
 import { arrayMove } from '@dnd-kit/sortable';
 import { toast } from 'react-hot-toast';
 import { useRouter } from 'next/navigation';
-import {
-  deleteTextField,
-  deleteTabGroup,
-  updateSectionItemOrder,
-} from '@root/app/class-guides/_actions/section-action';
 import { GuidePageProps, TabGroupProps } from '@root/@types/prisma';
 import { TextField } from '@prisma/client';
+import { deleteTextField } from '@root/app/class-guides/_actions/text-field/text-field-actions';
+import { deleteTabGroup } from '@root/app/class-guides/_actions/tab/tab-group-action';
+import { updateSectionItemOrder } from '@root/app/class-guides/_actions/dnd/dnd-actions';
 
 export type SectionItem =
   | { type: 'TEXT'; data: TextField; order: number }

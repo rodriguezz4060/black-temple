@@ -40,6 +40,7 @@ export const TalentsTab: React.FC<TabsEditorProps> = React.memo(
       setActiveTab,
       addNewTab,
       updateTabContent,
+      updateTabImportString,
       openEditDialog,
       saveTabChanges,
       handleDeleteTab,
@@ -106,6 +107,9 @@ export const TalentsTab: React.FC<TabsEditorProps> = React.memo(
                   key={tab.value}
                   tab={tab}
                   specialization={specialization}
+                  onImportChange={value =>
+                    updateTabImportString(tab.value, value)
+                  }
                   onContentChange={value => updateTabContent(tab.value, value)}
                 />
               ))}

@@ -47,6 +47,7 @@ export interface TabData {
   label: string;
   iconUrl: string | null;
   content: string;
+  importString: string;
   tabGroupId: number;
   isNew?: boolean;
 }

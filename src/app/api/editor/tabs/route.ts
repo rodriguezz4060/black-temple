@@ -2,9 +2,9 @@ import { NextResponse } from 'next/server';
 import { prisma } from '@prisma/prisma-client';
 import { TabData } from '@root/@types/prisma';
 import {
-  updateTab,
   deleteTab,
-} from '@root/app/class-guides/_actions/section-action';
+  updateTab,
+} from '@root/app/class-guides/_actions/tab/tab-action';
 
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
@@ -24,6 +24,7 @@ export async function GET(request: Request) {
       label: tab.label,
       iconUrl: tab.iconUrl,
       content: tab.content,
+      importString: tab.importString,
       tabGroupId: tab.tabGroupId,
       createdAt: tab.createdAt,
       updatedAt: tab.updatedAt,
@@ -49,6 +50,7 @@ export async function POST(request: Request) {
           label: tab.label,
           iconUrl: tab.iconUrl,
           content: tab.content,
+          importString: tab.importString,
         });
         if (result.success && result.tab) {
           updatedTabs.push(result.tab);

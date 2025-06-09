@@ -146,15 +146,16 @@ model TabGroup {
 }
 
 model Tab {
-    id         Int      @id @default(autoincrement())
-    value      String
-    label      String
-    iconUrl    String?
-    content    String
-    tabGroup   TabGroup @relation("TabGroupTabs", fields: [tabGroupId], references: [id], onDelete: Cascade)
-    tabGroupId Int
-    createdAt  DateTime @default(now())
-    updatedAt  DateTime @updatedAt
+    id           Int      @id @default(autoincrement())
+    value        String
+    label        String
+    iconUrl      String?
+    content      String
+    importString String
+    tabGroup     TabGroup @relation("TabGroupTabs", fields: [tabGroupId], references: [id], onDelete: Cascade)
+    tabGroupId   Int
+    createdAt    DateTime @default(now())
+    updatedAt    DateTime @updatedAt
 
     @@unique([value, tabGroupId], name: "value_tabGroupId")
     @@index([value])

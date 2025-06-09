@@ -22,9 +22,9 @@ import {
   useSectionItems,
 } from '@root/components/hooks/guide/edit/sections/use-section';
 import { useRouter } from 'next/navigation';
-import { deleteSection } from '@root/app/class-guides/_actions/section-action';
 import { ConfirmationDialog } from '../confirmation-dialog';
 import { TalentsTab } from '../talents/talents-tab';
+import { deleteSection } from '@root/app/class-guides/_actions/section/section-actions';
 
 interface SectionEditorProps {
   section: GuidePageProps['sections'][number];

@@ -13,9 +13,9 @@ import {
 import { Plus } from 'lucide-react';
 import { SectionType } from '@prisma/client';
 import { useRouter } from 'next/navigation';
-import { createSection } from '@root/app/class-guides/_actions/section-action';
 import { GuidePageProps } from '@root/@types/prisma';
 import { sectionTypeTranslations } from '@root/utils/section-translations';
+import { createSection } from '@root/app/class-guides/_actions/section/section-actions';
 
 interface SectionSelectorDrawerProps {
   guideId: number;
