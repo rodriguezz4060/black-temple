@@ -53,10 +53,10 @@ export const useDeleteHandlers = (
   ) => {
     const result = await deleteAction(id);
     if (result.success) {
-      toast.success(successMessage);
       setSectionItems(
         sectionItems.filter(item => item.type !== type || item.data.id !== id)
       );
+      toast.success(successMessage);
       router.refresh();
     } else {
       toast.error(result.error || errorMessage);
