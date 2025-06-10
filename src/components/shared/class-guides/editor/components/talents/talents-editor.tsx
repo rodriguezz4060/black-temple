@@ -7,10 +7,18 @@ import { ScrollArea, ScrollBar } from '@root/components/ui/scroll-area';
 import { TabsContent } from '@root/components/ui/tabs-list';
 import { Button } from '@root/components/ui/button';
 import { FormInput } from '@root/components/shared/forms/input-form';
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from '@root/components/ui/dialog';
 import Image from 'next/image';
 import { useForm, FormProvider } from 'react-hook-form';
 import { cn } from '@root/lib/utils';
 import { MDTabContentEditor } from '../text-field/md-tab-content-editor';
+import { useState } from 'react';
 
 interface TalentsEditorProps {
   tab: TabData;
@@ -41,6 +49,8 @@ export const TalentsEditor = ({
     },
   });
 
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
+
   const { handleSubmit, reset } = methods;
 
   const onSubmit = (data: TalentFormData) => {
@@ -48,6 +58,7 @@ export const TalentsEditor = ({
       onContentChange(data.content);
       onImportChange(data.importString);
       reset();
+      setIsDialogOpen(false);
     }
   };
 
@@ -79,14 +90,51 @@ export const TalentsEditor = ({
                 className='relative z-20 flex h-full items-center justify-center'
               >
                 {tab.importString ? (
-                  <iframe
-                    src={`https://www.raidbots.com/simbot/render/talents/${tab.importString}?locale=ru_RU&width=${IFRAME_WIDTH}&level=80&bgcolor=transparent`}
-                    width={IFRAME_WIDTH}
-                    height={IFRAME_HEIGHT}
-                    title='Talents Editor'
-                    className='overflow-hidden'
-                    scrolling='no'
-                  />
+                  <>
+                    <iframe
+                      src={`https://www.raidbots.com/simbot/render/talents/${tab.importString}?locale=ru_RU&width=${IFRAME_WIDTH}&level=80&bgcolor=transparent`}
+                      width={IFRAME_WIDTH}
+                      height={IFRAME_HEIGHT}
+                      title='Talents Editor'
+                      className='overflow-hidden'
+                      scrolling='no'
+                    />
+                    <div className='absolute top-4 right-4'>
+                      <Dialog
+                        open={isDialogOpen}
+                        onOpenChange={setIsDialogOpen}
+                      >
+                        <DialogTrigger asChild>
+                          <Button variant='default'>Редактировать</Button>
+                        </DialogTrigger>
+                        <DialogContent>
+                          <DialogHeader>
+                            <DialogTitle>
+                              Редактировать данные талантов
+                            </DialogTitle>
+                          </DialogHeader>
+                          <FormProvider {...methods}>
+                            <form
+                              onSubmit={handleSubmit(onSubmit)}
+                              className='space-y-4'
+                            >
+                              <FormInput
+                                name='importString'
+                                label='Строка талантов'
+                                placeholder='Введите строку для импорта'
+                                className='w-full'
+                                required
+                              />
+
+                              <div className='flex justify-end'>
+                                <Button type='submit'>Сохранить</Button>
+                              </div>
+                            </form>
+                          </FormProvider>
+                        </DialogContent>
+                      </Dialog>
+                    </div>
+                  </>
                 ) : (
                   <FormProvider {...methods}>
                     <div className='flex flex-col items-center gap-4 pt-20'>
