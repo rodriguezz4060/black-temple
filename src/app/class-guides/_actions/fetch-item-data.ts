@@ -36,10 +36,13 @@ export async function fetchItemData(
     }
     const itemId = match[1];
 
+    const cacheOption =
+      process.env.NODE_ENV === 'development' ? 'no-store' : 'force-cache';
+
     // Получение токена
     const tokenRes = await fetch(urlApi, {
       method: 'GET',
-      cache: 'force-cache',
+      cache: cacheOption,
     });
 
     if (!tokenRes.ok) {
@@ -55,7 +58,7 @@ export async function fetchItemData(
         headers: {
           Authorization: `Bearer ${access_token}`,
         },
-        cache: 'force-cache',
+        cache: cacheOption,
         next: { revalidate: 3600 },
       }
     );
@@ -73,7 +76,7 @@ export async function fetchItemData(
         headers: {
           Authorization: `Bearer ${access_token}`,
         },
-        cache: 'force-cache',
+        cache: cacheOption,
         next: { revalidate: 3600 },
       }
     );
