@@ -5,6 +5,7 @@ import Script from 'next/script';
 import './globals.css';
 import { Providers } from '@root/components/shared/provider';
 import NextTopLoader from 'nextjs-toploader';
+import WowheadInitializer from '@root/components/shared/wrapper/wowhead-initializer';
 
 const baseUrl =
   process.env.NEXT_PUBLIC_SITE_URL || 'https://black-temple.vercel.app';
@@ -87,12 +88,14 @@ export default async function RootLayout({
         <meta property='og:url' content={baseUrl} />
         <meta property='og:type' content='website' />
         <meta property='og:site_name' content='Black Temple' />
-        <Script id='wowhead-tooltips-config'>
+        <Script id='wowhead-tooltips-config' strategy='beforeInteractive'>
           {`const whTooltips = {colorLinks: true, iconizeLinks: true, renameLinks: true};`}
         </Script>
+
         <Script
           src='https://wow.zamimg.com/js/tooltips.js'
           strategy='afterInteractive'
+          async
         />
         <link data-rh='true' rel='icon' href='/favicon.png' />
       </head>
@@ -101,6 +104,7 @@ export default async function RootLayout({
           <Providers>
             <Header />
             <NextTopLoader />
+            <WowheadInitializer />
             {children}
           </Providers>
         </main>

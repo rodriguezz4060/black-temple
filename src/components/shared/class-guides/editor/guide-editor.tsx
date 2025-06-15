@@ -9,12 +9,12 @@ import { GuideStatusComponent } from './components/guide-status/guide-status-com
 import { DifficultyBarEditor } from './difficulty-bar-editor';
 import { BisGearEditor } from './components/bis-gear/bis-gear-editor';
 import { SectionSelectorDrawer } from './components/section/section-selector';
-
 import { useRouter } from 'next/navigation';
 import { SectionEditor } from './components/section/section-editor';
 import { Button } from '@root/components/ui/button';
 import Link from 'next/link';
 import { ChevronLeft } from 'lucide-react';
+import { RotationEditor } from './components/rotation/rotation-editor';
 
 interface GuideEditorProps {
   guide: GuidePageProps;
@@ -138,6 +138,8 @@ export const GuideEditor: React.FC<GuideEditorProps> = ({
           guide={guide}
           onSectionAdded={handleSectionAdded}
         />
+
+        <RotationEditor />
       </div>
     </div>
   );

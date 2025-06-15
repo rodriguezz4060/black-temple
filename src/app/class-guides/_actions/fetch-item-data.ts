@@ -1,11 +1,19 @@
 'use server';
 
 interface ItemData {
+  type: 'item';
+  name: string;
+  icon: string;
+}
+
+interface SpellData {
+  type: 'spell';
   name: string;
   icon: string;
 }
 
 interface ErrorResponse {
+  type: 'error';
   error: string;
 }
 
@@ -18,29 +26,39 @@ interface MediaData {
   assets: Asset[];
 }
 
-export async function fetchItemData(
-  url: string
-): Promise<ItemData | ErrorResponse> {
+type DataResponse = ItemData | SpellData | ErrorResponse;
+
+export async function fetchItemData(url: string): Promise<DataResponse> {
   try {
     const baseUrl =
       process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:3000/';
-    const urlApi = `${baseUrl}/api/blizzard-token`;
-
-    // Извлечение ID предмета из URL
-    const match = url.match(/item=(\d+)/);
-    if (!match) {
-      return {
-        error:
-          'Неверная ссылка. Убедитесь, что она содержит ID предмета (например, item=228839).',
-      };
-    }
-    const itemId = match[1];
-
+    const tokenUrl = `${baseUrl}/api/blizzard-token`;
     const cacheOption =
       process.env.NODE_ENV === 'development' ? 'no-store' : 'force-cache';
 
+    // Извлечение типа и ID из URL
+    const itemMatch = url.match(/item=(\d+)/);
+    const spellMatch = url.match(/spell=(\d+)/);
+
+    let id: string;
+    let type: 'item' | 'spell';
+
+    if (itemMatch) {
+      id = itemMatch[1];
+      type = 'item';
+    } else if (spellMatch) {
+      id = spellMatch[1];
+      type = 'spell';
+    } else {
+      return {
+        type: 'error',
+        error:
+          'Неверная ссылка. Убедитесь, что она содержит ID предмета (item=) или способности (spell=).',
+      };
+    }
+
     // Получение токена
-    const tokenRes = await fetch(urlApi, {
+    const tokenRes = await fetch(tokenUrl, {
       method: 'GET',
       cache: cacheOption,
     });
@@ -51,38 +69,40 @@ export async function fetchItemData(
 
     const { access_token } = await tokenRes.json();
 
-    // Получение данных предмета
-    const itemRes = await fetch(
-      `https://eu.api.blizzard.com/data/wow/item/${itemId}?namespace=static-eu&locale=ru_RU`,
-      {
-        headers: {
-          Authorization: `Bearer ${access_token}`,
-        },
-        cache: cacheOption,
-        next: { revalidate: 3600 },
-      }
-    );
+    // Формирование URL для данных
+    const dataUrl = `https://eu.api.blizzard.com/data/wow/${type}/${id}?namespace=static-eu&locale=ru_RU`;
+    const mediaUrl = `https://eu.api.blizzard.com/data/wow/media/${type}/${id}?namespace=static-eu&locale=ru_RU`;
 
-    if (!itemRes.ok) {
-      throw new Error('Ошибка получения данных предмета');
+    // Получение данных
+    const dataRes = await fetch(dataUrl, {
+      headers: {
+        Authorization: `Bearer ${access_token}`,
+      },
+      cache: cacheOption,
+      next: { revalidate: 3600 },
+    });
+
+    if (!dataRes.ok) {
+      throw new Error(
+        `Ошибка получения данных ${type === 'item' ? 'предмета' : 'способности'}`
+      );
     }
 
-    const itemData = await itemRes.json();
+    const data = await dataRes.json();
 
     // Получение медиа (иконки)
-    const mediaRes = await fetch(
-      `https://eu.api.blizzard.com/data/wow/media/item/${itemId}?namespace=static-eu&locale=ru_RU`,
-      {
-        headers: {
-          Authorization: `Bearer ${access_token}`,
-        },
-        cache: cacheOption,
-        next: { revalidate: 3600 },
-      }
-    );
+    const mediaRes = await fetch(mediaUrl, {
+      headers: {
+        Authorization: `Bearer ${access_token}`,
+      },
+      cache: cacheOption,
+      next: { revalidate: 3600 },
+    });
 
     if (!mediaRes.ok) {
-      throw new Error('Ошибка получения медиа');
+      throw new Error(
+        `Ошибка получения медиа ${type === 'item' ? 'предмета' : 'способности'}`
+      );
     }
 
     const mediaData: MediaData = await mediaRes.json();
@@ -91,12 +111,14 @@ export async function fetchItemData(
     )?.value;
 
     return {
-      name: itemData.name,
+      type,
+      name: data.name,
       icon: iconUrl || '',
     };
   } catch (e: unknown) {
-    console.error('Ошибка в fetchItemData:', e);
+    console.error('Ошибка в fetchData:', e);
     return {
+      type: 'error',
       error: e instanceof Error ? e.message : 'Произошла неизвестная ошибка',
     };
   }

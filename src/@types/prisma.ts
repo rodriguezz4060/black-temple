@@ -133,3 +133,11 @@ export interface GuideSpecGearProps {
 }
 
 export type ExpansionProps = Expansion & {};
+
+export interface Ability {
+  id: string;
+  wowheadLink: string;
+  type: 'spell' | 'item';
+  name: string;
+  icon: string;
+}
