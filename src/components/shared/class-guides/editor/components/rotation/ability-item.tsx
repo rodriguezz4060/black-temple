@@ -1,6 +1,5 @@
 'use client';
 
-import { Button } from '@root/components/ui/button';
 import { SortableAbility } from './sortable-ability';
 import WowheadLink from './wowhead-link';
 import { Ability, VerticalRow } from '@root/@types/prisma';
@@ -8,6 +7,7 @@ import { VerticalRowContainer } from './vertical-row-container';
 import { ChevronUp, Plus } from 'lucide-react';
 import { TooltipWrapper } from '@root/components/shared/wrapper';
 import { WowheadDialog } from './wowhead-dialog';
+import { Button } from '@root/components/ui/button';
 
 interface AbilityItemProps {
   ability: Ability;

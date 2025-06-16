@@ -14,7 +14,7 @@ import {
   rectIntersection,
 } from '@dnd-kit/core';
 import { arrayMove, sortableKeyboardCoordinates } from '@dnd-kit/sortable';
-import { Button } from '@root/components/ui/button';
+import { Button } from '@/components/ui/button';
 import {
   Dialog,
   DialogContent,
@@ -22,8 +22,8 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from '@root/components/ui/dialog';
-import { Input } from '@root/components/ui/input';
+} from '@/components/ui/dialog';
+import { Input } from '@/components/ui/input';
 import WowheadLink from './wowhead-link';
 import { Ability, VerticalRow } from '@root/@types/prisma';
 import { DroppableZone } from './droppable-zone';
@@ -259,49 +259,171 @@ export function RotationEditor() {
     const activeId = active.id.toString();
     const overId = over.id.toString();
 
-    const activeAbility = abilities.find(item => item.id === activeId);
+    // Поиск активной способности
+    let activeAbility: Ability | undefined;
+    let sourceRow: VerticalRow | undefined;
+
+    // Проверяем, находится ли способность в основном списке
+    activeAbility = abilities.find(item => item.id === activeId);
+    if (!activeAbility) {
+      // Если не в основном списке, ищем в вертикальных рядах
+      for (const row of verticalRows) {
+        const ability = row.abilities.find(item => item.id === activeId);
+        if (ability) {
+          activeAbility = ability;
+          sourceRow = row;
+          break;
+        }
+      }
+    }
+
     if (!activeAbility) return;
 
+    // Перетаскивание в зону препулла или пула
     if (overId === 'prepull-zone' || overId === 'pull-zone') {
       const targetIsPrepull = overId === 'prepull-zone';
-      if (activeAbility.isPrepull === targetIsPrepull) return;
+      if (activeAbility.isPrepull === targetIsPrepull && !sourceRow) return;
 
-      setAbilities(items =>
-        items.map(item =>
-          item.id === activeId ? { ...item, isPrepull: targetIsPrepull } : item
-        )
-      );
+      if (sourceRow) {
+        // Удаляем способность из вертикального ряда
+        setVerticalRows(rows =>
+          rows
+            .map(row =>
+              row.id === sourceRow!.id
+                ? {
+                    ...row,
+                    abilities: row.abilities.filter(
+                      item => item.id !== activeId
+                    ),
+                  }
+                : row
+            )
+            .filter(row => row.abilities.length > 0)
+        );
+      } else {
+        // Удаляем из основного списка, если не из ряда
+        setAbilities(abilities.filter(item => item.id !== activeId));
+      }
+
+      // Добавляем в основной список с новым isPrepull
+      setAbilities(items => [
+        ...items,
+        { ...activeAbility!, isPrepull: targetIsPrepull },
+      ]);
       return;
     }
 
+    // Перетаскивание в вертикальный ряд
     const targetRow = verticalRows.find(row => row.id === overId);
     if (targetRow) {
-      setAbilities(abilities.filter(item => item.id !== activeId));
+      if (sourceRow && sourceRow.id === targetRow.id) return; // Уже в этом ряду
+
+      if (sourceRow) {
+        // Удаляем из исходного ряда
+        setVerticalRows(rows =>
+          rows
+            .map(row =>
+              row.id === sourceRow!.id
+                ? {
+                    ...row,
+                    abilities: row.abilities.filter(
+                      item => item.id !== activeId
+                    ),
+                  }
+                : row
+            )
+            .filter(row => row.abilities.length > 0)
+        );
+      } else {
+        // Удаляем из основного списка
+        setAbilities(abilities.filter(item => item.id !== activeId));
+      }
+
+      // Добавляем в целевой ряд
       setVerticalRows(rows =>
         rows.map(row =>
           row.id === overId
-            ? { ...row, abilities: [{ ...activeAbility }, ...row.abilities] }
+            ? { ...row, abilities: [{ ...activeAbility! }, ...row.abilities] }
             : row
         )
       );
       return;
     }
 
+    // Перетаскивание внутри горизонтальной зоны
     const overAbility = abilities.find(item => item.id === overId);
     if (overAbility) {
-      const activeIndex = abilities.findIndex(item => item.id === activeId);
-      const overIndex = abilities.findIndex(item => item.id === overId);
+      if (sourceRow) {
+        // Удаляем из вертикального ряда
+        setVerticalRows(rows =>
+          rows
+            .map(row =>
+              row.id === sourceRow!.id
+                ? {
+                    ...row,
+                    abilities: row.abilities.filter(
+                      item => item.id !== activeId
+                    ),
+                  }
+                : row
+            )
+            .filter(row => row.abilities.length > 0)
+        );
 
-      if (activeIndex === overIndex) return;
+        // Добавляем в основной список
+        const overIndex = abilities.findIndex(item => item.id === overId);
+        setAbilities(items => [
+          ...items.slice(0, overIndex),
+          { ...activeAbility!, isPrepull: overAbility.isPrepull },
+          ...items.slice(overIndex),
+        ]);
+      } else {
+        const activeIndex = abilities.findIndex(item => item.id === activeId);
+        const overIndex = abilities.findIndex(item => item.id === overId);
 
-      setAbilities(items => {
-        const newItems = [...items];
-        newItems[activeIndex] = {
-          ...newItems[activeIndex],
-          isPrepull: newItems[overIndex].isPrepull,
-        };
-        return arrayMove(newItems, activeIndex, overIndex);
-      });
+        if (activeIndex === overIndex) return;
+
+        setAbilities(items => {
+          const newItems = [...items];
+          newItems[activeIndex] = {
+            ...newItems[activeIndex],
+            isPrepull: newItems[overIndex].isPrepull,
+          };
+          return arrayMove(newItems, activeIndex, overIndex);
+        });
+      }
+      return;
+    }
+
+    // Перетаскивание внутри вертикального ряда
+    const overRowAbility = verticalRows
+      .flatMap(row => row.abilities)
+      .find(item => item.id === overId);
+    if (overRowAbility && sourceRow) {
+      const targetRow = verticalRows.find(row =>
+        row.abilities.some(item => item.id === overId)
+      );
+      if (targetRow && targetRow.id === sourceRow.id) {
+        const activeIndex = sourceRow.abilities.findIndex(
+          item => item.id === activeId
+        );
+        const overIndex = targetRow.abilities.findIndex(
+          item => item.id === overId
+        );
+
+        if (activeIndex === overIndex) return;
+
+        setVerticalRows(rows =>
+          rows.map(row =>
+            row.id === targetRow.id
+              ? {
+                  ...row,
+                  abilities: arrayMove(row.abilities, activeIndex, overIndex),
+                }
+              : row
+          )
+        );
+      }
     }
   };
 
@@ -316,7 +438,6 @@ export function RotationEditor() {
           ...row,
           abilities: row.abilities.filter(ability => ability.id !== id),
         }))
-        // Фильтруем ряды, оставляя только те, у которых есть способности
         .filter(row => row.abilities.length > 0);
       return updatedRows;
     });
@@ -324,7 +445,11 @@ export function RotationEditor() {
 
   const prepullAbilities = abilities.filter(ability => ability.isPrepull);
   const pullAbilities = abilities.filter(ability => !ability.isPrepull);
-  const activeAbility = abilities.find(ability => ability.id === activeId);
+  const activeAbility =
+    abilities.find(ability => ability.id === activeId) ||
+    verticalRows
+      .flatMap(row => row.abilities)
+      .find(ability => ability.id === activeId);
 
   return (
     <div className='mt-6 flex flex-col gap-6'>

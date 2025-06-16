@@ -7,9 +7,10 @@ import {
 } from '@dnd-kit/sortable';
 import { Ability, VerticalRow } from '@root/@types/prisma';
 import { AbilityItem } from './ability-item';
-import { Button } from '@root/components/ui/button';
+
 import { WowheadDialog } from './wowhead-dialog';
 import { Plus } from 'lucide-react';
+import { Button } from '@root/components/ui/button';
 
 interface DroppableZoneProps {
   id: string;
@@ -81,6 +82,15 @@ export function DroppableZone({
             className='relative flex min-h-[60px] items-center gap-2'
             style={{ zIndex: 1 }}
           >
+            {abilities.length === 0 && (
+              <div
+                className={`pointer-events-none absolute inset-0 flex items-center justify-center text-sm text-gray-400 transition-opacity duration-200 ${
+                  isOver ? 'opacity-0' : 'opacity-100'
+                }`}
+              >
+                Перетащите сюда способности
+              </div>
+            )}
             {abilities.map((ability, index) => (
               <AbilityItem
                 key={ability.id}
