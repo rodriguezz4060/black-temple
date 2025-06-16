@@ -14,16 +14,7 @@ import {
   rectIntersection,
 } from '@dnd-kit/core';
 import { arrayMove, sortableKeyboardCoordinates } from '@dnd-kit/sortable';
-import { Button } from '@/components/ui/button';
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from '@/components/ui/dialog';
-import { Input } from '@/components/ui/input';
+import { ScrollArea, ScrollBar } from '@root/components/ui/scroll-area';
 import WowheadLink from './wowhead-link';
 import { Ability, VerticalRow } from '@root/@types/prisma';
 import { DroppableZone } from './droppable-zone';
@@ -31,7 +22,7 @@ import { DroppableZone } from './droppable-zone';
 // Константа для высоты одной способности (примерное значение в пикселях)
 const ABILITY_HEIGHT = 60; // Высота одной способности (включая отступы)
 const ROW_GAP = 5; // Отступ между способностями в вертикальном ряду
-const BASE_HEIGHT = 150; // Базовая высота контейнера без вертикальных рядов
+const BASE_HEIGHT = 160; // Базовая высота контейнера без вертикальных рядов
 
 export function RotationEditor() {
   const [abilities, setAbilities] = useState<Ability[]>([]);
@@ -460,62 +451,65 @@ export function RotationEditor() {
         onDragOver={handleDragOver}
         onDragEnd={handleDragEnd}
       >
-        <div
-          className='relative flex flex-col justify-end rounded-lg border p-4'
-          style={{ minHeight: `${BASE_HEIGHT + maxVerticalRowHeight}px` }}
-        >
-          <div className='flex w-full gap-4'>
-            <DroppableZone
-              id='prepull-zone'
-              title='Препулл'
-              abilities={prepullAbilities}
-              verticalRows={verticalRows}
-              onRemove={removeAbility}
-              isPrepullZone={true}
-              overId={overId}
-              activeId={activeId}
-              onAddVerticalRow={handleAddVerticalRow}
-              showVerticalRowDialog={showVerticalRowDialog}
-              setShowVerticalRowDialog={setShowVerticalRowDialog}
-              onAddVerticalAbility={handleAddVerticalAbility}
-              showVerticalAbilityDialog={showVerticalAbilityDialog}
-              setShowVerticalAbilityDialog={setShowVerticalAbilityDialog}
-              dialogUrl={dialogUrl}
-              setDialogUrl={setDialogUrl}
-              error={error}
-              setError={setError}
-              showAddAbilityDialog={showAddAbilityDialog}
-              setShowAddAbilityDialog={setShowAddAbilityDialog}
-              onAddAbility={handleAddAbility}
-            />
-            <div className='relative flex flex-col items-center justify-center'>
-              <div className='h-16 w-px bg-gray-500' />
+        <ScrollArea className='w-full'>
+          <div
+            className='relative flex flex-col justify-end rounded-lg border p-4'
+            style={{ minHeight: `${BASE_HEIGHT + maxVerticalRowHeight}px` }}
+          >
+            <div className='flex gap-4'>
+              <DroppableZone
+                id='prepull-zone'
+                title='Препулл'
+                abilities={prepullAbilities}
+                verticalRows={verticalRows}
+                onRemove={removeAbility}
+                isPrepullZone={true}
+                overId={overId}
+                activeId={activeId}
+                onAddVerticalRow={handleAddVerticalRow}
+                showVerticalRowDialog={showVerticalRowDialog}
+                setShowVerticalRowDialog={setShowVerticalRowDialog}
+                onAddVerticalAbility={handleAddVerticalAbility}
+                showVerticalAbilityDialog={showVerticalAbilityDialog}
+                setShowVerticalAbilityDialog={setShowVerticalAbilityDialog}
+                dialogUrl={dialogUrl}
+                setDialogUrl={setDialogUrl}
+                error={error}
+                setError={setError}
+                showAddAbilityDialog={showAddAbilityDialog}
+                setShowAddAbilityDialog={setShowAddAbilityDialog}
+                onAddAbility={handleAddAbility}
+              />
+              <div className='relative flex flex-col items-center justify-center'>
+                <div className='h-16 w-px bg-gray-500' />
+              </div>
+              <DroppableZone
+                id='pull-zone'
+                title='Пулл'
+                abilities={pullAbilities}
+                verticalRows={verticalRows}
+                onRemove={removeAbility}
+                isPrepullZone={false}
+                overId={overId}
+                activeId={activeId}
+                onAddVerticalRow={handleAddVerticalRow}
+                showVerticalRowDialog={showVerticalRowDialog}
+                setShowVerticalRowDialog={setShowVerticalRowDialog}
+                onAddVerticalAbility={handleAddVerticalAbility}
+                showVerticalAbilityDialog={showVerticalAbilityDialog}
+                setShowVerticalAbilityDialog={setShowVerticalAbilityDialog}
+                dialogUrl={dialogUrl}
+                setDialogUrl={setDialogUrl}
+                error={error}
+                setError={setError}
+                showAddAbilityDialog={showAddAbilityDialog}
+                setShowAddAbilityDialog={setShowAddAbilityDialog}
+                onAddAbility={handleAddAbility}
+              />
             </div>
-            <DroppableZone
-              id='pull-zone'
-              title='Пулл'
-              abilities={pullAbilities}
-              verticalRows={verticalRows}
-              onRemove={removeAbility}
-              isPrepullZone={false}
-              overId={overId}
-              activeId={activeId}
-              onAddVerticalRow={handleAddVerticalRow}
-              showVerticalRowDialog={showVerticalRowDialog}
-              setShowVerticalRowDialog={setShowVerticalRowDialog}
-              onAddVerticalAbility={handleAddVerticalAbility}
-              showVerticalAbilityDialog={showVerticalAbilityDialog}
-              setShowVerticalAbilityDialog={setShowVerticalAbilityDialog}
-              dialogUrl={dialogUrl}
-              setDialogUrl={setDialogUrl}
-              error={error}
-              setError={setError}
-              showAddAbilityDialog={showAddAbilityDialog}
-              setShowAddAbilityDialog={setShowAddAbilityDialog}
-              onAddAbility={handleAddAbility}
-            />
           </div>
-        </div>
+          <ScrollBar orientation='horizontal' />
+        </ScrollArea>
         <DragOverlay>
           {activeAbility ? (
             <WowheadLink
