@@ -5,6 +5,7 @@ import { useEffect, useRef } from 'react';
 interface WowheadLinkProps {
   id: number;
   type: 'spell' | 'item';
+  whData: string;
   isPtr?: boolean;
   ptrPrefix?: 'ptr' | 'ptr-2';
   className?: string;
@@ -14,6 +15,7 @@ interface WowheadLinkProps {
 export default function WowheadLink({
   id,
   type,
+  whData,
   isPtr = false,
   ptrPrefix,
   className,
@@ -53,7 +55,7 @@ export default function WowheadLink({
         ref={ref}
         href={href}
         data-wh-rename-link='false'
-        data-wh-icon-size='large'
+        data-wh-icon-size={whData}
         className={`${className || ''} no-navigation`}
         role='button'
         aria-label={`Wowhead ${type} ${id}`}

@@ -136,8 +136,16 @@ export type ExpansionProps = Expansion & {};
 
 export interface Ability {
   id: string;
-  wowheadLink: string;
-  type: 'spell' | 'item';
   name: string;
-  icon: string;
+  url: string;
+  spellId: string;
+  type: 'spell' | 'item';
+  isPtr: boolean;
+  isPrepull: boolean;
+}
+
+export interface VerticalRow {
+  id: string;
+  abilities: Ability[];
+  positionAfter: string | null;
 }
