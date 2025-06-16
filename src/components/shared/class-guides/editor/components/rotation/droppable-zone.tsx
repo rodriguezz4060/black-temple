@@ -7,6 +7,9 @@ import {
 } from '@dnd-kit/sortable';
 import { Ability, VerticalRow } from '@root/@types/prisma';
 import { AbilityItem } from './ability-item';
+import { Button } from '@root/components/ui/button';
+import { WowheadDialog } from './wowhead-dialog';
+import { Plus } from 'lucide-react';
 
 interface DroppableZoneProps {
   id: string;
@@ -27,6 +30,9 @@ interface DroppableZoneProps {
   setDialogUrl: (url: string) => void;
   error: string | null;
   setError: (error: string | null) => void;
+  showAddAbilityDialog: string | null;
+  setShowAddAbilityDialog: (id: string | null) => void;
+  onAddAbility: (zoneId: string) => void;
 }
 
 export function DroppableZone({
@@ -48,6 +54,9 @@ export function DroppableZone({
   setDialogUrl,
   error,
   setError,
+  showAddAbilityDialog,
+  setShowAddAbilityDialog,
+  onAddAbility,
 }: DroppableZoneProps) {
   const { setNodeRef, isOver } = useDroppable({ id });
 
@@ -61,16 +70,6 @@ export function DroppableZone({
       <h4 className='text-sm font-semibold text-gray-700 dark:text-gray-300'>
         {title}
       </h4>
-
-      {abilities.length === 0 && (
-        <div
-          className={`pointer-events-none absolute inset-0 flex items-center justify-center text-sm text-gray-400 transition-opacity duration-200 ${
-            isOver ? 'opacity-0' : 'opacity-100'
-          }`}
-        >
-          Перетащите сюда способности
-        </div>
-      )}
 
       <SortableContext
         id={id}
@@ -106,6 +105,36 @@ export function DroppableZone({
                 setError={setError}
               />
             ))}
+            <WowheadDialog
+              open={showAddAbilityDialog === id}
+              onOpenChange={open => {
+                setShowAddAbilityDialog(open ? id : null);
+                if (!open) {
+                  setDialogUrl('');
+                  setError(null);
+                }
+              }}
+              title='Добавить способность'
+              description='Введите ссылку на способность или предмет с Wowhead.'
+              value={dialogUrl}
+              onChange={setDialogUrl}
+              error={error}
+              onSubmit={() => onAddAbility(id)}
+              onCancel={() => {
+                setShowAddAbilityDialog(null);
+                setDialogUrl('');
+                setError(null);
+              }}
+              placeholder='Введите ссылку на Wowhead'
+            >
+              <Button
+                size='icon'
+                variant='outline'
+                className='group ml-2 h-12 w-12 transition-colors hover:bg-green-700'
+              >
+                <Plus className='h-5 w-5 transition-transform duration-300 ease-in-out group-hover:scale-110 group-hover:rotate-90' />
+              </Button>
+            </WowheadDialog>
             {abilities.length === 0 && isOver && overId === id && (
               <div className='h-12 w-1 rounded-full bg-blue-500 dark:bg-blue-400' />
             )}

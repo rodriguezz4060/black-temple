@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import {
   DndContext,
   KeyboardSensor,
@@ -14,27 +14,41 @@ import {
   rectIntersection,
 } from '@dnd-kit/core';
 import { arrayMove, sortableKeyboardCoordinates } from '@dnd-kit/sortable';
-import { Input } from '@root/components/ui/input';
 import { Button } from '@root/components/ui/button';
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from '@root/components/ui/dialog';
+import { Input } from '@root/components/ui/input';
 import WowheadLink from './wowhead-link';
 import { Ability, VerticalRow } from '@root/@types/prisma';
 import { DroppableZone } from './droppable-zone';
 
+// Константа для высоты одной способности (примерное значение в пикселях)
+const ABILITY_HEIGHT = 60; // Высота одной способности (включая отступы)
+const ROW_GAP = 5; // Отступ между способностями в вертикальном ряду
+const BASE_HEIGHT = 150; // Базовая высота контейнера без вертикальных рядов
+
 export function RotationEditor() {
   const [abilities, setAbilities] = useState<Ability[]>([]);
   const [verticalRows, setVerticalRows] = useState<VerticalRow[]>([]);
-  const [inputUrl, setInputUrl] = useState('');
+  const [dialogUrl, setDialogUrl] = useState('');
   const [error, setError] = useState<string | null>(null);
-  const [isPrepullInput, setIsPrepullInput] = useState(false);
   const [activeId, setActiveId] = useState<string | null>(null);
   const [overId, setOverId] = useState<string | null>(null);
+  const [showAddAbilityDialog, setShowAddAbilityDialog] = useState<
+    string | null
+  >(null);
   const [showVerticalRowDialog, setShowVerticalRowDialog] = useState<
     string | null
   >(null);
   const [showVerticalAbilityDialog, setShowVerticalAbilityDialog] = useState<
     string | null
   >(null);
-  const [dialogUrl, setDialogUrl] = useState('');
 
   const sensors = useSensors(
     useSensor(PointerSensor, {
@@ -47,15 +61,23 @@ export function RotationEditor() {
     })
   );
 
-  const handleAddAbility = () => {
-    if (!inputUrl.trim()) {
+  // Вычисляем максимальную высоту всех вертикальных рядов
+  const maxVerticalRowHeight = useMemo(() => {
+    return verticalRows.reduce((maxHeight, row) => {
+      const rowHeight = row.abilities.length * (ABILITY_HEIGHT + ROW_GAP);
+      return Math.max(maxHeight, rowHeight);
+    }, 0);
+  }, [verticalRows]);
+
+  const handleAddAbility = (zoneId: string) => {
+    if (!dialogUrl.trim()) {
       setError('Введите ссылку');
       return;
     }
 
     const wowheadRegex =
       /https?:\/\/(?:www\.|ptr\.|ru\.)?(?:wowhead\.com(?:\/(ptr-2|ptr|[a-z]{2}))?)\/(spell|item)=(\d+)(?:\/([\w-]+))?/i;
-    const match = inputUrl.match(wowheadRegex);
+    const match = dialogUrl.match(wowheadRegex);
 
     if (!match) {
       setError(
@@ -91,13 +113,13 @@ export function RotationEditor() {
       spellId,
       type: type as 'spell' | 'item',
       isPtr,
-      isPrepull: isPrepullInput,
+      isPrepull: zoneId === 'prepull-zone',
     };
 
     setAbilities([...abilities, newAbility]);
-    setInputUrl('');
+    setDialogUrl('');
     setError(null);
-    setIsPrepullInput(false);
+    setShowAddAbilityDialog(null);
   };
 
   const handleAddVerticalRow = (url: string, afterAbilityId: string) => {
@@ -284,15 +306,20 @@ export function RotationEditor() {
   };
 
   const removeAbility = (id: string) => {
+    // Удаляем способность из основного списка
     setAbilities(abilities.filter(ability => ability.id !== id));
-    setVerticalRows(rows =>
-      rows
+
+    // Обновляем вертикальные ряды, удаляя способность и пустые ряды
+    setVerticalRows(rows => {
+      const updatedRows = rows
         .map(row => ({
           ...row,
           abilities: row.abilities.filter(ability => ability.id !== id),
         }))
-        .filter(row => row.abilities.length > 0 || row.positionAfter !== id)
-    );
+        // Фильтруем ряды, оставляя только те, у которых есть способности
+        .filter(row => row.abilities.length > 0);
+      return updatedRows;
+    });
   };
 
   const prepullAbilities = abilities.filter(ability => ability.isPrepull);
@@ -301,25 +328,6 @@ export function RotationEditor() {
 
   return (
     <div className='mt-6 flex flex-col gap-6'>
-      <div className='flex flex-col gap-2 sm:flex-row sm:items-center'>
-        <Input
-          value={inputUrl}
-          onChange={e => setInputUrl(e.target.value)}
-          placeholder='Введите ссылку на способность или предмет с Wowhead'
-          className='flex-1'
-        />
-        <label className='flex items-center gap-2'>
-          <input
-            type='checkbox'
-            checked={isPrepullInput}
-            onChange={e => setIsPrepullInput(e.target.checked)}
-          />
-          Препулл
-        </label>
-        <Button onClick={handleAddAbility}>Добавить</Button>
-      </div>
-      {error && <div className='text-red-500'>{error}</div>}
-
       <DndContext
         sensors={sensors}
         collisionDetection={rectIntersection}
@@ -327,61 +335,61 @@ export function RotationEditor() {
         onDragOver={handleDragOver}
         onDragEnd={handleDragEnd}
       >
-        <div className='relative flex flex-col items-start gap-4 rounded-lg border p-4'>
-          {abilities.length === 0 ? (
-            <div className='flex h-40 w-full items-center justify-center text-gray-400'>
-              Добавьте первую способность
+        <div
+          className='relative flex flex-col justify-end rounded-lg border p-4'
+          style={{ minHeight: `${BASE_HEIGHT + maxVerticalRowHeight}px` }}
+        >
+          <div className='flex w-full gap-4'>
+            <DroppableZone
+              id='prepull-zone'
+              title='Препулл'
+              abilities={prepullAbilities}
+              verticalRows={verticalRows}
+              onRemove={removeAbility}
+              isPrepullZone={true}
+              overId={overId}
+              activeId={activeId}
+              onAddVerticalRow={handleAddVerticalRow}
+              showVerticalRowDialog={showVerticalRowDialog}
+              setShowVerticalRowDialog={setShowVerticalRowDialog}
+              onAddVerticalAbility={handleAddVerticalAbility}
+              showVerticalAbilityDialog={showVerticalAbilityDialog}
+              setShowVerticalAbilityDialog={setShowVerticalAbilityDialog}
+              dialogUrl={dialogUrl}
+              setDialogUrl={setDialogUrl}
+              error={error}
+              setError={setError}
+              showAddAbilityDialog={showAddAbilityDialog}
+              setShowAddAbilityDialog={setShowAddAbilityDialog}
+              onAddAbility={handleAddAbility}
+            />
+            <div className='relative flex flex-col items-center justify-center'>
+              <div className='h-16 w-px bg-gray-500' />
             </div>
-          ) : (
-            <div className='flex w-full gap-4'>
-              <DroppableZone
-                id='prepull-zone'
-                title='Препулл'
-                abilities={prepullAbilities}
-                verticalRows={verticalRows}
-                onRemove={removeAbility}
-                isPrepullZone={true}
-                overId={overId}
-                activeId={activeId}
-                onAddVerticalRow={handleAddVerticalRow}
-                showVerticalRowDialog={showVerticalRowDialog}
-                setShowVerticalRowDialog={setShowVerticalRowDialog}
-                onAddVerticalAbility={handleAddVerticalAbility}
-                showVerticalAbilityDialog={showVerticalAbilityDialog}
-                setShowVerticalAbilityDialog={setShowVerticalAbilityDialog}
-                dialogUrl={dialogUrl}
-                setDialogUrl={setDialogUrl}
-                error={error}
-                setError={setError}
-              />
-              <div className='relative flex flex-col items-center justify-center'>
-                <div className='h-16 w-px bg-gray-500' />
-                <span className='absolute top-[70px] text-sm text-gray-600'>
-                  Пулл
-                </span>
-              </div>
-              <DroppableZone
-                id='pull-zone'
-                title='Пулл'
-                abilities={pullAbilities}
-                verticalRows={verticalRows}
-                onRemove={removeAbility}
-                isPrepullZone={false}
-                overId={overId}
-                activeId={activeId}
-                onAddVerticalRow={handleAddVerticalRow}
-                showVerticalRowDialog={showVerticalRowDialog}
-                setShowVerticalRowDialog={setShowVerticalRowDialog}
-                onAddVerticalAbility={handleAddVerticalAbility}
-                showVerticalAbilityDialog={showVerticalAbilityDialog}
-                setShowVerticalAbilityDialog={setShowVerticalAbilityDialog}
-                dialogUrl={dialogUrl}
-                setDialogUrl={setDialogUrl}
-                error={error}
-                setError={setError}
-              />
-            </div>
-          )}
+            <DroppableZone
+              id='pull-zone'
+              title='Пулл'
+              abilities={pullAbilities}
+              verticalRows={verticalRows}
+              onRemove={removeAbility}
+              isPrepullZone={false}
+              overId={overId}
+              activeId={activeId}
+              onAddVerticalRow={handleAddVerticalRow}
+              showVerticalRowDialog={showVerticalRowDialog}
+              setShowVerticalRowDialog={setShowVerticalRowDialog}
+              onAddVerticalAbility={handleAddVerticalAbility}
+              showVerticalAbilityDialog={showVerticalAbilityDialog}
+              setShowVerticalAbilityDialog={setShowVerticalAbilityDialog}
+              dialogUrl={dialogUrl}
+              setDialogUrl={setDialogUrl}
+              error={error}
+              setError={setError}
+              showAddAbilityDialog={showAddAbilityDialog}
+              setShowAddAbilityDialog={setShowAddAbilityDialog}
+              onAddAbility={handleAddAbility}
+            />
+          </div>
         </div>
         <DragOverlay>
           {activeAbility ? (

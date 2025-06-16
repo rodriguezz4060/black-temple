@@ -1,18 +1,13 @@
 'use client';
 
 import { Button } from '@root/components/ui/button';
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogFooter,
-} from '@root/components/ui/dialog';
-import { Input } from '@root/components/ui/input';
 import { SortableAbility } from './sortable-ability';
 import WowheadLink from './wowhead-link';
 import { Ability, VerticalRow } from '@root/@types/prisma';
 import { VerticalRowContainer } from './vertical-row-container';
+import { ChevronUp, Plus } from 'lucide-react';
+import { TooltipWrapper } from '@root/components/shared/wrapper';
+import { WowheadDialog } from './wowhead-dialog';
 
 interface AbilityItemProps {
   ability: Ability;
@@ -57,6 +52,21 @@ export function AbilityItem({
   error,
   setError,
 }: AbilityItemProps) {
+  // Проверяем, есть ли вертикальный ряд для данной способности
+  const existingRow = verticalRows.find(
+    row => row.positionAfter === ability.id
+  );
+
+  const handlePlusClick = () => {
+    if (existingRow) {
+      // Если ряд существует, открываем диалог для добавления способности в этот ряд
+      setShowVerticalAbilityDialog(existingRow.id);
+    } else {
+      // Если ряда нет, открываем диалог для создания нового ряда
+      setShowVerticalRowDialog(ability.id);
+    }
+  };
+
   return (
     <div className='relative flex flex-col items-center gap-2'>
       <div className='absolute bottom-full flex flex-col gap-2'>
@@ -106,20 +116,30 @@ export function AbilityItem({
             />
           )}
         />
-        <Button
-          size='sm'
-          variant='ghost'
-          onClick={() => setShowVerticalRowDialog(ability.id)}
-          className='ml-2'
+        <TooltipWrapper
+          content={
+            existingRow
+              ? 'Добавить в вертикальную колонку'
+              : 'Создать вертикальную колонку'
+          }
+          side='bottom'
         >
-          +
-        </Button>
+          <Button
+            size='icon'
+            variant='ghost'
+            onClick={handlePlusClick}
+            className='group relative transition-colors hover:bg-green-700'
+          >
+            <Plus className='h-5 w-5 transition-transform duration-300 ease-in-out group-hover:scale-110 group-hover:rotate-90' />
+            <ChevronUp className='animate-bounce-up absolute -top-4 left-1/2 -mt-2 -translate-x-1/2 scale-0 opacity-0 transition-all duration-300 group-hover:scale-100 group-hover:opacity-100' />
+          </Button>
+        </TooltipWrapper>
         {index === abilitiesLength - 1 && isOver && overId === zoneId && (
           <div className='h-12 w-1 rounded bg-blue-500 dark:bg-blue-500' />
         )}
       </div>
 
-      <Dialog
+      <WowheadDialog
         open={showVerticalRowDialog === ability.id}
         onOpenChange={open => {
           if (!open) {
@@ -128,39 +148,42 @@ export function AbilityItem({
             setError(null);
           }
         }}
-      >
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>Добавление вертикального ряда</DialogTitle>
-          </DialogHeader>
-          <Input
-            value={dialogUrl}
-            onChange={e => setDialogUrl(e.target.value)}
-            placeholder='Введите ссылку на способность с Wowhead'
-            className='w-full'
-          />
-          {error && <div className='text-sm text-red-500'>{error}</div>}
-          <DialogFooter>
-            <Button
-              onClick={() => {
-                onAddVerticalRow(dialogUrl, ability.id);
-              }}
-            >
-              Добавить
-            </Button>
-            <Button
-              variant='outline'
-              onClick={() => {
-                setShowVerticalRowDialog(null);
-                setDialogUrl('');
-                setError(null);
-              }}
-            >
-              Отмена
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
+        title='Добавление вертикального ряда'
+        value={dialogUrl}
+        onChange={setDialogUrl}
+        error={error}
+        onSubmit={() => onAddVerticalRow(dialogUrl, ability.id)}
+        onCancel={() => {
+          setShowVerticalRowDialog(null);
+          setDialogUrl('');
+          setError(null);
+        }}
+        placeholder='Введите ссылку на способность с Wowhead'
+      />
+
+      {existingRow && (
+        <WowheadDialog
+          open={showVerticalAbilityDialog === existingRow.id}
+          onOpenChange={open => {
+            if (!open) {
+              setShowVerticalAbilityDialog(null);
+              setDialogUrl('');
+              setError(null);
+            }
+          }}
+          title='Добавить способность в вертикальный ряд'
+          value={dialogUrl}
+          onChange={setDialogUrl}
+          error={error}
+          onSubmit={() => onAddVerticalAbility(dialogUrl, existingRow.id)}
+          onCancel={() => {
+            setShowVerticalAbilityDialog(null);
+            setDialogUrl('');
+            setError(null);
+          }}
+          placeholder='Введите ссылку на способность с Wowhead'
+        />
+      )}
     </div>
   );
 }

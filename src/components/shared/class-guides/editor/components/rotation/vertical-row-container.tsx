@@ -2,20 +2,14 @@
 
 import { Button } from '@root/components/ui/button';
 import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogFooter,
-} from '@root/components/ui/dialog';
-import { Input } from '@root/components/ui/input';
-import {
   SortableContext,
   verticalListSortingStrategy,
 } from '@dnd-kit/sortable';
 import { SortableAbility } from './sortable-ability';
 import WowheadLink from './wowhead-link';
 import { VerticalRow } from '@root/@types/prisma';
+import { Plus } from 'lucide-react';
+import { WowheadDialog } from './wowhead-dialog';
 
 interface VerticalRowContainerProps {
   row: VerticalRow;
@@ -42,48 +36,6 @@ export function VerticalRowContainer({
 }: VerticalRowContainerProps) {
   return (
     <div id={row.id}>
-      <Dialog
-        open={showVerticalAbilityDialog === row.id}
-        onOpenChange={open => {
-          if (!open) {
-            setShowVerticalAbilityDialog(null);
-            setDialogUrl('');
-            setError(null);
-          }
-        }}
-      >
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>Добавить способность в вертикальный ряд</DialogTitle>
-          </DialogHeader>
-          <Input
-            value={dialogUrl}
-            onChange={e => setDialogUrl(e.target.value)}
-            placeholder='Введите ссылку на способность с Wowhead'
-            className='w-full'
-          />
-          {error && <div className='text-sm text-red-500'>{error}</div>}
-          <DialogFooter>
-            <Button
-              onClick={() => {
-                onAddVerticalAbility(dialogUrl, row.id);
-              }}
-            >
-              Добавить
-            </Button>
-            <Button
-              variant='outline'
-              onClick={() => {
-                setShowVerticalAbilityDialog(null);
-                setDialogUrl('');
-                setError(null);
-              }}
-            >
-              Отмена
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
       <div className='flex flex-col gap-2 rounded bg-gray-200 p-1 dark:bg-gray-600'>
         <SortableContext
           id={row.id}
@@ -114,14 +66,36 @@ export function VerticalRowContainer({
             />
           ))}
         </SortableContext>
-        <Button
-          size='sm'
-          variant='ghost'
-          onClick={() => setShowVerticalAbilityDialog(row.id)}
-          className='self-center'
+        <WowheadDialog
+          open={showVerticalAbilityDialog === row.id}
+          onOpenChange={open => {
+            if (!open) {
+              setShowVerticalAbilityDialog(null);
+              setDialogUrl('');
+              setError(null);
+            }
+          }}
+          title='Добавить способность в вертикальный ряд'
+          value={dialogUrl}
+          onChange={setDialogUrl}
+          error={error}
+          onSubmit={() => onAddVerticalAbility(dialogUrl, row.id)}
+          onCancel={() => {
+            setShowVerticalAbilityDialog(null);
+            setDialogUrl('');
+            setError(null);
+          }}
+          placeholder='Введите ссылку на способность с Wowhead'
         >
-          +
-        </Button>
+          <Button
+            size='icon'
+            variant='ghost'
+            onClick={() => setShowVerticalAbilityDialog(row.id)}
+            className='group relative self-center transition-colors hover:bg-green-700'
+          >
+            <Plus className='h-5 w-5 transition-transform duration-300 ease-in-out group-hover:scale-110 group-hover:rotate-90' />
+          </Button>
+        </WowheadDialog>
       </div>
     </div>
   );
