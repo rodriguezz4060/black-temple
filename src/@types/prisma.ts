@@ -41,17 +41,6 @@ export type InitialClassSelection = ClassSelection & {
   specializations: ClassSpecialization[];
 };
 
-export interface TabData {
-  id?: number;
-  value: string;
-  label: string;
-  iconUrl: string | null;
-  content: string;
-  importString: string;
-  tabGroupId: number;
-  isNew?: boolean;
-}
-
 export type TabGroupProps = Prisma.TabGroupGetPayload<{
   include: {
     tabs: true;
@@ -133,6 +122,17 @@ export interface GuideSpecGearProps {
 }
 
 export type ExpansionProps = Expansion & {};
+
+export interface TabData {
+  id?: number;
+  value: string;
+  label: string;
+  iconUrl: string | null;
+  content: string;
+  importString: string;
+  tabGroupId: number;
+  isNew?: boolean;
+}
 
 export interface Ability {
   id: string;

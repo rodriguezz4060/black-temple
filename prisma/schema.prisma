@@ -114,7 +114,6 @@ model Section {
     contentType String
     tabGroups   TabGroup[]  @relation("SectionTabGroups")
     textFields  TextField[] @relation("SectionTextFields")
-    rotation    Rotation[]  @relation("SectionRotations")
     createdAt   DateTime    @default(now())
     updatedAt   DateTime    @updatedAt
 
@@ -124,26 +123,18 @@ model Section {
 model Rotation {
     id           Int           @id @default(autoincrement())
     order        Int
-    section      Section       @relation("SectionRotations", fields: [sectionId], references: [id], onDelete: Cascade)
-    sectionId    Int
     abilities    Ability[]     @relation("RotationAbilities")
     verticalRows VerticalRow[] @relation("RotationVerticalRows")
+    tab          Tab?          @relation("TabRotation")
     createdAt    DateTime      @default(now())
     updatedAt    DateTime      @updatedAt
-
-    @@index([sectionId])
 }
 
 model Ability {
     id            String       @id @default(uuid()) // Используем строковый ID, как в компоненте
     rotationId    Int
     rotation      Rotation     @relation("RotationAbilities", fields: [rotationId], references: [id], onDelete: Cascade)
-    name          String
     url           String
-    spellId       String
-    type          AbilityType
-    isPtr         Boolean
-    isPrepull     Boolean
     order         Int // Для сортировки в горизонтальной зоне
     verticalRowId Int? // Связь с вертикальным рядом (если способность в ряду)
     verticalRow   VerticalRow? @relation("VerticalRowAbilities", fields: [verticalRowId], references: [id], onDelete: SetNull)
@@ -167,19 +158,6 @@ model VerticalRow {
     @@index([rotationId])
 }
 
-model OverviewDifficulty {
-    id            Int      @id @default(autoincrement())
-    singleTarget  Int?
-    multiTarget   Int?
-    utility       Int?
-    survivability Int?
-    mobility      Int?
-    guide         Guide    @relation(fields: [guideId], references: [id])
-    guideId       Int      @unique
-    createdAt     DateTime @default(now())
-    updatedAt     DateTime @updatedAt
-}
-
 model TabGroup {
     id        Int      @id @default(autoincrement())
     section   Section  @relation("SectionTabGroups", fields: [sectionId], references: [id], onDelete: Cascade)
@@ -193,19 +171,22 @@ model TabGroup {
 }
 
 model Tab {
-    id           Int      @id @default(autoincrement())
+    id           Int       @id @default(autoincrement())
     value        String
     label        String
     iconUrl      String?
     content      String
     importString String
-    tabGroup     TabGroup @relation("TabGroupTabs", fields: [tabGroupId], references: [id], onDelete: Cascade)
+    tabGroup     TabGroup  @relation("TabGroupTabs", fields: [tabGroupId], references: [id], onDelete: Cascade)
     tabGroupId   Int
-    createdAt    DateTime @default(now())
-    updatedAt    DateTime @updatedAt
+    rotation     Rotation? @relation("TabRotation", fields: [rotationId], references: [id], onDelete: Cascade)
+    rotationId   Int?      @unique
+    createdAt    DateTime  @default(now())
+    updatedAt    DateTime  @updatedAt
 
     @@unique([value, tabGroupId], name: "value_tabGroupId")
     @@index([value])
+    @@index([rotationId])
 }
 
 model TextField {
@@ -218,6 +199,19 @@ model TextField {
     updatedAt DateTime @updatedAt
 
     @@index([sectionId])
+}
+
+model OverviewDifficulty {
+    id            Int      @id @default(autoincrement())
+    singleTarget  Int?
+    multiTarget   Int?
+    utility       Int?
+    survivability Int?
+    mobility      Int?
+    guide         Guide    @relation(fields: [guideId], references: [id])
+    guideId       Int      @unique
+    createdAt     DateTime @default(now())
+    updatedAt     DateTime @updatedAt
 }
 
 model OverviewGear {
@@ -355,9 +349,4 @@ enum SectionType {
     WEAK_AURAS
     ADDONS
     DUNGEONS
-}
-
-enum AbilityType {
-    SPELL
-    ITEM
 }
