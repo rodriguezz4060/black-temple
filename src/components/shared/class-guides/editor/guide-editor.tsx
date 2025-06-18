@@ -14,7 +14,6 @@ import { SectionEditor } from './components/section/section-editor';
 import { Button } from '@root/components/ui/button';
 import Link from 'next/link';
 import { ChevronLeft } from 'lucide-react';
-import { RotationEditor } from './components/rotation/rotation-editor';
 
 interface GuideEditorProps {
   guide: GuidePageProps;
@@ -138,8 +137,6 @@ export const GuideEditor: React.FC<GuideEditorProps> = ({
           guide={guide}
           onSectionAdded={handleSectionAdded}
         />
-
-        <RotationEditor />
       </div>
     </div>
   );

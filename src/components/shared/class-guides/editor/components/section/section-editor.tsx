@@ -26,6 +26,7 @@ import { ConfirmationDialog } from '../confirmation-dialog';
 import { TalentsTab } from '../talents/talents-tab';
 import { deleteSection } from '@root/app/class-guides/_actions/section/section-actions';
 import { useState } from 'react';
+import { RotationTab } from '../rotation/rotation-tab';
 
 interface SectionEditorProps {
   section: GuidePageProps['sections'][number];
@@ -102,6 +103,13 @@ export const SectionEditor: React.FC<SectionEditorProps> = ({
             sectionId={section.id}
             tabGroupId={activeItem.data.id}
             specialization={guide.specialization}
+          />
+        ) : section.type === 'ROTATION' ? (
+          <RotationTab
+            initialTabs={activeItem.data.tabs || []}
+            defaultTab={activeItem.data.tabs?.[0]?.value || ''}
+            sectionId={section.id}
+            tabGroupId={activeItem.data.id}
           />
         ) : (
           <TabsEditor
@@ -198,6 +206,13 @@ export const SectionEditor: React.FC<SectionEditorProps> = ({
                   sectionId={section.id}
                   tabGroupId={item.data.id}
                   specialization={guide.specialization}
+                />
+              ) : section.type === 'ROTATION' ? (
+                <RotationTab
+                  initialTabs={item.data.tabs || []}
+                  defaultTab={item.data.tabs?.[0]?.value || ''}
+                  sectionId={section.id}
+                  tabGroupId={item.data.id}
                 />
               ) : (
                 <TabsEditor
