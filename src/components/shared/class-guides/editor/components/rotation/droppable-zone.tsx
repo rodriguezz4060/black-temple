@@ -82,15 +82,6 @@ export function DroppableZone({
             className='relative flex min-h-[60px] items-center gap-2'
             style={{ zIndex: 1 }}
           >
-            {abilities.length === 0 && (
-              <div
-                className={`pointer-events-none absolute inset-0 flex items-center justify-center text-sm text-gray-400 transition-opacity duration-200 ${
-                  isOver ? 'opacity-0' : 'opacity-100'
-                }`}
-              >
-                Перетащите сюда способности
-              </div>
-            )}
             {abilities.map((ability, index) => (
               <AbilityItem
                 key={ability.id}

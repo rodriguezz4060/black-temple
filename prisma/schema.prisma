@@ -122,16 +122,49 @@ model Section {
 }
 
 model Rotation {
-    id        Int     @id @default(autoincrement())
-    order     Int
-    rotation  String
-    section   Section @relation("SectionRotations", fields: [sectionId], references: [id], onDelete: Cascade)
-    sectionId Int
-
-    createdAt DateTime @default(now())
-    updatedAt DateTime @updatedAt
+    id           Int           @id @default(autoincrement())
+    order        Int
+    section      Section       @relation("SectionRotations", fields: [sectionId], references: [id], onDelete: Cascade)
+    sectionId    Int
+    abilities    Ability[]     @relation("RotationAbilities")
+    verticalRows VerticalRow[] @relation("RotationVerticalRows")
+    createdAt    DateTime      @default(now())
+    updatedAt    DateTime      @updatedAt
 
     @@index([sectionId])
+}
+
+model Ability {
+    id            String       @id @default(uuid()) // Используем строковый ID, как в компоненте
+    rotationId    Int
+    rotation      Rotation     @relation("RotationAbilities", fields: [rotationId], references: [id], onDelete: Cascade)
+    name          String
+    url           String
+    spellId       String
+    type          AbilityType
+    isPtr         Boolean
+    isPrepull     Boolean
+    order         Int // Для сортировки в горизонтальной зоне
+    verticalRowId Int? // Связь с вертикальным рядом (если способность в ряду)
+    verticalRow   VerticalRow? @relation("VerticalRowAbilities", fields: [verticalRowId], references: [id], onDelete: SetNull)
+    createdAt     DateTime     @default(now())
+    updatedAt     DateTime     @updatedAt
+
+    @@index([rotationId])
+    @@index([verticalRowId])
+}
+
+model VerticalRow {
+    id            Int       @id @default(autoincrement())
+    rotationId    Int
+    rotation      Rotation  @relation("RotationVerticalRows", fields: [rotationId], references: [id], onDelete: Cascade)
+    positionAfter String? // ID способности, после которой находится ряд
+    abilities     Ability[] @relation("VerticalRowAbilities")
+    order         Int // Для сортировки вертикальных рядов
+    createdAt     DateTime  @default(now())
+    updatedAt     DateTime  @updatedAt
+
+    @@index([rotationId])
 }
 
 model OverviewDifficulty {
@@ -322,4 +355,9 @@ enum SectionType {
     WEAK_AURAS
     ADDONS
     DUNGEONS
+}
+
+enum AbilityType {
+    SPELL
+    ITEM
 }
