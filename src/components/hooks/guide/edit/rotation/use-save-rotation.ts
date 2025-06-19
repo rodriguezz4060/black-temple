@@ -25,8 +25,9 @@ export const useSaveRotation = (
 
       setError(null);
       return result.rotationId; // Возвращаем ID ротации для обновления состояния
-    } catch (error: any) {
-      const errorMessage = error.message || 'Не удалось сохранить ротацию';
+    } catch (error: unknown) {
+      const errorMessage =
+        error instanceof Error ? error.message : 'Не удалось сохранить ротацию';
       setError(errorMessage);
       console.error('Ошибка сохранения:', error);
       return null;

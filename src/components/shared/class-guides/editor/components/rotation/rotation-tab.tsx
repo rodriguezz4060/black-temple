@@ -1,5 +1,3 @@
-'use client';
-
 import React from 'react';
 import { Tabs, TabsList } from '@root/components/ui/tabs-list';
 import { Button } from '@root/components/ui/button';
@@ -8,7 +6,6 @@ import { ScrollArea, ScrollBar } from '@root/components/ui/scroll-area';
 import { TabData } from '@root/@types/prisma';
 import { useTabsScroll } from '@root/components/hooks';
 import { cn } from '@root/lib/utils';
-
 import { useTabsQuery } from '@root/components/hooks/guide/edit/tab-editor/use-tabs-query';
 import { useTabsEditor } from '@root/components/hooks/guide/edit/tab-editor/use-tabs-editor';
 import { EditorDialog } from '../tabs/editor-dialog';
@@ -56,6 +53,13 @@ export const RotationTab: React.FC<TabsEditorProps> = React.memo(
     if (error)
       return <div className='p-4 text-red-500'>Ошибка: {error.message}</div>;
 
+    // Преобразуем tabs, чтобы гарантировать наличие id и rotationId
+    const validTabs = tabs.map(tab => ({
+      ...tab,
+      id: tab.id ?? 0, // Если id undefined, задаем 0
+      rotationId: tab.rotationId ?? tab.rotation?.id ?? 0, // Если rotationId undefined или null, берем rotation.id или 0
+    }));
+
     return (
       <div className='space-y-4'>
         <form onSubmit={handleSaveTabs}>
@@ -69,7 +73,7 @@ export const RotationTab: React.FC<TabsEditorProps> = React.memo(
                 >
                   <div className=''>
                     <TabsList className='grid grid-flow-col justify-start'>
-                      {tabs.map(tab => (
+                      {validTabs.map(tab => (
                         <TabTrigger
                           key={tab.value}
                           tab={tab}
@@ -85,7 +89,7 @@ export const RotationTab: React.FC<TabsEditorProps> = React.memo(
                         onClick={addNewTab}
                         className='my-1.5 ml-1 h-11'
                         aria-label='Add new tab'
-                        disabled={tabs.length >= 15}
+                        disabled={validTabs.length >= 15}
                       >
                         <Plus className='h-4 w-4' />
                       </Button>
@@ -99,7 +103,7 @@ export const RotationTab: React.FC<TabsEditorProps> = React.memo(
                   </div>
                 </ScrollArea>
               </div>
-              {tabs.map(tab => (
+              {validTabs.map(tab => (
                 <RotationEditor
                   key={tab.id}
                   tab={tab}
