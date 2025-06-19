@@ -135,6 +135,7 @@ model Ability {
     rotationId    Int
     rotation      Rotation     @relation("RotationAbilities", fields: [rotationId], references: [id], onDelete: Cascade)
     url           String
+    isPrepull     Boolean      @default(false)
     order         Int // Для сортировки в горизонтальной зоне
     verticalRowId Int? // Связь с вертикальным рядом (если способность в ряду)
     verticalRow   VerticalRow? @relation("VerticalRowAbilities", fields: [verticalRowId], references: [id], onDelete: SetNull)

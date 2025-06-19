@@ -1,28 +1,35 @@
 'use client';
 
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 import { DndContext, DragOverlay, rectIntersection } from '@dnd-kit/core';
 import { ScrollArea, ScrollBar } from '@root/components/ui/scroll-area';
 import WowheadLink from './wowhead-link';
 import { DroppableZone } from './droppable-zone';
 import { useDragAndDrop } from '@root/components/hooks/guide/edit/rotation/use-drag-and-drops';
 import { useRotationState } from '@root/components/hooks/guide/edit/rotation/use-rotation-state';
+import { useSaveRotation } from '@root/components/hooks/guide/edit/rotation/use-save-rotation';
 import { MDTabContentEditor } from '../text-field/md-tab-content-editor';
 import { TabData } from '@root/@types/prisma';
 import { TabsContent } from '@root/components/ui/tabs-list';
 import { Card, CardContent } from '@root/components/ui/card';
+import { Button } from '@root/components/ui/button';
 
 // Константы для расчета высоты
-const ABILITY_HEIGHT = 60; // Высота одной способности (включая отступы)
-const ROW_GAP = 5; // Отступ между способностями в вертикальном ряду
-const BASE_HEIGHT = 160; // Базовая высота контейнера без вертикальных рядов
+const ABILITY_HEIGHT = 60;
+const ROW_GAP = 5;
+const BASE_HEIGHT = 160;
 
 interface RotationEditorProps {
-  tab: TabData;
+  tab: TabData & { id: number; rotationId: number };
   onContentChange: (value: string) => void;
 }
 
 export function RotationEditor({ tab, onContentChange }: RotationEditorProps) {
+  const [localRotationId, setLocalRotationId] = useState<number | null>(
+    tab.rotationId || null
+  ); // Локальное состояние для rotationId
+  const [isSaving, setIsSaving] = useState(false); // Индикатор сохранения
+
   const {
     abilities,
     setAbilities,
@@ -42,7 +49,7 @@ export function RotationEditor({ tab, onContentChange }: RotationEditorProps) {
     handleAddVerticalRow,
     handleAddVerticalAbility,
     removeAbility,
-  } = useRotationState();
+  } = useRotationState({ ...tab, rotationId: localRotationId }); // Передаем обновленный rotationId
 
   const {
     sensors,
@@ -53,6 +60,25 @@ export function RotationEditor({ tab, onContentChange }: RotationEditorProps) {
     handleDragEnd,
   } = useDragAndDrop(abilities, setAbilities, verticalRows, setVerticalRows);
 
+  const saveRotation = useSaveRotation(
+    tab.id,
+    localRotationId,
+    abilities,
+    verticalRows,
+    setError
+  );
+
+  const handleSave = async () => {
+    setIsSaving(true);
+    const newRotationId = await saveRotation();
+    if (newRotationId) {
+      setLocalRotationId(newRotationId); // Обновляем rotationId после успешного сохранения
+      setError(null);
+      console.log('Ротация сохранена, ID:', newRotationId);
+    }
+    setIsSaving(false);
+  };
+
   const maxVerticalRowHeight = useMemo(() => {
     return verticalRows.reduce((maxHeight, row) => {
       const rowHeight = row.abilities.length * (ABILITY_HEIGHT + ROW_GAP);
@@ -60,8 +86,12 @@ export function RotationEditor({ tab, onContentChange }: RotationEditorProps) {
     }, 0);
   }, [verticalRows]);
 
-  const prepullAbilities = abilities.filter(ability => ability.isPrepull);
-  const pullAbilities = abilities.filter(ability => !ability.isPrepull);
+  const prepullAbilities = abilities.filter(
+    ability => ability.isPrepull && !ability.verticalRowId
+  );
+  const pullAbilities = abilities.filter(
+    ability => !ability.isPrepull && !ability.verticalRowId
+  );
   const activeAbility =
     abilities.find(ability => ability.id === activeId) ||
     verticalRows
@@ -149,7 +179,7 @@ export function RotationEditor({ tab, onContentChange }: RotationEditorProps) {
                 {activeAbility ? (
                   <WowheadLink
                     id={Number(activeAbility.spellId)}
-                    type={activeAbility.type}
+                    type={activeAbility.type as 'spell' | 'item'}
                     isPtr={activeAbility.isPtr}
                     whData='large'
                     ptrPrefix={
@@ -170,6 +200,9 @@ export function RotationEditor({ tab, onContentChange }: RotationEditorProps) {
               content={tab.content}
               onContentChange={onContentChange}
             />
+            <Button onClick={handleSave} className='mt-4' disabled={isSaving}>
+              {isSaving ? 'Сохранение...' : 'Сохранить ротацию'}
+            </Button>
           </div>
         </CardContent>
       </Card>

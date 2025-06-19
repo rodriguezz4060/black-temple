@@ -29,7 +29,7 @@ export const GuideEditor: React.FC<GuideEditorProps> = ({
   const handleSectionAdded = () => {
     router.refresh();
   };
-
+  console.log(guide);
   return (
     <div
       className={`post-page flex h-max flex-col justify-center pt-10 lg:flex-row ${className}`}

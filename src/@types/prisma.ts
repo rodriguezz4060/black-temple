@@ -123,6 +123,24 @@ export interface GuideSpecGearProps {
 
 export type ExpansionProps = Expansion & {};
 
+export interface Ability {
+  id: string;
+  url: string;
+  spellId?: string; // Извлекается из URL
+  type?: 'spell' | 'item'; // Извлекается из URL
+  isPtr?: boolean; // Извлекается из URL
+  isPrepull: boolean; // Может быть в JSON
+  order: number; // Присутствует в JSON
+  verticalRowId?: string | null; // Присутствует в JSON
+}
+
+export interface VerticalRow {
+  id: string;
+  positionAfter?: string;
+  order?: number;
+  abilities: Ability[];
+}
+
 export interface TabData {
   id?: number;
   value: string;
@@ -132,20 +150,10 @@ export interface TabData {
   importString: string;
   tabGroupId: number;
   isNew?: boolean;
-}
-
-export interface Ability {
-  id: string;
-  name: string;
-  url: string;
-  spellId: string;
-  type: 'spell' | 'item';
-  isPtr: boolean;
-  isPrepull: boolean;
-}
-
-export interface VerticalRow {
-  id: string;
-  abilities: Ability[];
-  positionAfter: string | null;
+  rotationId?: number | null;
+  rotation?: {
+    id: number;
+    abilities: Ability[];
+    verticalRows: VerticalRow[];
+  } | null;
 }

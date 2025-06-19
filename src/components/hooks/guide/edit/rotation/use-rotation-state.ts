@@ -1,7 +1,7 @@
-import { useState } from 'react';
-import { Ability, VerticalRow } from '@root/@types/prisma';
+import { useState, useEffect } from 'react';
+import { Ability, VerticalRow, TabData } from '@root/@types/prisma';
 
-export function useRotationState() {
+export function useRotationState(initialTab?: TabData) {
   const [abilities, setAbilities] = useState<Ability[]>([]);
   const [verticalRows, setVerticalRows] = useState<VerticalRow[]>([]);
   const [dialogUrl, setDialogUrl] = useState('');
@@ -53,6 +53,74 @@ export function useRotationState() {
     return { name, finalUrl, spellId, type: type as 'spell' | 'item', isPtr };
   };
 
+  // Инициализация состояния на основе initialTab.rotation
+  useEffect(() => {
+    if (initialTab?.rotation) {
+      setAbilities(
+        initialTab.rotation.abilities
+          .filter(ability => !ability.verticalRowId)
+          .map(ability => {
+            const parsed = parseWowheadUrl(ability.url);
+            if (!parsed) {
+              console.warn(`Invalid URL in DB: ${ability.url}`);
+              return {
+                id: ability.id,
+                url: ability.url,
+                spellId: undefined,
+                type: undefined,
+                isPtr: undefined,
+                isPrepull: ability.isPrepull ?? false,
+                order: ability.order || 0,
+                verticalRowId: null,
+              };
+            }
+            return {
+              id: ability.id,
+              url: parsed.finalUrl,
+              spellId: parsed.spellId,
+              type: parsed.type,
+              isPtr: parsed.isPtr,
+              isPrepull: ability.isPrepull ?? false,
+              order: ability.order || 0,
+              verticalRowId: null,
+            };
+          })
+      );
+
+      setVerticalRows(
+        (initialTab.rotation.verticalRows || []).map(row => ({
+          id: row.id,
+          positionAfter: row.positionAfter || undefined,
+          order: row.order || 0,
+          abilities: row.abilities.map(ability => {
+            const parsed = parseWowheadUrl(ability.url);
+            if (!parsed) {
+              console.warn(`Invalid URL in DB: ${ability.url}`);
+              return {
+                id: ability.id,
+                url: ability.url,
+                spellId: undefined,
+                type: undefined,
+                isPtr: undefined,
+                isPrepull: ability.isPrepull ?? false,
+                order: ability.order || 0,
+              };
+            }
+            return {
+              id: ability.id,
+              url: parsed.finalUrl,
+              spellId: parsed.spellId,
+              type: parsed.type,
+              isPtr: parsed.isPtr,
+              isPrepull: ability.isPrepull ?? false,
+              order: ability.order || 0,
+            };
+          }),
+        }))
+      );
+    }
+  }, [initialTab?.rotation, initialTab?.rotation?.id]);
+
   // Добавление способности
   const handleAddAbility = (zoneId: string) => {
     const parsed = parseWowheadUrl(dialogUrl);
@@ -60,9 +128,12 @@ export function useRotationState() {
 
     const newAbility: Ability = {
       id: `ability-${Date.now()}`,
-      ...parsed,
       url: parsed.finalUrl,
-      isPrepull: zoneId === 'prepull-zone',
+      spellId: parsed.spellId,
+      type: parsed.type,
+      isPtr: parsed.isPtr,
+      isPrepull: zoneId === 'prepull-zone', // Устанавливаем на основе зоны
+      order: abilities.length,
     };
 
     setAbilities([...abilities, newAbility]);
@@ -78,15 +149,19 @@ export function useRotationState() {
 
     const newAbility: Ability = {
       id: `ability-${Date.now()}`,
-      ...parsed,
       url: parsed.finalUrl,
-      isPrepull: false,
+      spellId: parsed.spellId,
+      type: parsed.type,
+      isPtr: parsed.isPtr,
+      isPrepull: false, // Вертикальные ряды всегда в зоне "Пулл"
+      order: 0,
     };
 
     const newRow: VerticalRow = {
       id: `row-${Date.now()}`,
       abilities: [newAbility],
       positionAfter: afterAbilityId,
+      order: verticalRows.length,
     };
 
     setVerticalRows([...verticalRows, newRow]);
@@ -102,15 +177,18 @@ export function useRotationState() {
 
     const newAbility: Ability = {
       id: `ability-${Date.now()}`,
-      ...parsed,
       url: parsed.finalUrl,
-      isPrepull: false,
+      spellId: parsed.spellId,
+      type: parsed.type,
+      isPtr: parsed.isPtr,
+      isPrepull: false, // Способности в рядах всегда в зоне "Пулл"
+      order: verticalRows.find(row => row.id === rowId)?.abilities.length || 0,
     };
 
     setVerticalRows(rows =>
       rows.map(row =>
         row.id === rowId
-          ? { ...row, abilities: [newAbility, ...row.abilities] }
+          ? { ...row, abilities: [...row.abilities, newAbility] }
           : row
       )
     );

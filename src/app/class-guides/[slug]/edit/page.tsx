@@ -44,7 +44,20 @@ export default async function GuidePageRoute({
         include: {
           tabGroups: {
             include: {
-              tabs: true,
+              tabs: {
+                include: {
+                  rotation: {
+                    include: {
+                      abilities: true, // Подгружаем способности
+                      verticalRows: {
+                        include: {
+                          abilities: true, // Подгружаем способности в вертикальных рядах
+                        },
+                      },
+                    },
+                  },
+                },
+              },
             },
           },
           textFields: true,
