@@ -27,6 +27,7 @@ import { TalentsTab } from '../talents/talents-tab';
 import { deleteSection } from '@root/app/class-guides/_actions/section/section-actions';
 import { useState } from 'react';
 import { RotationTab } from '../rotation/rotation-tab';
+import { RotationProvider } from '../rotation/rotation-context';
 
 interface SectionEditorProps {
   section: GuidePageProps['sections'][number];
@@ -105,12 +106,14 @@ export const SectionEditor: React.FC<SectionEditorProps> = ({
             specialization={guide.specialization}
           />
         ) : section.type === 'ROTATION' ? (
-          <RotationTab
-            initialTabs={activeItem.data.tabs || []}
-            defaultTab={activeItem.data.tabs?.[0]?.value || ''}
-            sectionId={section.id}
-            tabGroupId={activeItem.data.id}
-          />
+          <RotationProvider>
+            <RotationTab
+              initialTabs={activeItem.data.tabs || []}
+              defaultTab={activeItem.data.tabs?.[0]?.value || ''}
+              sectionId={section.id}
+              tabGroupId={activeItem.data.id}
+            />
+          </RotationProvider>
         ) : (
           <TabsEditor
             initialTabs={activeItem.data.tabs || []}
@@ -208,12 +211,14 @@ export const SectionEditor: React.FC<SectionEditorProps> = ({
                   specialization={guide.specialization}
                 />
               ) : section.type === 'ROTATION' ? (
-                <RotationTab
-                  initialTabs={item.data.tabs || []}
-                  defaultTab={item.data.tabs?.[0]?.value || ''}
-                  sectionId={section.id}
-                  tabGroupId={item.data.id}
-                />
+                <RotationProvider>
+                  <RotationTab
+                    initialTabs={item.data.tabs || []}
+                    defaultTab={item.data.tabs?.[0]?.value || ''}
+                    sectionId={section.id}
+                    tabGroupId={item.data.id}
+                  />
+                </RotationProvider>
               ) : (
                 <TabsEditor
                   initialTabs={item.data.tabs || []}

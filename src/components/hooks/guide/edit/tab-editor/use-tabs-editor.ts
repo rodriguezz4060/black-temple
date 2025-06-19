@@ -159,6 +159,7 @@ export const useTabsEditor = ({
     editingTab,
     editForm,
     isSaving,
+    setIsSaving,
     setActiveTab,
     addNewTab,
     updateTabContent,

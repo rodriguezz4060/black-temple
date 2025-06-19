@@ -1,6 +1,6 @@
 'use client';
 
-import { useMemo, useState } from 'react';
+import { useMemo, useState, useEffect } from 'react';
 import { DndContext, DragOverlay, rectIntersection } from '@dnd-kit/core';
 import { ScrollArea, ScrollBar } from '@root/components/ui/scroll-area';
 import WowheadLink from './wowhead-link';
@@ -12,7 +12,7 @@ import { MDTabContentEditor } from '../text-field/md-tab-content-editor';
 import { TabData } from '@root/@types/prisma';
 import { TabsContent } from '@root/components/ui/tabs-list';
 import { Card, CardContent } from '@root/components/ui/card';
-import { Button } from '@root/components/ui/button';
+import { useRotationContext } from './rotation-context';
 
 // Константы для расчета высоты
 const ABILITY_HEIGHT = 60;
@@ -25,10 +25,10 @@ interface RotationEditorProps {
 }
 
 export function RotationEditor({ tab, onContentChange }: RotationEditorProps) {
+  const { registerRotation } = useRotationContext();
   const [localRotationId, setLocalRotationId] = useState<number | null>(
     tab.rotationId || null
-  ); // Локальное состояние для rotationId
-  const [isSaving, setIsSaving] = useState(false); // Индикатор сохранения
+  );
 
   const {
     abilities,
@@ -49,7 +49,7 @@ export function RotationEditor({ tab, onContentChange }: RotationEditorProps) {
     handleAddVerticalRow,
     handleAddVerticalAbility,
     removeAbility,
-  } = useRotationState({ ...tab, rotationId: localRotationId }); // Передаем обновленный rotationId
+  } = useRotationState({ ...tab, rotationId: localRotationId });
 
   const {
     sensors,
@@ -68,16 +68,21 @@ export function RotationEditor({ tab, onContentChange }: RotationEditorProps) {
     setError
   );
 
-  const handleSave = async () => {
-    setIsSaving(true);
-    const newRotationId = await saveRotation();
-    if (newRotationId) {
-      setLocalRotationId(newRotationId); // Обновляем rotationId после успешного сохранения
-      setError(null);
-      console.log('Ротация сохранена, ID:', newRotationId);
-    }
-    setIsSaving(false);
-  };
+  // Регистрируем функцию сохранения ротации в контексте
+  useEffect(() => {
+    registerRotation({
+      tabValue: tab.value,
+      rotationId: localRotationId,
+      saveRotation,
+      setRotationId: setLocalRotationId,
+      setError,
+    });
+  }, [tab.value, localRotationId, saveRotation, setError, registerRotation]);
+
+  // Синхронизируем localRotationId с tab.rotationId
+  useEffect(() => {
+    setLocalRotationId(tab.rotationId || null);
+  }, [tab.rotationId]);
 
   const maxVerticalRowHeight = useMemo(() => {
     return verticalRows.reduce((maxHeight, row) => {
@@ -200,9 +205,6 @@ export function RotationEditor({ tab, onContentChange }: RotationEditorProps) {
               content={tab.content}
               onContentChange={onContentChange}
             />
-            <Button onClick={handleSave} className='mt-4' disabled={isSaving}>
-              {isSaving ? 'Сохранение...' : 'Сохранить ротацию'}
-            </Button>
           </div>
         </CardContent>
       </Card>

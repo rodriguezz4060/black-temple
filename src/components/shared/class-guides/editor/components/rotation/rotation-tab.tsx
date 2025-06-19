@@ -11,6 +11,7 @@ import { useTabsEditor } from '@root/components/hooks/guide/edit/tab-editor/use-
 import { EditorDialog } from '../tabs/editor-dialog';
 import { TabTrigger } from '../tabs/tab-trigger';
 import { RotationEditor } from './rotation-editor';
+import { useRotationContext } from './rotation-context';
 
 interface TabsEditorProps {
   initialTabs: TabData[];
@@ -32,6 +33,7 @@ export const RotationTab: React.FC<TabsEditorProps> = React.memo(
       editingTab,
       editForm,
       isSaving,
+      setIsSaving,
       setActiveTab,
       addNewTab,
       openEditDialog,
@@ -48,22 +50,35 @@ export const RotationTab: React.FC<TabsEditorProps> = React.memo(
       tabGroupId,
     });
     const { scrollAreaRef, getMap } = useTabsScroll(activeTab);
+    const { saveAllRotations } = useRotationContext();
 
-    if (isLoading) return <div className='p-4'>Загрузка табов...</div>;
-    if (error)
-      return <div className='p-4 text-red-500'>Ошибка: {error.message}</div>;
+    const handleSaveAll = async (e: React.FormEvent) => {
+      e.preventDefault();
+      setIsSaving(true); // Устанавливаем isSaving сразу
+      try {
+        await saveAllRotations(); // Сохраняем ротации
+        await handleSaveTabs(e); // Сохраняем табы
+      } catch (err) {
+        console.error('Ошибка при сохранении:', err);
+      } finally {
+        setIsSaving(false); // Сбрасываем isSaving после завершения
+      }
+    };
 
-    // Преобразуем tabs, чтобы гарантировать наличие id и rotationId
     const validTabs = tabs.map(tab => ({
       ...tab,
-      id: tab.id ?? 0, // Если id undefined, задаем 0
-      rotationId: tab.rotationId ?? tab.rotation?.id ?? 0, // Если rotationId undefined или null, берем rotation.id или 0
+      id: tab.id ?? 0,
+      rotationId: tab.rotationId ?? tab.rotation?.id ?? 0,
     }));
 
     return (
       <div className='space-y-4'>
-        <form onSubmit={handleSaveTabs}>
-          <div className=''>
+        <form onSubmit={handleSaveAll}>
+          {isLoading ? (
+            <div className='p-4'>Загрузка табов...</div>
+          ) : error ? (
+            <div className='p-4 text-red-500'>Ошибка: {error.message}</div>
+          ) : (
             <Tabs value={activeTab} onValueChange={setActiveTab}>
               <div className='relative w-full'>
                 <ScrollArea
@@ -111,7 +126,7 @@ export const RotationTab: React.FC<TabsEditorProps> = React.memo(
                 />
               ))}
             </Tabs>
-          </div>
+          )}
           <div className='mt-2 flex justify-end'>
             <Button type='submit' loading={isSaving}>
               <Save className='mr-2 h-4 w-4' />
