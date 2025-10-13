@@ -2,7 +2,8 @@
 
 import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
-import { Ability } from '@prisma/client';
+import { Ability } from '@root/@types/prisma';
+
 import { Button } from '@root/components/ui/button';
 
 interface SortableAbilityProps {

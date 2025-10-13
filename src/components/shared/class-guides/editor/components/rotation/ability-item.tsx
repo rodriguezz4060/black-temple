@@ -98,7 +98,7 @@ export function AbilityItem({
           renderAbility={ability => (
             <WowheadLink
               id={Number(ability.spellId)}
-              type={ability.type}
+              type={ability.type ?? 'spell'}
               isPtr={ability.isPtr}
               whData='large'
               ptrPrefix={

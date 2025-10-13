@@ -54,10 +54,10 @@ export const RotationTab: React.FC<TabsEditorProps> = React.memo(
 
     const handleSaveAll = async (e: React.FormEvent) => {
       e.preventDefault();
-      setIsSaving(true); // Устанавливаем isSaving сразу
+      setIsSaving(true);
       try {
-        await saveAllRotations(); // Сохраняем ротации
-        await handleSaveTabs(e); // Сохраняем табы
+        await saveAllRotations();
+        await handleSaveTabs(e);
       } catch (err) {
         console.error('Ошибка при сохранении:', err);
       } finally {
